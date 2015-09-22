@@ -12,13 +12,20 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.ai.app.aitask.common.ConfigurationFile;
+import com.ai.app.aitask.common.HttpClient;
 import com.ai.app.aitask.common.OrderedProperties;
+import com.ai.app.aitask.config.AgentProperties;
 import com.ai.app.aitask.task.parts.ExecutorProbe;
 import com.ai.app.aitask.task.parts.interfaces.IResultFetcher;
 
 public class IniResultFetcher implements IResultFetcher{
 
 	transient final static private Logger log = Logger.getLogger(IniResultFetcher.class);
+	String result_path = null;
+	
+	public IniResultFetcher(String result_path){
+		this.result_path = result_path;
+	}
 
 	
 	public String fetch(JobExecutionContext context)
@@ -26,14 +33,14 @@ public class IniResultFetcher implements IResultFetcher{
 		//String project_path = context.getMergedJobDataMap().getString("project_path");
 		
 		//Read ini file get result
-		String result_path = context.getMergedJobDataMap().getString("ini_path");
-		if(result_path == null || result_path.isEmpty())
-			result_path = context.getMergedJobDataMap().getString("result_path");
-		log.info("Read result: " + result_path);
+//		String result_path = context.getMergedJobDataMap().getString("ini_path");
+//		if(result_path == null || result_path.isEmpty())
+//			result_path = context.getMergedJobDataMap().getString("result_path");
+//		log.info("Read result: " + result_path);
 		
 		ConfigurationFile file = null;
 		try {
-			file = new ConfigurationFile(result_path);
+			file = new ConfigurationFile(this.result_path);
 		} catch (IOException e) {
 			throw new JobExecutionException(e);
 		}
@@ -79,45 +86,87 @@ public class IniResultFetcher implements IResultFetcher{
 		
 		@SuppressWarnings("unchecked")
 		List<ExecutorProbe> probes = (List<ExecutorProbe>) context.getMergedJobDataMap().get("probes");
-		Element steps = root.addElement("steps");
-		for(ExecutorProbe p : probes){
-			String result_str = result_section.getProperty(p.getName());
-			
-			if(result_str == null || result_str.isEmpty()){
-				root.setAttributeValue("rst_log", root.attributeValue("rst_log") + "\n" + "未发现探测点或步骤：" + p.getName());
-				continue;
-			}
-
-			String[] result_list = result_str.split(",");
-			String p_result = result_list[0].trim();
-			String p_time = result_list[1].trim();
-			String p_log = result_list[2].trim();
-			
-			Element step = steps.addElement("ResultStep");
-			step.addAttribute("step_id", p.getId());
-			step.addAttribute("step_name", p.getName());
-			step.addAttribute("step_desc", p.getDesc());
-			step.addAttribute("expect_result", "");
-			
-			if(!result_str.matches("^.*,.*,.*$")){
-				//root.setAttributeValue("rst_log", root.attributeValue("rst_log") + "\n" + "发现探测点或步骤的输出格式有误" + p.getName() + ":\t" + result_str);
-				//continue;
+		if(probes != null){ 
+			Element steps = root.addElement("steps");
+			for(ExecutorProbe p : probes){
+				String result_str = result_section.getProperty(p.getName());
 				
-				step.addAttribute("start_time", "");
-				step.addAttribute("eclapse", "0");
-				step.addAttribute("result", "1");
-				step.addAttribute("rst_log", "发现探测点或步骤的输出格式有误"+ p.getName() + ":\t" + result_str);
-			}else{
-				step.addAttribute("start_time", "");
-				step.addAttribute("eclapse", p_time);
-				step.addAttribute("result", p_result);
-				step.addAttribute("rst_log", p_log);
+				if(result_str == null || result_str.isEmpty()){
+					root.setAttributeValue("rst_log", root.attributeValue("rst_log") + "\n" + "未发现探测点或步骤：" + p.getName());
+					continue;
+				}
+	
+				String[] result_list = result_str.split(",");
+				String p_result = result_list[0].trim();
+				String p_time = result_list[1].trim();
+				String p_log = result_list[2].trim();
+				
+				Element step = steps.addElement("ResultStep");
+				step.addAttribute("step_id", p.getId());
+				step.addAttribute("step_name", p.getName());
+				step.addAttribute("step_desc", p.getDesc());
+				step.addAttribute("expect_result", "");
+				
+				if(!result_str.matches("^.*,.*,.*$")){
+					//root.setAttributeValue("rst_log", root.attributeValue("rst_log") + "\n" + "发现探测点或步骤的输出格式有误" + p.getName() + ":\t" + result_str);
+					//continue;
+					
+					step.addAttribute("start_time", "");
+					step.addAttribute("eclapse", "0");
+					step.addAttribute("result", "1");
+					step.addAttribute("rst_log", "发现探测点或步骤的输出格式有误"+ p.getName() + ":\t" + result_str);
+				}else{
+					step.addAttribute("start_time", "");
+					step.addAttribute("eclapse", p_time);
+					step.addAttribute("result", p_result);
+					step.addAttribute("rst_log", p_log);
+				}
 			}
-			
 		
 			
 		}
+		try {
+			String result_save_url = AgentProperties.getInstance().getProperty("aitask.result.save.url");
+			if(result_save_url == null)
+				throw new Exception("aitask.result.save.url not found");
+			HttpClient.post(result_save_url, root.asXML(), "text/xml");
+		} catch (Exception e) {
+			log.error(e);
+		}
+		return root.asXML();
+	}
+
+
+	public String error(JobExecutionContext context, JobExecutionException exception) throws JobExecutionException {
+		Element root = DocumentHelper.createElement("ResultCase");
+		root.addAttribute("task_id", context.getMergedJobDataMap().getString("task_id"));
+		root.addAttribute("run_id", context.getMergedJobDataMap().getString("task_id"));
+		root.addAttribute("case_id", context.getMergedJobDataMap().getString("case_id"));
+		root.addAttribute("case_name", context.getMergedJobDataMap().getString("case_name"));
+		root.addAttribute("case_category", context.getMergedJobDataMap().getString("ctype"));
+		root.addAttribute("case_module", context.getMergedJobDataMap().getString("case_module"));
+		root.addAttribute("group_no", context.getMergedJobDataMap().getString("group_no"));
+		root.addAttribute("group_name", context.getMergedJobDataMap().getString("group_name"));
+		root.addAttribute("agent_id", context.getMergedJobDataMap().getString("agent_id"));
+		root.addAttribute("agent_name", context.getMergedJobDataMap().getString("agent_name"));
+		root.addAttribute("data_id", "");
+		root.addAttribute("data_value", "");
+		root.addAttribute("data_desc", "");
+		root.addAttribute("start_time", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		root.addAttribute("end_time", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 		
+		root.addAttribute("rst_log", exception.getMessage());
+		root.addAttribute("eclapse", "0");
+		root.addAttribute("key_eclapse", "0");
+		root.addAttribute("result", "1");
+		try {
+			String result_save_url = AgentProperties.getInstance().getProperty("aitask.result.save.url");
+			if(result_save_url == null)
+				throw new Exception("aitask.result.save.url not found");
+			HttpClient.post(result_save_url, root.asXML(), "text/xml");
+		} catch (Exception e) {
+			log.error(e);
+		}
 		return root.asXML();
 	}
 

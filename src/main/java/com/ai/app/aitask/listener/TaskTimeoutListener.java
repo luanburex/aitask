@@ -19,7 +19,7 @@ public class TaskTimeoutListener implements JobListener{
 	}
 
 	public void jobExecutionVetoed(JobExecutionContext context) {
-		log.debug("[" + context.getTrigger().getKey().toString() + "]" + "the timeout listener is running for "+context.getJobDetail().getKey().getName());
+		log.debug("[" + context.getTrigger().getKey().toString() + "]" + "the timeout listener is running(vote) for "+context.getJobDetail().getKey().getName());
 	}
 
 	public void jobToBeExecuted(JobExecutionContext context) {
@@ -31,7 +31,7 @@ public class TaskTimeoutListener implements JobListener{
 
 	public void jobWasExecuted(JobExecutionContext context,
 			JobExecutionException arg1) {
-		log.debug("["+context.getTrigger().getKey().toString()+"]"+"the timeout linstener is ended.");
+		log.debug("["+context.getTrigger().getKey().toString()+"]"+"the timeout linstener is normally ended.");
 		if(_timeoutthread != null)
 			_timeoutthread.interrupt();
 	}

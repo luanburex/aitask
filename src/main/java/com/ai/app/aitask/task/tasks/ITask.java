@@ -13,6 +13,10 @@ import org.quartz.UnableToInterruptJobException;
  *
  */
 public interface ITask extends InterruptableJob{
+	
+	public void before(JobExecutionContext context);
+	
+	public void after(JobExecutionContext context, JobExecutionException error);
 
 	public void interrupt() throws UnableToInterruptJobException;
 

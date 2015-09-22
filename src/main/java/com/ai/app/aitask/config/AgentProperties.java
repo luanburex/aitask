@@ -18,7 +18,7 @@ public class AgentProperties {
 		instance = properties;
 	}
 
-	public static Properties getInstance() throws IOException {
+	public static synchronized Properties getInstance() throws IOException {
 
 		if (instance == null) {
 			new AgentProperties();

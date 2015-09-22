@@ -17,8 +17,8 @@ import com.ai.app.aitask.task.tasks.TaskDirector;
 import com.ai.app.aitask.utils.FileReaderUtils;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;
 
-public class SerialTaskCronTest {
-	final static private Logger log = Logger.getLogger(SerialTaskCronTest.class);
+public class CmdTaskCronTest {
+	final static private Logger log = Logger.getLogger(CmdTaskCronTest.class);
 
 	public static ScheduleDaemon sd;
 	

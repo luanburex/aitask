@@ -17,6 +17,7 @@ import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
 
+import com.ai.app.aitask.listener.BeforeAndAfterTaskListener;
 import com.ai.app.aitask.listener.OpenAndCloseListner;
 import com.ai.app.aitask.listener.TaskTimeoutListener;
 import com.ai.app.aitask.task.tasks.ITaskBuilder;
@@ -64,6 +65,7 @@ public class TaskSchedule {
 		
 //		scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener(),
 //				EverythingMatcher.allJobs());
+		scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener());
 		scheduler.getListenerManager().addJobListener(new TaskTimeoutListener());
 		scheduler.start();
 	}

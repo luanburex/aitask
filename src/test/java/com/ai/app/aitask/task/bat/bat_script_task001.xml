@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<root>
-<task ID="10900" run_id="10900" name="北京普通开发" ctype="7" group_no="101" group_name="地区1" agent_id="458680" agent_name="10.1.195.101" instant="false" cron="0 0/30 * * * ?">
+<task ID="10900" run_id="10900" name="北京普通开发" ctype="7" group_no="101" group_name="地区1" agent_id="458680" agent_name="10.1.195.101" instant="true" cron="0 0/30 * * * ?">
 	<case ID="14474" name="普通开户" group_no="111" group_name="全省" position="1" case_module="受理类业务" script_path="c:/test_project/普通开户/" bat_path="c:/test_project/普通开户/run.cmd" ini_path="c:/test_project/普通开户/普通开户.ini" project_path="c:/test_project" project_name="普通开户" svn_path="/普通缴费" revision="45236" username="renzq" password="123456">
 	      <probe ID="11929" name="登录" base_line="120000" warn_time="120000" timeout_time="120000"/>
 	      <probe ID="11930" name="账单查询,打开菜单" base_line="120000" warn_time="120000" timeout_time="120000"/>
 	      <probe ID="11931" name="账单查询,业务查询" base_line="120000" warn_time="120000" timeout_time="120000"/>
 	</case>
 </task>
-</root>
