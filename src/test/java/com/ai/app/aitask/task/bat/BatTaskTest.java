@@ -16,8 +16,8 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;
+import com.ai.app.aitask.task.TaskDirector;
 import com.ai.app.aitask.task.tasks.ITaskBuilder;
-import com.ai.app.aitask.task.tasks.TaskDirector;
 import com.ai.app.aitask.utils.FileReaderUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;
@@ -38,7 +38,7 @@ public class BatTaskTest {
 	@BeforeClass
 	public static void start() throws Exception{
 		sd = ScheduleDaemon.instance();
-		server = new TestJettyServer();
+		server = new TestJettyServer(null);
 		server.start();
 	}
 	
@@ -64,6 +64,7 @@ public class BatTaskTest {
 		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.BLOCKED, 1000l));
 		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
-				ts.getTrigger().getKey(), TriggerState.NONE, 7000l));
+				ts.getTrigger().getKey(), TriggerState.NONE, 9000l));
+		Thread.sleep(3000l);
 	}
 }

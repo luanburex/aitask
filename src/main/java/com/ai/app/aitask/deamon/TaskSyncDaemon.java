@@ -17,7 +17,7 @@ public class TaskSyncDaemon {
 				System.out.println("run");
 				
 			}
-		}, 100l, 60*1000l);
+		}, 100l, 1000l);
 	}
 	
 	synchronized public static TaskSyncDaemon instance(){

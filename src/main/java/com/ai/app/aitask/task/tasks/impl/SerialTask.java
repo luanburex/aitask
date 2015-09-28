@@ -5,6 +5,8 @@ import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
+import org.quartz.SchedulerException;
+import org.quartz.TriggerKey;
 import org.quartz.UnableToInterruptJobException;
 
 import com.ai.app.aitask.task.parts.interfaces.IDataReparer;
@@ -74,12 +76,11 @@ public class SerialTask implements ITask{
 	}
 
 	public void before(JobExecutionContext context) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void after(JobExecutionContext context, JobExecutionException error) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

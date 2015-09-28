@@ -184,5 +184,22 @@ public class CmdTaskExecutorTester {
 	}
 	
 	
+	@Test(timeout=3000)
+	public void testErrorExecute(){
+		CmdTaskExecutor e = new CmdTaskExecutor("cmd /c/q d:/run.cmd");
+		
+		try {
+			int ret = e.run(null);
+			log.debug(ret);
+			Assert.assertTrue(ret == 1);
+			Assert.assertFalse("".equals(e.getExecute_out()));
+			
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			Assert.assertTrue("存在报错", false);
+		}
+		
+	}
+	
 	
 }

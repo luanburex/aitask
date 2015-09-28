@@ -1,7 +1,9 @@
 package com.ai.app.aitask.task.parts.impl;
 
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
@@ -16,11 +18,29 @@ import com.ai.app.aitask.task.parts.interfaces.IExecutor;
  *
  */
 public class CmdTaskExecutor implements IExecutor{
+	
+	public static String default_charset = "GBK"; 
 
 	transient final static private Logger log = Logger.getLogger(CmdTaskExecutor.class);
 	private Process exectionProcess = null;
 	private String cmd = null;
+	private String execute_out = null;
+	private String execute_error = null;
 	
+	
+	
+	public String getExecute_out() {
+		return execute_out;
+	}
+
+
+
+	public String getExecute_error() {
+		return execute_error;
+	}
+
+
+
 	public CmdTaskExecutor(String cmd){
 		this.cmd = cmd;
 	}
@@ -31,7 +51,7 @@ public class CmdTaskExecutor implements IExecutor{
 		Process process_kill_task = Runtime.getRuntime().exec("taskkill /T /F /IM " + process_name);
 		Scanner in = new Scanner(process_kill_task.getInputStream());
 		while (in.hasNextLine()) {
-			log.debug(in.nextLine());
+			//log.debug(in.nextLine());
 		}
 
 		try {
@@ -65,16 +85,40 @@ public class CmdTaskExecutor implements IExecutor{
 	 * @throws Exception
 	 */
 	public int run(JobExecutionContext context) throws JobExecutionException{
-		log.info("["+context.getTrigger().getKey()+"]"+"start run cmd: " + cmd);
+		if(context != null)
+			log.info("["+context.getTrigger().getKey()+"]"+"start run cmd: " + cmd);
 
         try {
     		this.exectionProcess = Runtime.getRuntime().exec(cmd);
-            BufferedInputStream in = new BufferedInputStream(this.exectionProcess.getInputStream());
-    		byte[] bytes = new byte[4096];
-			while (in.read(bytes) != -1) {}
-			log.info("["+context.getTrigger().getKey()+"]"+"start wait cmd end..: " + cmd);
+            //BufferedInputStream in = new BufferedInputStream(this.exectionProcess.getInputStream());
+    		//byte[] bytes = new byte[4096];
+			//while (in.read(bytes) != -1) {execute_out += new String(bytes, "UTF-8");}
+    		this.execute_out = "";
+    		this.execute_error = "";
+    		InputStream in=this.exectionProcess.getInputStream();
+    		BufferedReader br=new BufferedReader(new InputStreamReader(in, default_charset));
+    		String str="";
+    		while((str=br.readLine())!=null){
+    			this.execute_out +=  str ;
+    		}
+    		
+    		BufferedReader br_err = new BufferedReader(new InputStreamReader(this.exectionProcess.getErrorStream(), default_charset));
+    		while((str=br_err.readLine())!=null){
+    			this.execute_error += "\n" + str;
+    		}
+    		
+    		log.info("CMD stdout: " + this.execute_out);
+    		if(!"".equals(execute_error))
+    			log.error("CMD error: " + this.execute_error);
+    		
+    		
+    		
+			if(context != null)
+				log.info("["+context.getTrigger().getKey()+"]"+"start wait cmd end..: " + cmd);
 	        int result = this.exectionProcess.waitFor();
-	        log.info("["+context.getTrigger().getKey()+"]"+"end cmd execution: " + cmd);
+	        if(context != null)
+	        	log.info("["+context.getTrigger().getKey()+"]"+"end cmd execution: " + cmd);
+	        
 	        return result;
 		} catch (Exception e) {
 			throw new JobExecutionException(e);

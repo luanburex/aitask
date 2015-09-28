@@ -34,7 +34,7 @@ public class IniResultFetcherTester {
 	
 	@BeforeClass
 	public static void startup() throws Exception{
-		server = new TestJettyServer();
+		server = new TestJettyServer(null);
 		server.start();
 	}
 	@AfterClass

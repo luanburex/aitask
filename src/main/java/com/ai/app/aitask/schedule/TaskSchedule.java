@@ -16,6 +16,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 
 import com.ai.app.aitask.listener.BeforeAndAfterTaskListener;
 import com.ai.app.aitask.listener.OpenAndCloseListner;
@@ -67,6 +68,7 @@ public class TaskSchedule {
 //				EverythingMatcher.allJobs());
 		scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener());
 		scheduler.getListenerManager().addJobListener(new TaskTimeoutListener());
+		
 		scheduler.start();
 	}
 	
@@ -118,10 +120,37 @@ public class TaskSchedule {
 		return this.getTaskStateByTrigger(triggerKey);
 	}
 	
-	public void interruptByJobKey(TriggerKey triggerKey) throws SchedulerException{
+	public void interruptByTrigger(TriggerKey triggerKey) throws SchedulerException{
 		
 		JobKey jobKey = this.getScheduler().getTrigger(triggerKey).getJobKey();
 		scheduler.interrupt(jobKey);
 	}
 	
+	public void fireTrigger(TriggerKey triggerkey) throws SchedulerException{
+		
+		Trigger trigger = this.scheduler.getTrigger(triggerkey);
+		this.scheduler.triggerJob(trigger.getJobKey(), trigger.getJobDataMap());
+	}
+	
+	public Set<TriggerKey> getAllTriggerKey() throws SchedulerException{
+		GroupMatcher<TriggerKey> gm = GroupMatcher.anyTriggerGroup();
+		Set<TriggerKey> keys = this.scheduler.getTriggerKeys(gm);
+		return keys;
+	}
+	
+	public String getTrigerInfo() throws SchedulerException{
+		StringBuffer sb = new StringBuffer();
+		for(TriggerKey key : this.getAllTriggerKey()){
+			Trigger trigger = this.scheduler.getTrigger(key);
+			sb.append(trigger.getKey());
+			sb.append("\t");
+			sb.append(scheduler.getTriggerState(key));
+			sb.append("\t");
+			sb.append(trigger.getPreviousFireTime());
+			sb.append("\t");
+			sb.append(trigger.getNextFireTime());
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 }

@@ -15,7 +15,6 @@ import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.tasks.ITaskBuilder;
-import com.ai.app.aitask.task.tasks.TaskDirector;
 import com.ai.app.aitask.utils.FileReaderUtils;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;
 
@@ -88,7 +87,7 @@ public class CmdTaskTest {
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 		sd.getTaskSchedule().addTask(ts, true);
 		Thread.sleep(500l);
-		sd.getTaskSchedule().interruptByJobKey(ts.getTrigger().getKey());
+		sd.getTaskSchedule().interruptByTrigger(ts.getTrigger().getKey());
 		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 	}

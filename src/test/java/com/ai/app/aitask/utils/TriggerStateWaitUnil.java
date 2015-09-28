@@ -19,4 +19,16 @@ public class TriggerStateWaitUnil {
 		}
 		return false;
 	}
+	
+	public static boolean waitPreviousTimeNull(TaskSchedule s, TriggerKey triggerKey, long wait_time) throws SchedulerException, InterruptedException{
+
+		long _wait = 0l;
+		while(_wait < wait_time){
+			if(s.getScheduler().getTrigger(triggerKey).getPreviousFireTime() == null)
+					return true;
+			Thread.sleep(100l);
+			_wait += 100l;
+		}
+		return false;
+	}
 }
