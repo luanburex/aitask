@@ -33,7 +33,8 @@ public class TestJettyHandle extends AbstractHandler
 
 
 
-	public void handle(String target,Request baseRequest,HttpServletRequest request,HttpServletResponse response)   
+	@Override
+    public void handle(String target,Request baseRequest,HttpServletRequest request,HttpServletResponse response)   
         throws IOException, ServletException  
     {  
     	request.setCharacterEncoding("utf-8");
@@ -76,7 +77,7 @@ public class TestJettyHandle extends AbstractHandler
   	    while ((line = reader.readLine()) != null)
   	      jb.append(line);
   	  } catch (Exception e) { /*report an error*/ }
-  	  System.out.println(jb.toString());
+//  	  System.out.println(jb.toString());
       response.setContentType("text/html;charset=utf-8");  
       response.setStatus(HttpServletResponse.SC_OK);  
       baseRequest.setHandled(true);  

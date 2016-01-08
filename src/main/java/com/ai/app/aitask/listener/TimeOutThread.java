@@ -1,7 +1,5 @@
 package com.ai.app.aitask.listener;
 
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.quartz.InterruptableJob;
 import org.quartz.JobExecutionContext;
@@ -72,7 +70,8 @@ public class TimeOutThread extends Thread {
 		}
 	}
 
-	public void run() {
+	@Override
+    public void run() {
 		if (timeout == -1l)
 			return;
 		try {

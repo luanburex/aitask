@@ -2,15 +2,11 @@ package com.ai.app.aitask.task;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
-
 import org.apache.log4j.Logger;
-import org.dom4j.DocumentException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.quartz.SchedulerException;
-import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;

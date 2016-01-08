@@ -2,7 +2,9 @@ package com.ai.app.aitask.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class FileReaderUtils {
 
@@ -18,7 +20,6 @@ public class FileReaderUtils {
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {
-
 			reader = new BufferedReader(new java.io.FileReader(file));
 			String tempString = null;
 			int line = 1;

@@ -19,15 +19,18 @@ public class BeforeAndAfterTaskListener implements JobListener {
 			IllegalAccessException, ClassNotFoundException, IOException {
 	}
 
-	public String getName() {
+	@Override
+    public String getName() {
 		return "BeforeAndAfterTaskListener";
 	}
 
-	public void jobExecutionVetoed(JobExecutionContext context) {
+	@Override
+    public void jobExecutionVetoed(JobExecutionContext context) {
 	
 	}
 
-	public void jobToBeExecuted(JobExecutionContext context) {
+	@Override
+    public void jobToBeExecuted(JobExecutionContext context) {
 	
 		try {
 			Method m = context.getJobInstance().getClass().getMethod("before",JobExecutionContext.class);
@@ -46,7 +49,8 @@ public class BeforeAndAfterTaskListener implements JobListener {
 		} 
 	}
 
-	public void jobWasExecuted(JobExecutionContext context,
+	@Override
+    public void jobWasExecuted(JobExecutionContext context,
 			JobExecutionException error) {
 
 		try {
@@ -62,7 +66,6 @@ public class BeforeAndAfterTaskListener implements JobListener {
 		} catch (Exception e) {
 			log.error("["+context.getTrigger().getKey().toString()+"]"+"run AFTER function,error: ",e);
 		}
-
 	}
 
 }

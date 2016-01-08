@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ai.app.aitask.task.parts.impl.CmdTaskExecutor;
@@ -68,7 +67,8 @@ class WaitProcessClass implements Runnable{
 
 	}
 	
-	public void run() {
+	@Override
+    public void run() {
 		try {
 			Thread.sleep(wait_time);
 			this.result = this.existsTask(this.process_name);
@@ -106,7 +106,8 @@ public class CmdTaskExecutorTester {
 		final CmdTaskExecutor e = new CmdTaskExecutor("ping -n 2 127.0.0.1");
 		Thread t = new Thread(new Runnable(){
 			
-			public void run() {
+			@Override
+            public void run() {
 				try {
 					Thread.sleep(1000l);
 					e.interupt();
@@ -161,7 +162,8 @@ public class CmdTaskExecutorTester {
 			final CmdTaskExecutor e = new CmdTaskExecutor("notepad.exe");
 			Thread t = new Thread(new Runnable(){
 	
-				public void run() {
+				@Override
+                public void run() {
 					try {
 						Thread.sleep(1000l);
 						e.interupt();

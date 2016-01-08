@@ -54,16 +54,25 @@ public class ScheduleDaemon {
 	 * return the singleton ScheduleDaemon Object
 	 * 
 	 * @return
-	 * @throws SchedulerException
-	 * @throws IOException 
-	 * @throws ClassNotFoundException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws SQLException 
 	 */
-	public static ScheduleDaemon instance() throws SchedulerException, IOException, SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-		if (singletonObj == null)
-			singletonObj = new ScheduleDaemon();
+	public static ScheduleDaemon instance() {
+		if (singletonObj == null) {
+			try {
+                singletonObj = new ScheduleDaemon();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+		}
 		return singletonObj;
 	}
 

@@ -33,19 +33,23 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder{
 	protected IResultFetcher result = null;
 	
 	
-	public JobDataMap getDatamap() {
+	@Override
+    public JobDataMap getDatamap() {
 		return datamap;
 	}
-	public void setDatamap(JobDataMap datamap) {
+	@Override
+    public void setDatamap(JobDataMap datamap) {
 		this.datamap = datamap;
 	}
-	public JobDetail getJobDetail() {
+	@Override
+    public JobDetail getJobDetail() {
 		return jobDetail;
 	}
 	public void setJobDetail(JobDetail jobDetail) {
 		this.jobDetail = jobDetail;
 	}
-	public Trigger getTrigger() {
+	@Override
+    public Trigger getTrigger() {
 		return trigger;
 	}
 	public void setTrigger(Trigger trigger) {
@@ -71,7 +75,8 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder{
 	}
 	
 
-	public void parseXml(String xml) throws DocumentException, TaskParseNotFoundException{
+	@Override
+    public void parseXml(String xml) throws DocumentException, TaskParseNotFoundException{
 		Document doc = DocumentHelper.parseText(xml);
         Element root = doc.getRootElement();
         
@@ -108,7 +113,8 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder{
 	}
 	
 	
-	public void generate(){
+	@Override
+    public void generate(){
 		
 		
 		String task_id = this.datamap.getString("task_id");

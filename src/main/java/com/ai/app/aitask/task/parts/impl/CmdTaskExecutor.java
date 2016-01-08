@@ -84,7 +84,8 @@ public class CmdTaskExecutor implements IExecutor{
 	 * @return
 	 * @throws Exception
 	 */
-	public int run(JobExecutionContext context) throws JobExecutionException{
+	@Override
+    public int run(JobExecutionContext context) throws JobExecutionException{
 		if(context != null)
 			log.info("["+context.getTrigger().getKey()+"]"+"start run cmd: " + cmd);
 
@@ -129,7 +130,8 @@ public class CmdTaskExecutor implements IExecutor{
 	/**
 	 * use process.destroy end the process running.
 	 */
-	public void interupt(){
+	@Override
+    public void interupt(){
 		log.info("destroy process: " + cmd + "\t ,and process object :" + this.exectionProcess);
 		if (this.exectionProcess != null){
 			this.exectionProcess.destroy();

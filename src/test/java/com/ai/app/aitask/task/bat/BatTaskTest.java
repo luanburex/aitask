@@ -1,9 +1,6 @@
 package com.ai.app.aitask.task.bat;
 
 import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -12,7 +9,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.quartz.SchedulerException;
 import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;
