@@ -8,7 +8,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.util.MultiPartWriter;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -16,7 +15,6 @@ import org.quartz.PersistJobDataAfterExecution;
 import org.quartz.UnableToInterruptJobException;
 
 import com.ai.app.aitask.common.HttpClient;
-import com.ai.app.aitask.net.RequestWorker;
 import com.ai.app.aitask.task.builder.ITask;
 import com.ai.app.aitask.task.excutor.IDataPreparer;
 import com.ai.app.aitask.task.excutor.IExecutor;

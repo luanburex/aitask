@@ -1,6 +1,5 @@
 package com.ai.app.aitask.task.excutor.impl;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -11,8 +10,7 @@ import org.dom4j.Element;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.ai.app.aitask.common.Configuration;
-import com.ai.app.aitask.common.HttpClient;
+import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.OrderedProperties;
 import com.ai.app.aitask.config.AgentProperties;
 import com.ai.app.aitask.task.excutor.ExecutorProbe;
@@ -37,7 +35,7 @@ public class IniResultFetcher implements IResultFetcher {
         // result_path = context.getMergedJobDataMap().getString("result_path");
         // log.info("Read result: " + result_path);
 
-        Configuration file = Configuration.getInstance(this.result_path);
+        Config file = Config.instance(this.result_path);
 
         OrderedProperties result_section = file.getProperties("探测结果");
         if (result_section == null)
@@ -88,7 +86,7 @@ public class IniResultFetcher implements IResultFetcher {
                 String result_str = result_section.getProperty(p.getName());
 
                 if (result_str == null || result_str.isEmpty()) {
-                    root.setAttributeValue("rst_log", root.attributeValue("rst_log") + "\n"
+                    root.addAttribute("rst_log", root.attributeValue("rst_log") + "\n"
                             + "未发现探测点或步骤：" + p.getName());
                     continue;
                 }
@@ -161,7 +159,7 @@ public class IniResultFetcher implements IResultFetcher {
         root.addAttribute("key_eclapse", "0");
         root.addAttribute("result", "1");
         try {
-            Configuration config = Configuration.getInstance("agent.properties");
+            Config config = Config.instance("agent.properties");
             String result_save_url = config.getProperty(null, "aitask.result.save.url");
             if (result_save_url == null)
                 throw new Exception("aitask.result.save.url not found");

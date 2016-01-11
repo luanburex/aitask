@@ -11,30 +11,25 @@ import com.ai.app.aitask.task.builder.AbstractTaskBuilder;
 import com.ai.app.aitask.task.excutor.impl.BatTaskExecutor;
 import com.ai.app.aitask.task.excutor.impl.IniResultFetcher;
 
-public class BatTaskBuilder extends AbstractTaskBuilder{
-	
-	transient final static private Logger log = Logger.getLogger(BatTaskBuilder.class);
+public class BatTaskBuilder extends AbstractTaskBuilder {
 
-	@Override
-	public void parseXml(String xml) throws DocumentException, TaskParseNotFoundException{
-		Document doc = DocumentHelper.parseText(xml);
-        Element root = doc.getRootElement();
-        
-        Element case_element = root.element("case");
-        
-        
-        BatTaskExecutor executor = new BatTaskExecutor(
-        		case_element.attributeValue("bat_path"),
-        		case_element.attributeValue("project_path"),
-        		case_element.attributeValue("script_path"),
-        		case_element.attributeValue("ini_path")
-        		);
+    protected final static Logger log = Logger.getLogger(BatTaskBuilder.class);
+
+    @Override
+    public void parseXml(String xml) throws DocumentException, TaskParseNotFoundException {
+        Document doc = DocumentHelper.parseText(xml);
+        Element case_element = doc.getRootElement().element("case");
+
+        String path_bat = case_element.attributeValue("bat_path");
+        String path_ini = case_element.attributeValue("ini_path");
+        String path_script = case_element.attributeValue("script_path");
+        String path_project = case_element.attributeValue("project_path");
+        BatTaskExecutor exe = new BatTaskExecutor(path_bat, path_project, path_script, path_ini);
         IniResultFetcher fetcher = new IniResultFetcher(case_element.attributeValue("ini_path"));
-        
-        
+
         this.preparer = null;
-		this.executor = executor;
-		this.result = fetcher;
-		super.parseXml(xml);
-	}
+        this.executor = exe;
+        this.result = fetcher;
+        super.parseXml(xml);
+    }
 }

@@ -11,7 +11,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.quartz.Trigger.TriggerState;
 
-import com.ai.app.aitask.common.Configuration;
+import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.net.RequestWorker;
 import com.ai.app.aitask.task.TaskDirector;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
@@ -22,11 +22,11 @@ public class TaskFetch {
     private TaskSchedule     ts               = null;
     private TaskSyncRunable  task_sync        = null;
     private Thread           task_sync_thread = null;
-    private Configuration    config;
+    private Config    config;
 
     public TaskFetch(TaskSchedule ts, long sync_task_interval_time) {
         this.ts = ts;
-        this.config = Configuration.getInstance("client.properties");
+        this.config = Config.instance("client.properties");
         ;
         this.task_sync = new TaskSyncRunable(this.ts);
         this.task_sync.setIntervalTime(sync_task_interval_time);

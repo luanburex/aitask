@@ -1,44 +1,11 @@
 package com.ai.app.aitask.schedule;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-
-import javax.swing.text.html.parser.Entity;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.quartz.Trigger.TriggerState;
-import org.quartz.TriggerKey;
-
-import com.ai.app.aitask.common.Configuration;
-import com.ai.app.aitask.deamon.ScheduleDaemon;
-import com.ai.app.aitask.net.RequestWorker;
-import com.ai.app.aitask.utils.FileReaderUtils;
-import com.ai.app.aitask.utils.TestJettyServer;
-import com.ai.app.aitask.utils.TriggerStateWaitUnil;
+import com.ai.app.aitask.common.Config;
 
 public class CopyOfTaskSyncTester {
 
     public static void main(String[] args) {
-        Configuration cf = Configuration.getInstance("2.properties");
+        Config cf = Config.instance("2.properties");
         
         
         cf.getProperties(null).put("test", "tttt");

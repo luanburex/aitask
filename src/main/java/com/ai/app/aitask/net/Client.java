@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import com.ai.app.aitask.common.Configuration;
+import com.ai.app.aitask.common.Config;
 
 /**
  * 
@@ -18,9 +18,9 @@ import com.ai.app.aitask.common.Configuration;
 public class Client {
     protected Logger      logger = Logger.getLogger(getClass());
     private Server        server;
-    private Configuration config;
+    private Config config;
     public Client() {
-        this.config = Configuration.getInstance("client.properties");
+        this.config = Config.instance("client.properties");
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         for (Entry<Object, Object> servlet : config.getProperties("servlets").entrySet()) {
             logger.info(servlet.getKey() + " @ " + servlet.getValue());

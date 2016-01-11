@@ -1,10 +1,8 @@
 package com.ai.app.aitask.common;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,50 +14,51 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-public class Configuration {
+public class Config {
 
-    protected final static Logger                             log = Logger.getLogger(Configuration.class);
-    protected transient static Map<String, Configuration> files;
-    protected transient OrderedProperties                     current;
-    protected transient OrderedProperties                     builtin;
-    protected transient Map<String, OrderedProperties>        sections;
-    protected transient String                                filename;
-    protected transient String                                currentSecion;
+    protected final static Logger                      log = Logger.getLogger(Config.class);
+    protected transient static Map<String, Config>     files;
+    protected transient OrderedProperties              current;
+    protected transient OrderedProperties              builtin;
+    protected transient Map<String, OrderedProperties> sections;
+    protected transient String                         filename;
+    protected transient String                         currentSecion;
     static {
-        files = new HashMap<String, Configuration>();
+        files = new HashMap<String, Config>();
     }
 
-    public static synchronized Configuration getInstance(String filename) {
-        Configuration file;
+    public static synchronized Config instance(String filename) {
+        Config config;
         if (files.containsKey(filename)) {
-            file = files.get(filename);
+            config = files.get(filename);
         } else {
-            files.put(filename, file = new Configuration(filename));
+            files.put(filename, config = new Config(filename));
         }
-        return file;
+        return config;
     }
 
-    protected Configuration(String filename) {
+    protected Config(String filename) {
         this.builtin = new OrderedProperties();
         this.sections = new HashMap<String, OrderedProperties>();
         this.filename = filename;
-        if ((new File(filename)).exists()) {
+        InputStream input = ClassLoader.getSystemResourceAsStream(filename);
+        if (null == input) {
             try {
-                InputStream is = new BufferedInputStream(new FileInputStream(this.filename));
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                read(reader);
+                throw new FileNotFoundException("resource not found");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+                for (String line = reader.readLine(); null != line; line = reader.readLine()) {
+                    // log.debug(line);
+                    parseLine(line);
+                }
                 reader.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    protected void read(BufferedReader reader) throws IOException {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            log.debug(line);
-            parseLine(line);
         }
     }
 

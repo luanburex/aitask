@@ -8,7 +8,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
-import com.ai.app.aitask.common.Configuration;
+import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.schedule.TaskSchedule;
 
 public class ScheduleDaemon {
@@ -48,7 +48,7 @@ public class ScheduleDaemon {
      * start the Quartz Daemon
      */
     public void start() {
-        Configuration config = Configuration.getInstance("agent.properties");
+        Config config = Config.instance("agent.properties");
         try {
             scheduler = new StdSchedulerFactory(config.getProperties(null)).getScheduler();
             scheduler.standby();

@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
-import java.util.Iterator;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,20 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.quartz.Trigger.TriggerState;
-
 import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
-import com.ai.app.aitask.schedule.TaskFetch;
 import com.ai.app.aitask.schedule.TaskSchedule;
 import com.ai.app.aitask.task.TaskDirector;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 public class TaskArrangeServlet extends HttpServlet implements Constants {
     private static final long serialVersionUID = 1L;
@@ -49,8 +40,6 @@ public class TaskArrangeServlet extends HttpServlet implements Constants {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         System.out.println("query:" + req.getQueryString());
-        String taskId = req.getParameter("taskId");
-        String sceneId = req.getParameter("sceneId");
 
         StringBuffer buffer = new StringBuffer();
         {
@@ -65,7 +54,7 @@ public class TaskArrangeServlet extends HttpServlet implements Constants {
             }
             System.out.println(buffer.toString());
         }
-        System.out.println("来自:"+req.getRemoteAddr());
+        System.out.println("来自:" + req.getRemoteAddr());
 
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html");
@@ -75,13 +64,13 @@ public class TaskArrangeServlet extends HttpServlet implements Constants {
         writer.flush();
 
         {
-        String url_path = "";
-        // RequestWorker worker = new RequestWorker(url_path);
-        // worker.setQueryParameter("taskId", taskId);
-        // JsonElement dataset = new JsonParser().parse(worker.Get().getResponseContent());
+            // String url_path = "";
+            // RequestWorker worker = new RequestWorker(url_path);
+            // worker.setQueryParameter("taskId", taskId);
+            // JsonElement dataset = new JsonParser().parse(worker.Get().getResponseContent());
         }
-        
-        if(buffer.length() > 0){
+
+        if (buffer.length() > 0) {
             Document document;
             try {
                 document = DocumentHelper.parseText(buffer.toString());
