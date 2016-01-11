@@ -2,8 +2,6 @@ package com.ai.app.aitask.net;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -18,8 +16,8 @@ import com.ai.app.aitask.common.Configuration;
  *
  */
 public class Client {
-    protected Logger          logger = Logger.getLogger(getClass());
-    private Server            server;
+    protected Logger      logger = Logger.getLogger(getClass());
+    private Server        server;
     private Configuration config;
     public Client() {
         this.config = Configuration.getInstance("client.properties");
@@ -44,10 +42,10 @@ public class Client {
         StringBuffer stringBuffer = new StringBuffer();
         byte[] mac = new byte[0];
         try {
-            mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost())
-                    .getHardwareAddress();
-        } catch (SocketException e) {
-        } catch (UnknownHostException e) {
+            NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
+            mac = ni.getHardwareAddress();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         for (int i = 0; i < mac.length; i++) {
             String string = Integer.toHexString(mac[i] & 0xFF);
@@ -60,7 +58,7 @@ public class Client {
             stringBuffer.append(string);
         }
         if (stringBuffer.length() == 0) {
-            return "unknown";
+            return null;
         } else {
             return stringBuffer.toString();
         }

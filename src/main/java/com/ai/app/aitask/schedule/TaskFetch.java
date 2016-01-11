@@ -1,15 +1,11 @@
 package com.ai.app.aitask.schedule;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.net.ConnectException;
+import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -22,58 +18,58 @@ import com.ai.app.aitask.task.builder.ITaskBuilder;
 
 public class TaskFetch {
 
-    private final static Log  log              = LogFactory.getLog(TaskFetch.class);
-    private TaskSchedule      ts               = null;
-    private TaskSyncRunable   task_sync        = null;
-    private Thread            task_sync_thread = null;
-    private Configuration config;
+    private final static Log log              = LogFactory.getLog(TaskFetch.class);
+    private TaskSchedule     ts               = null;
+    private TaskSyncRunable  task_sync        = null;
+    private Thread           task_sync_thread = null;
+    private Configuration    config;
 
     public TaskFetch(TaskSchedule ts, long sync_task_interval_time) {
         this.ts = ts;
-        this.config = Configuration.getInstance("client.properties");;
+        this.config = Configuration.getInstance("client.properties");
+        ;
         this.task_sync = new TaskSyncRunable(this.ts);
         this.task_sync.setIntervalTime(sync_task_interval_time);
         this.task_sync_thread = new Thread(this.task_sync);
         this.task_sync_thread.start();
     }
 
-    public void fetch() throws Exception {
+    public void fetch() {
         String url = config.getProperty(null, "aitask.sync.url");
         String agent_name = config.getProperty(null, "aitask.name");
+        HashMap<String, String> queryPairs = new HashMap<String, String>();
+        queryPairs.put("agent_name", agent_name);
 
-        // 取任务
-
-        ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("agent_name", agent_name));
-        String content = EntityUtils.toString(new UrlEncodedFormEntity(pairs, "UTF-8"));
-
-        RequestWorker worker = new RequestWorker(url);
-        worker.Post(content,
-                ContentType.APPLICATION_JSON);
-        System.out.println(worker.getResponseMessage());
-        System.out.println(worker.getResponseContent());
-
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("agent_name").append("=").append(agent_name);
-        worker.Post(buffer.toString(), ContentType.APPLICATION_JSON);
+        RequestWorker worker = new RequestWorker(url, null);                                        // 取任务
+        try {
+            worker.Post(RequestWorker.formEntity(queryPairs), ContentType.APPLICATION_JSON);
+        } catch (ConnectException e1) {
+            // e1.printStackTrace();
+            log.error("req : failed connecting");
+        }
+        log.info("resp msg:" + worker.getResponseMessage());
+        log.info("resp code:" + worker.getResponseContent());
         String task_xml = worker.getResponseContent();
-        // TODO String task_xml = HttpClient.post(url, "agent_name=" + agent_name, "x-www-form-urlencoded");
-
-        Document document = DocumentHelper.parseText(task_xml);
-        Element root = document.getRootElement();
-
-        Iterator<Element> elements = root.elementIterator("task");
-        while (elements.hasNext()) {
-            Element current_element = elements.next();
-            ITaskBuilder tb = TaskDirector.generateTaskBuilderByXml(current_element.asXML());
-            if (TriggerState.BLOCKED.equals(this.ts.getTaskState(tb.getTrigger().getKey()))) {
-                log.debug("task is BLOCKED, add to sync queue." + tb.getTrigger().getKey());
-                this.task_sync.putTask(tb.getTrigger().getKey(), current_element.asXML());
-            } else {
-                log.debug("add task:" + tb.getTrigger().getKey());
-                this.ts.addTask(tb, true);
+        if (null == task_xml || task_xml.trim().isEmpty()) {
+            log.error("no effective content");
+        } else {
+            try {
+                Document document = DocumentHelper.parseText(task_xml);
+                Element root = document.getRootElement();
+                for (Object o : root.elements("task")) {
+                    Element e = (Element) o;
+                    ITaskBuilder tb = TaskDirector.generateTaskBuilderByXml(e.asXML());
+                    if (TriggerState.BLOCKED.equals(this.ts.getTaskState(tb.getTrigger().getKey()))) {
+                        log.debug("task is BLOCKED, add to sync queue." + tb.getTrigger().getKey());
+                        this.task_sync.putTask(tb.getTrigger().getKey(), e.asXML());
+                    } else {
+                        log.debug("add task:" + tb.getTrigger().getKey());
+                        this.ts.addTask(tb, true);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
-
 }

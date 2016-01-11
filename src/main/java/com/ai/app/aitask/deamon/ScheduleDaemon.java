@@ -19,29 +19,16 @@ public class ScheduleDaemon {
     private Scheduler                     scheduler     = null;
     /** The Schduler of Task */
     private TaskSchedule                  taskscheduler = null;
-    private static ScheduleDaemon         singletonObj  = null;
+    private static ScheduleDaemon         singleton     = null;
 
-    /**
-     * return the Schduler of Task
-     * 
-     * @return
-     */
+    /** return the Scheduler of Task */
     public TaskSchedule getTaskSchedule() {
         return taskscheduler;
     }
     /**
      * the private singleton Constructor of ScheduleDaemon
-     * 
-     * @throws SchedulerException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws SQLException
      */
-    private ScheduleDaemon() throws SchedulerException, IOException, SQLException,
-            InstantiationException, IllegalAccessException, ClassNotFoundException {
-        this.start();
+    private ScheduleDaemon() {
     }
 
     /**
@@ -50,44 +37,36 @@ public class ScheduleDaemon {
      * @return
      */
     public static ScheduleDaemon instance() {
-        if (singletonObj == null) {
-            try {
-                singletonObj = new ScheduleDaemon();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SchedulerException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        if (null == singleton) {
+            return singleton = new ScheduleDaemon();
+        } else {
+            return singleton;
         }
-        return singletonObj;
     }
 
     /**
      * start the Quartz Daemon
-     * 
-     * @throws SchedulerException
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws SQLException
      */
-    public void start() throws SchedulerException, IOException, SQLException,
-            InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public void start() {
         Configuration config = Configuration.getInstance("agent.properties");
-        scheduler = new StdSchedulerFactory(config.getProperties(null)).getScheduler();
-
-        scheduler.standby();
-        this.taskscheduler = new TaskSchedule(scheduler);
-        log.info("Quartz daemon start.");
-
+        try {
+            scheduler = new StdSchedulerFactory(config.getProperties(null)).getScheduler();
+            scheduler.standby();
+            this.taskscheduler = new TaskSchedule(scheduler);
+            log.info("Quartz daemon start.");
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

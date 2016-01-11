@@ -139,7 +139,7 @@ public class TaskSyncTester {
             ele.setAttributeValue("cron", next_second.getSeconds() + " " + next_second.getMinutes() + " * * * ?");
         }
         server.setTaskXmlStr(root.asXML());
-        TaskFetch tf = new TaskFetch(null, sd.getTaskSchedule(), 1000l);
+        TaskFetch tf = new TaskFetch(sd.getTaskSchedule(), 1000l);
         tf.fetch();
         
         TriggerKey key1 = TriggerKey.triggerKey("11230", "AITASK");

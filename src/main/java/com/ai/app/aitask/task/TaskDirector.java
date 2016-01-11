@@ -1,6 +1,7 @@
 package com.ai.app.aitask.task;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
@@ -10,14 +11,21 @@ import com.ai.app.aitask.task.builder.impl.CmdTaskBuilder;
 
 public class TaskDirector implements TaskCategory {
 
-    public static ITaskBuilder generateTaskBuilderByXml(String xml) throws Exception {
-        Document document = DocumentHelper.parseText(xml);
-        Element element = document.getRootElement();
-        switch (Integer.parseInt(element.attributeValue("ctype"))) {
-        case TASK_TYPE_BAT:
-            return getBatTaskBuilder(xml);
-        case TASK_TYPE_CMD:
-            return getCmdTaskBuilder(xml);
+    public static ITaskBuilder generateTaskBuilderByXml(String xml) {
+        Document document;
+        try {
+            document = DocumentHelper.parseText(xml);
+            Element element = document.getRootElement();
+            switch (Integer.parseInt(element.attributeValue("ctype"))) {
+            case TASK_TYPE_BAT:
+                return getBatTaskBuilder(xml);
+            case TASK_TYPE_CMD:
+                return getCmdTaskBuilder(xml);
+            }
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }

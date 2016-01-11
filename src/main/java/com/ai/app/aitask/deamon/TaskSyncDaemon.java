@@ -10,25 +10,27 @@ import com.ai.app.aitask.schedule.TaskFetch;
 
 public class TaskSyncDaemon {
     private final static transient Logger log = Logger.getLogger(ScheduleDaemon.class);
-//    private ConfigurationFile             config;
+    private static TaskSyncDaemon         singleton;
     private TaskFetch                     fetcher;
-    private ScheduleDaemon                schedule;
-    
-    public TaskSyncDaemon() {
+    public static synchronized TaskSyncDaemon instance() {
+        if (null == singleton) {
+            return singleton = new TaskSyncDaemon();
+        } else {
+            return singleton;
+        }
+    }
+    private TaskSyncDaemon() {
         Configuration config = Configuration.getInstance("client.properties");
         long interval = Long.parseLong(config.getProperty(null, "aitask.sync.interval"));
-        schedule = ScheduleDaemon.instance();
-        log.info("interval:"+interval);
-        fetcher = new TaskFetch(schedule.getTaskSchedule(), interval);
+        log.info("interval:" + interval);
+        fetcher = new TaskFetch(ScheduleDaemon.instance().getTaskSchedule(), interval);
+    }
+    public void start() {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 log.info("try task synchronize");
-                try {
-                    fetcher.fetch();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                fetcher.fetch();
             }
         }, 100l, 1000l);
     }
