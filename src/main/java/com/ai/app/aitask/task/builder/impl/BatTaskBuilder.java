@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.tasks.impl;
+package com.ai.app.aitask.task.builder.impl;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -7,9 +7,9 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import com.ai.app.aitask.exception.TaskParseNotFoundException;
-import com.ai.app.aitask.task.parts.impl.BatTaskExecutor;
-import com.ai.app.aitask.task.parts.impl.IniResultFetcher;
-import com.ai.app.aitask.task.tasks.AbstractTaskBuilder;
+import com.ai.app.aitask.task.builder.AbstractTaskBuilder;
+import com.ai.app.aitask.task.excutor.impl.BatTaskExecutor;
+import com.ai.app.aitask.task.excutor.impl.IniResultFetcher;
 
 public class BatTaskBuilder extends AbstractTaskBuilder{
 	
@@ -32,7 +32,7 @@ public class BatTaskBuilder extends AbstractTaskBuilder{
         IniResultFetcher fetcher = new IniResultFetcher(case_element.attributeValue("ini_path"));
         
         
-        this.repare = null;
+        this.preparer = null;
 		this.executor = executor;
 		this.result = fetcher;
 		super.parseXml(xml);

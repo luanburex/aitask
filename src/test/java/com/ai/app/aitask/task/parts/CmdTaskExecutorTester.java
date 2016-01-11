@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.ai.app.aitask.task.parts.impl.CmdTaskExecutor;
+import com.ai.app.aitask.task.excutor.impl.CmdTaskExecutor;
 
 
 class WaitProcessClass implements Runnable{

@@ -8,9 +8,8 @@ import org.apache.commons.logging.LogFactory;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
 
-import com.ai.app.aitask.common.ConfigurationFile;
 import com.ai.app.aitask.task.TaskDirector;
-import com.ai.app.aitask.task.tasks.ITaskBuilder;
+import com.ai.app.aitask.task.builder.ITaskBuilder;
 
 public class TaskSyncRunable implements Runnable {
 
@@ -20,10 +19,8 @@ public class TaskSyncRunable implements Runnable {
     TaskSchedule               taskSchedule  = null;
     long                       interval_time = 1000l;
 
-    public TaskSyncRunable(ConfigurationFile config, TaskSchedule taskSchedule) {
+    public TaskSyncRunable(TaskSchedule taskSchedule) {
         this.taskSchedule = taskSchedule;
-        String interval = config.getProperties(null).getProperty("aitask.sync.interval", "1000");
-        this.interval_time = Long.parseLong(interval);
     }
 
     public void setIntervalTime(long time) {
@@ -49,7 +46,8 @@ public class TaskSyncRunable implements Runnable {
     public void run() {
         try {
             while (true) {
-                Thread.sleep(1000l);
+                Thread.sleep(interval_time);
+                log.info("sleep:"+interval_time);
                 this.sync();
             }
         } catch (Exception e) {

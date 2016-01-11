@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.parts.impl;
+package com.ai.app.aitask.task.excutor.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.ai.app.aitask.task.parts.interfaces.IExecutor;
+import com.ai.app.aitask.task.excutor.IExecutor;
 
 /**
  * Use System shell to run cmd command.

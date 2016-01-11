@@ -24,7 +24,7 @@ import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.schedule.TaskFetch;
 import com.ai.app.aitask.schedule.TaskSchedule;
 import com.ai.app.aitask.task.TaskDirector;
-import com.ai.app.aitask.task.tasks.ITaskBuilder;
+import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

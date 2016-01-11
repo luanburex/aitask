@@ -12,7 +12,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;
-import com.ai.app.aitask.task.tasks.ITaskBuilder;
+import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileReaderUtils;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;
 

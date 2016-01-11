@@ -19,7 +19,8 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.ai.app.aitask.task.parts.impl.IniResultFetcher;
+import com.ai.app.aitask.task.excutor.ExecutorProbe;
+import com.ai.app.aitask.task.excutor.impl.IniResultFetcher;
 import com.ai.app.aitask.utils.TestJettyServer;
 
 public class IniResultFetcherTester {

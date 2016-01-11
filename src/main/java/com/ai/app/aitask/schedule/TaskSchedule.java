@@ -21,7 +21,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 import com.ai.app.aitask.listener.BeforeAndAfterTaskListener;
 import com.ai.app.aitask.listener.OpenAndCloseListner;
 import com.ai.app.aitask.listener.TaskTimeoutListener;
-import com.ai.app.aitask.task.tasks.ITaskBuilder;
+import com.ai.app.aitask.task.builder.ITaskBuilder;
 
 
 public class TaskSchedule {

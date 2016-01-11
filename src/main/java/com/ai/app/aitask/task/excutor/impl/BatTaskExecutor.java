@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.parts.impl;
+package com.ai.app.aitask.task.excutor.impl;
 
 public class BatTaskExecutor extends CmdTaskExecutor{
 	

@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.tasks.impl;
+package com.ai.app.aitask.task.builder.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,10 +17,10 @@ import org.quartz.UnableToInterruptJobException;
 
 import com.ai.app.aitask.common.HttpClient;
 import com.ai.app.aitask.net.RequestWorker;
-import com.ai.app.aitask.task.parts.interfaces.IDataReparer;
-import com.ai.app.aitask.task.parts.interfaces.IExecutor;
-import com.ai.app.aitask.task.parts.interfaces.IResultFetcher;
-import com.ai.app.aitask.task.tasks.ITask;
+import com.ai.app.aitask.task.builder.ITask;
+import com.ai.app.aitask.task.excutor.IDataPreparer;
+import com.ai.app.aitask.task.excutor.IExecutor;
+import com.ai.app.aitask.task.excutor.IResultFetcher;
 
 
 @DisallowConcurrentExecution
@@ -42,14 +42,14 @@ public class SerialTask implements ITask{
 			context.getMergedJobDataMap().put("start_time", System.currentTimeMillis());
 			
 			executor = (IExecutor)context.getMergedJobDataMap().get("executor");
-			IDataReparer reparer = (IDataReparer)context.getMergedJobDataMap().get("reparer");
+			IDataPreparer preparer = (IDataPreparer)context.getMergedJobDataMap().get("preparer");
 			IResultFetcher fetcher = (IResultFetcher)context.getMergedJobDataMap().get("result");
 			
 			log.info("["+context.getTrigger().getKey()+"]"+"task execute....");
 			
 			if(executor == null) throw new JobExecutionException("The task's executor is null.");
-			if(reparer!= null && !isJobInterrupted)
-				reparer.parepare(context);
+			if(preparer!= null && !isJobInterrupted)
+				preparer.prepare(context);
 			
 			if(!isJobInterrupted){
 				context.getMergedJobDataMap().put("start_time", System.currentTimeMillis());
@@ -115,8 +115,4 @@ public class SerialTask implements ITask{
 	@Override
     public void after(JobExecutionContext context, JobExecutionException error) {
 	}
-
-
-
-	
 }

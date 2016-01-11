@@ -1,8 +1,6 @@
 package com.ai.app.aitask.task;
 
-public class TaskCategory {
-
-	final public static String CMD_TASK_TYPE = "5";
-	final public static String BAT_TASK_TYPE = "7";
-	
+public interface TaskCategory {
+    public int TASK_TYPE_CMD = 5;
+    public int TASK_TYPE_BAT = 7;
 }

@@ -1,6 +1,6 @@
 package com.ai.app.aitask;
 
-import com.ai.app.aitask.common.ConfigurationFile;
+import com.ai.app.aitask.common.Configuration;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.deamon.TaskSyncDaemon;
 import com.ai.app.aitask.net.Client;
@@ -11,11 +11,10 @@ import com.ai.app.aitask.net.Client;
  */
 public class App {
     public static void main(String[] args) {
-        ConfigurationFile config = new ConfigurationFile("client.properties");
-        new Client(config).start();
+        new Client().start();
         try {
             ScheduleDaemon.instance().start();
-//            new TaskSyncDaemon(config);
+            new TaskSyncDaemon();
         } catch (Exception e) {
             e.printStackTrace();
         }

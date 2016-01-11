@@ -1,6 +1,7 @@
 package com.ai.app.aitask.task.bat;
 
 import java.io.File;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -13,7 +14,7 @@ import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.TaskDirector;
-import com.ai.app.aitask.task.tasks.ITaskBuilder;
+import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileReaderUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;

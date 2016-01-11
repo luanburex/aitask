@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
-import com.ai.app.aitask.common.ConfigurationFile;
+import com.ai.app.aitask.common.Configuration;
 import com.ai.app.aitask.schedule.TaskFetch;
 
 public class TaskSyncDaemon {
@@ -13,12 +13,13 @@ public class TaskSyncDaemon {
 //    private ConfigurationFile             config;
     private TaskFetch                     fetcher;
     private ScheduleDaemon                schedule;
-
-    public TaskSyncDaemon(ConfigurationFile config) {
-//        this.config = config;
-        long interval = Long.parseLong(config.getValue(null, "aitask.sync.interval"));
+    
+    public TaskSyncDaemon() {
+        Configuration config = Configuration.getInstance("client.properties");
+        long interval = Long.parseLong(config.getProperty(null, "aitask.sync.interval"));
         schedule = ScheduleDaemon.instance();
-        fetcher = new TaskFetch(config, schedule.getTaskSchedule(), interval);
+        log.info("interval:"+interval);
+        fetcher = new TaskFetch(schedule.getTaskSchedule(), interval);
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

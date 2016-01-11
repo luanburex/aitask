@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.tasks;
+package com.ai.app.aitask.task.builder;
 
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;

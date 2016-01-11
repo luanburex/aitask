@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.parts.impl;
+package com.ai.app.aitask.task.excutor.impl;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -11,12 +11,12 @@ import org.dom4j.Element;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.ai.app.aitask.common.ConfigurationFile;
+import com.ai.app.aitask.common.Configuration;
 import com.ai.app.aitask.common.HttpClient;
 import com.ai.app.aitask.common.OrderedProperties;
 import com.ai.app.aitask.config.AgentProperties;
-import com.ai.app.aitask.task.parts.ExecutorProbe;
-import com.ai.app.aitask.task.parts.interfaces.IResultFetcher;
+import com.ai.app.aitask.task.excutor.ExecutorProbe;
+import com.ai.app.aitask.task.excutor.IResultFetcher;
 
 public class IniResultFetcher implements IResultFetcher {
 
@@ -37,7 +37,7 @@ public class IniResultFetcher implements IResultFetcher {
         // result_path = context.getMergedJobDataMap().getString("result_path");
         // log.info("Read result: " + result_path);
 
-        ConfigurationFile file = new ConfigurationFile(this.result_path);
+        Configuration file = Configuration.getInstance(this.result_path);
 
         OrderedProperties result_section = file.getProperties("探测结果");
         if (result_section == null)
@@ -128,7 +128,7 @@ public class IniResultFetcher implements IResultFetcher {
                     "aitask.result.save.url");
             if (result_save_url == null)
                 throw new Exception("aitask.result.save.url not found");
-//            HttpClient.post(result_save_url, root.asXML(), "text/xml");
+            // HttpClient.post(result_save_url, root.asXML(), "text/xml");
         } catch (Exception e) {
             log.error(e);
         }
@@ -138,6 +138,7 @@ public class IniResultFetcher implements IResultFetcher {
     @Override
     public String error(JobExecutionContext context, JobExecutionException exception)
             throws JobExecutionException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Element root = DocumentHelper.createElement("ResultCase");
         root.addAttribute("task_id", context.getMergedJobDataMap().getString("task_id"));
         root.addAttribute("run_id", context.getMergedJobDataMap().getString("task_id"));
@@ -152,21 +153,19 @@ public class IniResultFetcher implements IResultFetcher {
         root.addAttribute("data_id", "");
         root.addAttribute("data_value", "");
         root.addAttribute("data_desc", "");
-        root.addAttribute("start_time",
-                new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-        root.addAttribute("end_time",
-                new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        root.addAttribute("start_time", format.format(new Date()));
+        root.addAttribute("end_time", format.format(new Date()));
 
         root.addAttribute("rst_log", exception.getMessage());
         root.addAttribute("eclapse", "0");
         root.addAttribute("key_eclapse", "0");
         root.addAttribute("result", "1");
         try {
-            String result_save_url = AgentProperties.getInstance().getProperty(
-                    "aitask.result.save.url");
+            Configuration config = Configuration.getInstance("agent.properties");
+            String result_save_url = config.getProperty(null, "aitask.result.save.url");
             if (result_save_url == null)
                 throw new Exception("aitask.result.save.url not found");
-//            HttpClient.post(result_save_url, root.asXML(), "text/xml");
+            // HttpClient.post(result_save_url, root.asXML(), "text/xml");
         } catch (Exception e) {
             log.error(e);
         }
