@@ -75,7 +75,8 @@ public class RequestWorker implements Constants {
         StringBuffer responseContent = new StringBuffer();
         try {
             if (responseCode == 200) {
-                if (conn.getContentLength() > -1 || conn.getHeaderField("Transfer-Encoding").equals("chunked")) {
+                boolean chunked = "chunked".equals(conn.getHeaderField("Transfer-Encoding"));
+                if (conn.getContentLength() > -1 || chunked) {
                     InputStreamReader reader = new InputStreamReader(conn.getInputStream(), "UTF-8"); // GBK for some special...
                     BufferedReader bufferReader = new BufferedReader(reader);
                     for (String temp = bufferReader.readLine(); temp != null;) {
