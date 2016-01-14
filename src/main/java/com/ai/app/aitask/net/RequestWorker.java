@@ -75,13 +75,12 @@ public class RequestWorker implements Constants {
         StringBuffer responseContent = new StringBuffer();
         try {
             if (responseCode == 200) {
-                if (conn.getContentLength() > -1) {
-                    InputStreamReader reader = new InputStreamReader(conn.getInputStream(), "GBK"); // GBK for some special...
+                if (conn.getContentLength() > -1 || conn.getHeaderField(4).equals("chunked")) {
+                    InputStreamReader reader = new InputStreamReader(conn.getInputStream(), "UTF-8"); // GBK for some special...
                     BufferedReader bufferReader = new BufferedReader(reader);
                     for (String temp = bufferReader.readLine(); temp != null;) {
                         responseContent.append(temp).append(LINE_SEPARATOR);
                         temp = bufferReader.readLine();
-                        System.out.println("test");
                     }
                 }
             } else if (responseCode == 400) {
