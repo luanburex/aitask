@@ -81,6 +81,7 @@ public class RequestWorker implements Constants {
                     for (String temp = bufferReader.readLine(); temp != null;) {
                         responseContent.append(temp).append(LINE_SEPARATOR);
                         temp = bufferReader.readLine();
+                        System.out.println("test");
                     }
                 }
             } else if (responseCode == 400) {
