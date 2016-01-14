@@ -9,14 +9,14 @@ import org.apache.http.entity.ContentType;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.net.RequestWorker;
 import com.ai.app.aitask.task.TaskDirector;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class TaskFetch {
 
@@ -52,13 +52,8 @@ public class TaskFetch {
         log.info("resp msg:" + worker.getResponseMessage());
         log.info("resp code:" + worker.getResponseContent());
         String task_xml = worker.getResponseContent();
-        try {
-			JSONObject a = new JSONObject(task_xml);
-			task_xml = a.getString("returnObj");
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+    	JsonObject a = new JsonParser().parse(task_xml).getAsJsonObject();
+		task_xml = a.get("returnObj").getAsString();
         if (null == task_xml || task_xml.trim().isEmpty()) {
             log.error("no effective content");
         } else {
