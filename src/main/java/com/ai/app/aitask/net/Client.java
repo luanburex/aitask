@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Map.Entry;
 
+import javax.servlet.Servlet;
+
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -16,17 +18,22 @@ import com.ai.app.aitask.common.Config;
  *
  */
 public class Client {
-    protected Logger      logger = Logger.getLogger(getClass());
-    private Server        server;
-    private Config config;
+    protected Logger logger = Logger.getLogger(getClass());
+    private Server   server;
+    private Config   config;
     public Client() {
         this.config = Config.instance("client.properties");
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         for (Entry<Object, Object> servlet : config.getProperties("servlets").entrySet()) {
             logger.info(servlet.getKey() + " @ " + servlet.getValue());
-            handler.addServlet((String) servlet.getKey(), (String) servlet.getValue());
+            try {
+                Class<?> clazz = Class.forName((String) servlet.getKey());
+                handler.addServlet(clazz.asSubclass(Servlet.class), (String) servlet.getValue());
+            } catch (ClassNotFoundException e) {
+                logger.error("Servlet not found : " + (String) servlet.getKey());
+            }
         }
-        int port = Integer.parseInt(config.getProperty(null, "aitask.port"));
+        int port = Integer.parseInt(config.getProperty(null, "aitask.client.port"));
         logger.info("port:" + port);
         server = new Server(port);
         server.setHandler(handler);

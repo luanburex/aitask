@@ -64,7 +64,9 @@ public class Config {
 
     protected void parseLine(String line) {
         line = line.trim();
-        if (line.matches(".?\\[.*\\]")) {
+        if (line.isEmpty()) {
+        } else if ('#' == line.charAt(0)) {
+        } else if (line.matches(".?\\[.*\\]")) {
             currentSecion = line.replaceFirst(".?\\[(.*)\\]", "$1");
             current = new OrderedProperties();
             sections.put(currentSecion, current);
@@ -78,7 +80,6 @@ public class Config {
             current.setProperty(name, value);
         }
     }
-
     public String[] getSections() {
         ArrayList<String> section_arraylist = new ArrayList<String>();
         for (String key : sections.keySet()) {
