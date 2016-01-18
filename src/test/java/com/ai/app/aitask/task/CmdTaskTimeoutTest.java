@@ -12,7 +12,7 @@ import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.ai.app.aitask.utils.FileReaderUtils;
+import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;
 
 public class CmdTaskTimeoutTest {
@@ -30,7 +30,7 @@ public class CmdTaskTimeoutTest {
 		ScheduleDaemon sd = ScheduleDaemon.instance();
 		String xml_file = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString() 
 				+ "/com/ai/app/aitask/task/cmd_script_task004_timeout.xml";
-		String xml_str = FileReaderUtils.readFileToString(xml_file);
+		String xml_str = FileUtils.readFileToString(xml_file);
 		ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
 		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));

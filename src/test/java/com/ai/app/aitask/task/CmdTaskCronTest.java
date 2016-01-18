@@ -13,7 +13,7 @@ import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.ai.app.aitask.utils.FileReaderUtils;
+import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;
 
 public class CmdTaskCronTest {
@@ -30,7 +30,7 @@ public class CmdTaskCronTest {
 	public void testCronRun() throws Exception{
 		String xml_file = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString() 
 				+ "/com/ai/app/aitask/task/cmd_script_task005_cron.xml";
-		String xml_str = FileReaderUtils.readFileToString(xml_file);
+		String xml_str = FileUtils.readFileToString(xml_file);
 		ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
 		Date next_second = new Date(System.currentTimeMillis() + 2000l);
 		log.info(next_second);

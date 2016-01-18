@@ -15,7 +15,7 @@ import org.quartz.Trigger.TriggerState;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.TaskDirector;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.ai.app.aitask.utils.FileReaderUtils;
+import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;
 
@@ -43,7 +43,7 @@ public class BatTaskTest {
 	public void testNormal() throws Exception{
 		String xml_file = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString() 
 				+ "/com/ai/app/aitask/task/bat/bat_script_task001.xml";
-		String xml_str = FileReaderUtils.readFileToString(xml_file);
+		String xml_str = FileUtils.readFileToString(xml_file);
 		
 		Document doc = DocumentHelper.parseText(xml_str);
         Element root = doc.getRootElement();

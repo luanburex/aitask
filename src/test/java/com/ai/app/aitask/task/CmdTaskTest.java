@@ -12,7 +12,7 @@ import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.ai.app.aitask.utils.FileReaderUtils;
+import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TriggerStateWaitUnil;
 
 public class CmdTaskTest {
@@ -30,7 +30,7 @@ public class CmdTaskTest {
 	public void testSimpleRun() throws Exception{
 		String xml_file = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString() 
 				+ "/com/ai/app/aitask/task/cmd_script_task001.xml";
-		String xml_str = FileReaderUtils.readFileToString(xml_file);
+		String xml_str = FileUtils.readFileToString(xml_file);
 		ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
 		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
@@ -46,13 +46,13 @@ public class CmdTaskTest {
 	public void testSerialRun() throws Exception{
 		String xml_file1 = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString() 
 				+ "/com/ai/app/aitask/task/cmd_script_task001.xml";
-		String xml_str1 = FileReaderUtils.readFileToString(xml_file1);
+		String xml_str1 = FileUtils.readFileToString(xml_file1);
 		ITaskBuilder ts1 = TaskDirector.getCmdTaskBuilder(xml_str1);
 		
 		
 		String xml_file2 = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString() 
 				+ "/com/ai/app/aitask/task/cmd_script_task001.xml";
-		String xml_str2 = FileReaderUtils.readFileToString(xml_file2);
+		String xml_str2 = FileUtils.readFileToString(xml_file2);
 		ITaskBuilder ts2 = TaskDirector.getCmdTaskBuilder(xml_str2);
 		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts1.getTrigger().getKey(), TriggerState.NONE, 1000l));
@@ -78,7 +78,7 @@ public class CmdTaskTest {
 	
 	@Test
 	public void testInterruptSerialRun() throws Exception{
-		ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(FileReaderUtils.readXmlFileInClasspath(
+		ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(FileUtils.readXmlFileInClasspath(
 				"/com/ai/app/aitask/task/cmd_script_task003_longtime.xml"));
 		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
