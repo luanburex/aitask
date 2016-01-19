@@ -18,7 +18,7 @@ public class CmdTaskBuilder extends AbstractTaskBuilder {
     public void parseXml(String xml) throws DocumentException, TaskParseNotFoundException {
         Document doc = DocumentHelper.parseText(xml);
         Element root = doc.getRootElement();
-        
+
         this.preparer = null;
         this.executor = new CmdTaskExecutor(root.attributeValue("cmd_str"));
         this.result = null;

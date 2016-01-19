@@ -18,23 +18,23 @@ import com.ai.app.aitask.common.Config;
  *
  */
 public class Client {
-    protected Logger logger = Logger.getLogger(getClass());
+    protected Logger log = Logger.getLogger(getClass());
     private Server   server;
     private Config   config;
     public Client() {
         this.config = Config.instance("client.properties");
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         for (Entry<Object, Object> servlet : config.getProperties("servlets").entrySet()) {
-            logger.info(servlet.getKey() + " @ " + servlet.getValue());
+            log.info(servlet.getKey() + " @ " + servlet.getValue());
             try {
                 Class<?> clazz = Class.forName((String) servlet.getKey());
                 handler.addServlet(clazz.asSubclass(Servlet.class), (String) servlet.getValue());
             } catch (ClassNotFoundException e) {
-                logger.error("Servlet not found : " + (String) servlet.getKey());
+                log.error("Servlet not found : " + (String) servlet.getKey());
             }
         }
         int port = Integer.parseInt(config.getProperty(null, "aitask.client.port"));
-        logger.info("port:" + port);
+        log.info("port:" + port);
         server = new Server(port);
         server.setHandler(handler);
     }

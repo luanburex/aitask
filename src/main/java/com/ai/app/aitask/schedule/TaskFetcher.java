@@ -18,15 +18,15 @@ import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class TaskFetch {
+public class TaskFetcher {
 
-    private final static Log log              = LogFactory.getLog(TaskFetch.class);
+    private final static Log log              = LogFactory.getLog(TaskFetcher.class);
     private TaskSchedule     ts               = null;
     private TaskSyncRunable  task_sync        = null;
     private Thread           task_sync_thread = null;
-    private Config    config;
+    private Config           config;
 
-    public TaskFetch(TaskSchedule ts, long sync_task_interval_time) {
+    public TaskFetcher(TaskSchedule ts, long sync_task_interval_time) {
         this.ts = ts;
         this.config = Config.instance("client.properties");
         ;
@@ -52,8 +52,8 @@ public class TaskFetch {
         log.info("resp msg:" + worker.getResponseMessage());
         log.info("resp code:" + worker.getResponseContent());
         String task_xml = worker.getResponseContent();
-    	JsonObject a = new JsonParser().parse(task_xml).getAsJsonObject();
-		task_xml = a.get("returnObj").getAsString();
+        JsonObject a = new JsonParser().parse(task_xml).getAsJsonObject();
+        task_xml = a.get("xml").getAsString();
         if (null == task_xml || task_xml.trim().isEmpty()) {
             log.error("no effective content");
         } else {
@@ -63,6 +63,7 @@ public class TaskFetch {
                 for (Object o : root.elements("task")) {
                     Element e = (Element) o;
                     ITaskBuilder tb = TaskDirector.generateTaskBuilderByXml(e.asXML());
+                    System.err.println("tb:"+tb);
                     if (TriggerState.BLOCKED.equals(this.ts.getTaskState(tb.getTrigger().getKey()))) {
                         log.debug("task is BLOCKED, add to sync queue." + tb.getTrigger().getKey());
                         this.task_sync.putTask(tb.getTrigger().getKey(), e.asXML());

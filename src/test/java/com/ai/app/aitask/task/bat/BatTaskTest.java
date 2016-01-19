@@ -17,7 +17,7 @@ import com.ai.app.aitask.task.TaskDirector;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
-import com.ai.app.aitask.utils.TriggerStateWaitUnil;
+import com.ai.app.aitask.utils.TriggerUnil;
 
 public class BatTaskTest {
 
@@ -54,13 +54,13 @@ public class BatTaskTest {
         
 		
 		ITaskBuilder ts = TaskDirector.getBatTaskBuilder(root.asXML());
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 		sd.getTaskSchedule().addTask(ts, true);
 		log.info(sd.getTaskSchedule().getTaskState(ts.getTrigger().getKey()));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.BLOCKED, 1000l));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 9000l));
 		Thread.sleep(3000l);
 	}

@@ -6,7 +6,7 @@ import org.quartz.TriggerKey;
 
 import com.ai.app.aitask.schedule.TaskSchedule;
 
-public class TriggerStateWaitUnil {
+public class TriggerUnil {
 
     public static boolean waitStateUntil(TaskSchedule s, TriggerKey triggerKey, TriggerState state,
             long wait_time) throws InterruptedException, SchedulerException {
@@ -20,7 +20,9 @@ public class TriggerStateWaitUnil {
             Thread.sleep(100l);
             _wait += 100l;
         }
-        System.err.println("result:"+result);
+        System.out.println("actual:"+s.getTaskState(triggerKey));
+        System.out.println("expect:"+state);
+        System.err.println("result:"+result+" dur:"+_wait);
         return result;
     }
 

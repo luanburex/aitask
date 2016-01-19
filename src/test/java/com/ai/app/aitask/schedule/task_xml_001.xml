@@ -1,18 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <root>
-  <task ID="11230" run_id="11230" name="吉林_用户信息查询" ctype="7" group_no="431" group_name="吉林" agent_id="459041" agent_name="10.254.37.71" instant="false" cron="0 0 * * * ?" >
-    <case ID="15049" name="用户信息查询" group_no="431" group_name="吉林" position="1" case_module="吉林查询类" script_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\script\用户信息查询\用户信息查询.s" bat_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\run.bat" ini_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\script\用户信息查询\用户信息查询.ini" project_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\全网监控中心二期实体营业厅终端仿真探测吉林移动.vtp" project_name="全网监控中心二期实体营业厅终端仿真探测吉林移动" svn_path="/script/用户信息查询" revision="152" username="renzq" password="123456">
-      <probe ID="11926" name="登录" base_line="90000" warn_time="90000" timeout_time="90000"/>
-      <probe ID="11927" name="用户信息查询,打开菜单" base_line="90000" warn_time="90000" timeout_time="90000"/>
-      <probe ID="11928" name="用户信息查询,业务查询" base_line="90000" warn_time="90000" timeout_time="90000"/>
-    </case>
-  </task>
-  <task ID="11231" run_id="11231" name="吉林_账单查询" ctype="7" group_no="431" group_name="吉林" agent_id="459041" agent_name="10.254.37.71" instant="false" cron="0 0 * * * ?" >
-    <case ID="15050" name="账单查询" group_no="431" group_name="吉林" position="1" case_module="吉林查询类" script_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\script\账单查询\账单查询.s" bat_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\run.bat" ini_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\script\账单查询\账单查询.ini" project_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\全网监控中心二期实体营业厅终端仿真探测吉林移动.vtp" project_name="全网监控中心二期实体营业厅终端仿真探测吉林移动" svn_path="/script/账单查询" revision="152" username="renzq" password="123456">
-      <probe ID="11929" name="登录" base_line="120000" warn_time="120000" timeout_time="120000"/>
-      <probe ID="11930" name="账单查询,打开菜单" base_line="120000" warn_time="120000" timeout_time="120000"/>
-      <probe ID="11931" name="账单查询,业务查询" base_line="120000" warn_time="120000" timeout_time="120000"/>
-    </case>
-  </task>
+	<task ID="11230" run_id="11230" name="吉林_用户信息查询" ctype="7"
+		group_no="431" group_name="吉林" agent_id="459041" agent_name="10.254.37.71"
+		instant="false" cron="0 0 * * * ?">
+		<case ID="15049" name="用户信息查询" group_no="431" group_name="吉林"
+			position="1" case_module="吉林查询类"
+			script_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\script\用户信息查询\用户信息查询.s"
+			bat_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\run.bat" ini_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\script\用户信息查询\用户信息查询.ini"
+			project_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\全网监控中心二期实体营业厅终端仿真探测吉林移动.vtp"
+			project_name="全网监控中心二期实体营业厅终端仿真探测吉林移动" svn_path="/script/用户信息查询"
+			revision="152" username="renzq" password="123456">
+			<probe ID="11926" name="登录" base_line="90000" warn_time="90000"
+				timeout_time="90000" />
+			<probe ID="11927" name="用户信息查询,打开菜单" base_line="90000"
+				warn_time="90000" timeout_time="90000" />
+			<probe ID="11928" name="用户信息查询,业务查询" base_line="90000"
+				warn_time="90000" timeout_time="90000" />
+		</case>
+	</task>
+	<task ID="11231" run_id="11231" name="吉林_账单查询" ctype="7" group_no="431"
+		group_name="吉林" agent_id="459041" agent_name="10.254.37.71" instant="false"
+		cron="0 0 * * * ?">
+		<case ID="15050" name="账单查询" group_no="431" group_name="吉林"
+			position="1" case_module="吉林查询类"
+			script_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\script\账单查询\账单查询.s" bat_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\run.bat"
+			ini_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\script\账单查询\账单查询.ini"
+			project_path="E:\全网监控中心二期实体营业厅终端仿真探测吉林移动\全网监控中心二期实体营业厅终端仿真探测吉林移动.vtp"
+			project_name="全网监控中心二期实体营业厅终端仿真探测吉林移动" svn_path="/script/账单查询"
+			revision="152" username="renzq" password="123456">
+			<probe ID="11929" name="登录" base_line="120000" warn_time="120000"
+				timeout_time="120000" />
+			<probe ID="11930" name="账单查询,打开菜单" base_line="120000"
+				warn_time="120000" timeout_time="120000" />
+			<probe ID="11931" name="账单查询,业务查询" base_line="120000"
+				warn_time="120000" timeout_time="120000" />
+		</case>
+	</task>
 </root>

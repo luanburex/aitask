@@ -8,9 +8,7 @@ public class FileUtils {
 
     public static String readXmlFileInClasspath(String filename) {
         String path = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-        System.out.println(path);
         return FileUtils.readFileToString(path.concat(filename));
-
     }
 
     public static String readFileToString(String fileName) {
@@ -21,11 +19,8 @@ public class FileUtils {
         try {
             reader = new BufferedReader(new java.io.FileReader(file));
             String tempString = null;
-            int line = 1;
-
             while ((tempString = reader.readLine()) != null) {
                 sb.append(tempString);
-                line++;
             }
             reader.close();
         } catch (IOException e) {
@@ -39,7 +34,7 @@ public class FileUtils {
                     return "";
                 }
             }
-            return sb.toString();
         }
+        return sb.toString();
     }
 }

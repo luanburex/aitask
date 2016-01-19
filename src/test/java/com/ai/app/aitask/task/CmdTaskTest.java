@@ -13,7 +13,7 @@ import org.quartz.Trigger.TriggerState;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
-import com.ai.app.aitask.utils.TriggerStateWaitUnil;
+import com.ai.app.aitask.utils.TriggerUnil;
 
 public class CmdTaskTest {
 	final static private Logger log = Logger.getLogger(CmdTaskTest.class);
@@ -32,13 +32,13 @@ public class CmdTaskTest {
 				+ "/com/ai/app/aitask/task/cmd_script_task001.xml";
 		String xml_str = FileUtils.readFileToString(xml_file);
 		ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 		sd.getTaskSchedule().addTask(ts, true);
 		log.info(sd.getTaskSchedule().getTaskState(ts.getTrigger().getKey()));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.BLOCKED, 1000l));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 5000l));
 	}
 	
@@ -54,25 +54,25 @@ public class CmdTaskTest {
 				+ "/com/ai/app/aitask/task/cmd_script_task001.xml";
 		String xml_str2 = FileUtils.readFileToString(xml_file2);
 		ITaskBuilder ts2 = TaskDirector.getCmdTaskBuilder(xml_str2);
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts1.getTrigger().getKey(), TriggerState.NONE, 1000l));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts2.getTrigger().getKey(), TriggerState.NONE, 1000l));
 		
 		sd.getTaskSchedule().addTask(ts1, true);
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts1.getTrigger().getKey(), TriggerState.BLOCKED, 1000l));
 		
 		sd.getTaskSchedule().addTask(ts2, true);
 		Thread.sleep(200l);
 		Assert.assertEquals(1, sd.getTaskSchedule().getScheduler().getCurrentlyExecutingJobs().size());
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts2.getTrigger().getKey(), TriggerState.BLOCKED, 5000l));
 		Assert.assertEquals(1, sd.getTaskSchedule().getScheduler().getCurrentlyExecutingJobs().size());
 		
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts1.getTrigger().getKey(), TriggerState.NONE, 5000l));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts2.getTrigger().getKey(), TriggerState.NONE, 5000l));
 	}
 	
@@ -80,12 +80,12 @@ public class CmdTaskTest {
 	public void testInterruptSerialRun() throws Exception{
 		ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(FileUtils.readXmlFileInClasspath(
 				"/com/ai/app/aitask/task/cmd_script_task003_longtime.xml"));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 		sd.getTaskSchedule().addTask(ts, true);
 		Thread.sleep(500l);
 		sd.getTaskSchedule().interruptByTrigger(ts.getTrigger().getKey());
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 	}
 }

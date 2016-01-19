@@ -1,5 +1,8 @@
 package com.ai.app.aitask.utils;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -7,7 +10,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-public abstract class TestJettyServer {
+public class TestJettyServer {
     private AbstractHandler handler;
     private Server          server;
     private int             port;
@@ -29,5 +32,25 @@ public abstract class TestJettyServer {
         if (server != null)
             server.stop();
     }
-    public abstract void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p);
+    public void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p) {
+        p.setContentType("text/html;charset=utf-8");
+        p.setStatus(HttpServletResponse.SC_OK);
+        r.setHandled(true);
+        String content = u;
+        Writer writer = null;
+        try {
+            writer = p.getWriter();
+            System.err.println(content);
+            writer.write(content);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

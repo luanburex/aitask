@@ -14,7 +14,7 @@ import org.quartz.Trigger.TriggerState;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
-import com.ai.app.aitask.utils.TriggerStateWaitUnil;
+import com.ai.app.aitask.utils.TriggerUnil;
 
 public class CmdTaskCronTest {
 	final static private Logger log = Logger.getLogger(CmdTaskCronTest.class);
@@ -37,7 +37,7 @@ public class CmdTaskCronTest {
 		log.info(next_second.getSeconds() + " " + next_second.getMinutes() + " * * * ?");
 		ts.getDatamap().put("cron", next_second.getSeconds() + " " + next_second.getMinutes() + " * * * ?");
 		ts.generate();
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 		
 		sd.getTaskSchedule().addTask(ts, true);
@@ -46,14 +46,14 @@ public class CmdTaskCronTest {
 		
 		log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getPreviousFireTime());
 		log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getNextFireTime());
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NORMAL, 2000l));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.BLOCKED, 5000l));
 		log.info(sd.getTaskSchedule().getTaskState(ts.getTrigger().getKey()));
 		log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getPreviousFireTime());
 		log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getNextFireTime());
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NORMAL, 5000l));
 
 	}

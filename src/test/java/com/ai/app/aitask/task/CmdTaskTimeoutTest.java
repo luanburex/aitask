@@ -13,7 +13,7 @@ import org.quartz.Trigger.TriggerState;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
-import com.ai.app.aitask.utils.TriggerStateWaitUnil;
+import com.ai.app.aitask.utils.TriggerUnil;
 
 public class CmdTaskTimeoutTest {
 	final static private Logger log = Logger.getLogger(CmdTaskTest.class);
@@ -32,12 +32,12 @@ public class CmdTaskTimeoutTest {
 				+ "/com/ai/app/aitask/task/cmd_script_task004_timeout.xml";
 		String xml_str = FileUtils.readFileToString(xml_file);
 		ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 		sd.getTaskSchedule().addTask(ts, true);
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.BLOCKED, 1000l));
-		Assert.assertTrue(TriggerStateWaitUnil.waitStateUntil(sd.getTaskSchedule(), 
+		Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
 				ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
 	}
 }

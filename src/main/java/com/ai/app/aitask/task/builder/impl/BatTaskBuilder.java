@@ -26,7 +26,6 @@ public class BatTaskBuilder extends AbstractTaskBuilder {
         String path_project = case_element.attributeValue("project_path");
         BatTaskExecutor exe = new BatTaskExecutor(path_bat, path_project, path_script, path_ini);
         IniResultFetcher fetcher = new IniResultFetcher(case_element.attributeValue("ini_path"));
-
         this.preparer = null;
         this.executor = exe;
         this.result = fetcher;
