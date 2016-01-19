@@ -35,19 +35,21 @@ public class ScheduleTester {
 
     private static ScheduleDaemon     daemon;
     private static TestJettyServer    server;
-    private static String             xml;
+    private static String             xml_file;
 
     @BeforeClass
     public static void startup() throws Exception {
         String xml_path = "/com/ai/app/aitask/schedule/task_xml_001.xml";
-        xml = FileUtils.readXmlFileInClasspath(xml_path);
+        xml_file = FileUtils.readXmlFileInClasspath(xml_path);
         server = new TestJettyServer(9999) {
             @Override
             public void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p) {
                 if ("/fetchTask".equals(u)) {
                     HashMap<String, String> bean = new HashMap<String, String>();
-                    bean.put("xml", xml);
+                    bean.put("xml", xml_file);
                     super.handle(new Gson().toJson(bean), r, q, p);
+                } else {
+                    super.handle(u, r, q, p);
                 }
             }
         };
@@ -81,7 +83,7 @@ public class ScheduleTester {
     @Test
     public void testReplaceOnBlock() throws Exception {
         // 1.先设置所有的执行时间在两秒后
-        Document document = DocumentHelper.parseText(xml);
+        Document document = DocumentHelper.parseText(xml_file);
         Element root = document.getRootElement();
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(System.currentTimeMillis() + 2000l));
@@ -92,7 +94,7 @@ public class ScheduleTester {
             System.out.println(t);
             ele.attribute("cron").setValue(t);
         }
-        xml = root.asXML();
+        xml_file = root.asXML();
 
         TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule(), 1000l);
         fetcher.fetch();

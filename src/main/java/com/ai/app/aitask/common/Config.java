@@ -2,6 +2,7 @@ package com.ai.app.aitask.common;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,7 +45,14 @@ public class Config {
         InputStream input = ClassLoader.getSystemResourceAsStream(filename);
         if (null == input) {
             try {
-                throw new FileNotFoundException("resource not found");
+                input = new FileInputStream(filename);
+            } catch (FileNotFoundException e) {
+                // e.printStackTrace();
+            }
+        }
+        if (null == input) {
+            try {
+                throw new FileNotFoundException("resource not found:" + filename);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

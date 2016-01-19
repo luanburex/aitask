@@ -12,7 +12,6 @@ import org.quartz.JobExecutionException;
 
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.OrderedProperties;
-import com.ai.app.aitask.config.AgentProperties;
 import com.ai.app.aitask.task.excutor.ExecutorProbe;
 import com.ai.app.aitask.task.excutor.IResultFetcher;
 
@@ -122,8 +121,8 @@ public class IniResultFetcher implements IResultFetcher {
 
         }
         try {
-            String result_save_url = AgentProperties.getInstance().getProperty(
-                    "aitask.result.save.url");
+            String result_save_url = Config.instance("client.properties").getProperty(null,
+                    "aitask.result.url");
             if (result_save_url == null)
                 throw new Exception("aitask.result.save.url not found");
             // HttpClient.post(result_save_url, root.asXML(), "text/xml");

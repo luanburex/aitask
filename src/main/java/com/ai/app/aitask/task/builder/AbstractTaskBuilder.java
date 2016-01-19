@@ -131,7 +131,6 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
             this.trigger = TriggerBuilder.newTrigger().withIdentity(task_id, task_group)
                     .withSchedule(CronScheduleBuilder.cronSchedule(cron)).usingJobData(datamap)
                     .build();
-
         log.debug("generate task jobKey:" + this.jobDetail.getKey() + "\t task trigger:"
                 + this.trigger.getKey());
 

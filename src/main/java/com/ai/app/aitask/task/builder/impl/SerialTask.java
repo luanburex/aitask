@@ -10,7 +10,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
