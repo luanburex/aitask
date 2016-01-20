@@ -80,36 +80,30 @@ public class Mapper {
      */
     public static void transfer(Map<String, Object> source, Map<String, Map<String, String>> dict) {
         Map<String, String> generalDict = dict.get("");
-        Set<Entry<String, Object>> set = new HashSet<Entry<String, Object>>(source.entrySet());
-        for (Entry<String, Object> entry : set) {
-            String key = entry.getKey();
+        Set<String> set = new HashSet<String>(source.keySet());
+        for (String key : set) {
             if (null != generalDict && generalDict.containsKey(key)) {
                 source.put(generalDict.get(key), source.remove(key));
             }
             Map<String, String> namedDict = dict.get(key);
-            if (entry.getValue() instanceof Map) {
-                Map<String, Object> child = Caster.cast(entry.getValue(), null);
+            Object value = source.get(key);
+            if (value instanceof Map) {
+                Map<String, Object> child = Caster.cast(value, null);
                 if (null != namedDict) {
-                    Set<Entry<String, Object>> cSet;
-                    cSet = new HashSet<Entry<String, Object>>(child.entrySet());
-                    for (Entry<String, Object> cEntry : cSet) {
-                        String cKey = cEntry.getKey();
+                    for (String cKey : new HashSet<String>(child.keySet())) {
                         if (namedDict.containsKey(cKey)) {
                             child.put(namedDict.get(cKey), child.remove(cKey));
                         }
                     }
                 }
                 transfer(child, dict);
-            } else if (entry.getValue() instanceof List) {
-                List<Object> list = Caster.cast(entry.getValue(), null);
+            } else if (value instanceof List) {
+                List<Object> list = Caster.cast(value, null);
                 if (!list.isEmpty() && list.get(0) instanceof Map) {
                     List<Map<String, Object>> mapList = Caster.cast(list, null);
                     for (Map<String, Object> child : mapList) {
                         if (null != namedDict) {
-                            Set<Entry<String, Object>> cSet;
-                            cSet = new HashSet<Entry<String, Object>>(child.entrySet());
-                            for (Entry<String, Object> cEntry : cSet) {
-                                String cKey = cEntry.getKey();
+                            for (String cKey : new HashSet<String>(child.keySet())) {
                                 if (namedDict.containsKey(cKey)) {
                                     child.put(namedDict.get(cKey), child.remove(cKey));
                                 }
