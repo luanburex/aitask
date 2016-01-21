@@ -8,16 +8,15 @@ import org.apache.commons.logging.LogFactory;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
 
-import com.ai.app.aitask.task.TaskDirector;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
 public class TaskSyncRunable implements Runnable {
 
-    final transient static Log log           = LogFactory.getLog(TaskSyncRunable.class);
+    final transient static Log    log           = LogFactory.getLog(TaskSyncRunable.class);
 
-    Map<TriggerKey, String>    tasks         = new ConcurrentHashMap<TriggerKey, String>();
-    TaskSchedule               taskSchedule  = null;
-    long                       interval_time = 1000l;
+    Map<TriggerKey, ITaskBuilder> tasks         = new ConcurrentHashMap<TriggerKey, ITaskBuilder>();
+    TaskSchedule                  taskSchedule  = null;
+    long                          interval_time = 1000l;
 
     public TaskSyncRunable(TaskSchedule taskSchedule) {
         this.taskSchedule = taskSchedule;
@@ -27,16 +26,15 @@ public class TaskSyncRunable implements Runnable {
         this.interval_time = time;
     }
 
-    public void putTask(TriggerKey key, String xml) {
-        tasks.put(key, xml);
+    public void putTask(ITaskBuilder tb) {
+        tasks.put(tb.getTrigger().getKey(), tb);
     }
 
     public synchronized void sync() throws Exception {
         for (TriggerKey key : tasks.keySet()) {
             if (!TriggerState.BLOCKED.equals(taskSchedule.getTaskState(key))) {
                 log.debug("sync task: " + key + " , status: " + taskSchedule.getTaskState(key));
-                ITaskBuilder tb = TaskDirector.generateTaskBuilderByXml(tasks.get(key));
-                this.taskSchedule.addTask(tb, true);
+                this.taskSchedule.addTask(tasks.get(key), true);
                 tasks.remove(key);
             }
         }
@@ -47,7 +45,7 @@ public class TaskSyncRunable implements Runnable {
         try {
             while (true) {
                 Thread.sleep(interval_time);
-                log.info("sleep:"+interval_time);
+                log.info("sleep:" + interval_time);
                 this.sync();
             }
         } catch (Exception e) {

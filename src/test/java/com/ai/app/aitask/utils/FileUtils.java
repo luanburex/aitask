@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class FileUtils {
 
-    public static String readXmlFileInClasspath(String filename) {
+    public static String readFileInClasspath(String filename) {
         String path = Thread.currentThread().getContextClassLoader().getResource("").getPath();
         return FileUtils.readFileToString(path.concat(filename));
     }

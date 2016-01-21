@@ -1,12 +1,9 @@
 package com.ai.app.aitask.task.builder.impl;
 
-import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+import java.util.Map;
 
-import com.ai.app.aitask.exception.TaskParseNotFoundException;
+import org.apache.log4j.Logger;
+
 import com.ai.app.aitask.task.builder.AbstractTaskBuilder;
 import com.ai.app.aitask.task.excutor.impl.CmdTaskExecutor;
 
@@ -15,14 +12,11 @@ public class CmdTaskBuilder extends AbstractTaskBuilder {
     protected final static Logger log = Logger.getLogger(CmdTaskBuilder.class);
 
     @Override
-    public void parseXml(String xml) throws DocumentException, TaskParseNotFoundException {
-        Document doc = DocumentHelper.parseText(xml);
-        Element root = doc.getRootElement();
-
-        this.preparer = null;
-        this.executor = new CmdTaskExecutor(root.attributeValue("cmd_str"));
-        this.result = null;
-        super.parseXml(xml);
+    public void parseTask(Map<String, Object> datamap) throws Exception {
+        jobDatamap.put("preparer", null);
+        jobDatamap.put("executor", new CmdTaskExecutor((String) jobDatamap.get("cmd_str")));
+        jobDatamap.put("result", null);
+        super.parseTask(datamap);
     }
 
 }

@@ -1,47 +1,25 @@
 package com.ai.app.aitask.task;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+import java.util.Map;
 
+import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.task.builder.impl.BatTaskBuilder;
 import com.ai.app.aitask.task.builder.impl.CmdTaskBuilder;
 
-public class TaskDirector implements TaskCategory {
-
-    public static ITaskBuilder generateTaskBuilderByXml(String xml) {
-        Document document;
-        try {
-            document = DocumentHelper.parseText(xml);
-            Element element = document.getRootElement();
-            switch (Integer.parseInt(element.attributeValue("ctype"))) {
-            case TASK_TYPE_BAT:
-                return getBatTaskBuilder(xml);
-            case TASK_TYPE_CMD:
-                return getCmdTaskBuilder(xml);
-            }
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+public class TaskDirector implements Constants {
+    public static ITaskBuilder getBuilder(Map<String, Object> data, String type) throws Exception {
+        ITaskBuilder builder = null;
+        switch (Integer.parseInt(type)) {
+        case TASK_TYPE_BAT:
+            builder = new BatTaskBuilder();
+        case TASK_TYPE_CMD:
+            builder = new CmdTaskBuilder();
         }
-        return null;
+        if (null != builder) {
+            builder.parseTask(data);
+            builder.build();
+        }
+        return builder;
     }
-
-    public static ITaskBuilder getCmdTaskBuilder(String xml) throws Exception {
-        ITaskBuilder ctb = new CmdTaskBuilder();
-        ctb.parseXml(xml);
-        ctb.generate();
-        return ctb;
-    }
-
-    public static ITaskBuilder getBatTaskBuilder(String xml) throws Exception {
-        ITaskBuilder ctb = new BatTaskBuilder();
-        ctb.parseXml(xml);
-        ctb.generate();
-        return ctb;
-    }
-
 }

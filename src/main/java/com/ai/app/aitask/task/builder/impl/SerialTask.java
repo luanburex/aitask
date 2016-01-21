@@ -1,13 +1,8 @@
 package com.ai.app.aitask.task.builder.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.net.ConnectException;
 import java.util.Date;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
@@ -15,8 +10,9 @@ import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 import org.quartz.UnableToInterruptJobException;
 
+import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.Constants;
-import com.ai.app.aitask.common.HttpClient;
+import com.ai.app.aitask.net.RequestWorker;
 import com.ai.app.aitask.task.builder.ITask;
 import com.ai.app.aitask.task.excutor.IDataPreparer;
 import com.ai.app.aitask.task.excutor.IExecutor;
@@ -26,13 +22,16 @@ import com.ai.app.aitask.task.excutor.IResultFetcher;
 @PersistJobDataAfterExecution
 public class SerialTask implements ITask, Constants {
 
-    transient final static private Logger log              = Logger.getLogger(SerialTask.class);
+    transient final static protected Logger log              = Logger.getLogger(SerialTask.class);
 
     private volatile boolean              isJobInterrupted = false;
     private volatile Thread               thisThread;
     private volatile IExecutor            executor;
-
+    private Config                        config;
     private long                          start;
+    {
+        config = Config.instance("client.properties");
+    }
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         thisThread = Thread.currentThread();
@@ -48,10 +47,12 @@ public class SerialTask implements ITask, Constants {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (executor == null)
+            if (executor == null) {
                 throw new JobExecutionException("The task's executor is null.");
-            if (preparer != null && !isJobInterrupted)
+            }
+            if (preparer != null && !isJobInterrupted) {
                 preparer.prepare(context);
+            }
 
             if (!isJobInterrupted) {
                 context.getMergedJobDataMap().put("start_time", System.currentTimeMillis());
@@ -69,32 +70,36 @@ public class SerialTask implements ITask, Constants {
                 result_str = fetcher.fetch(context);
                 log.info("[" + context.getTrigger().getKey() + "]" + "task fetch result: "
                         + result_str);
-                // try {
-                // String result = HttpClient.post("http://10.1.55.14:8002/aiga/service?action=receivePost&isconvert=true", result_str,
-                // ContentType.TEXT_HTML.getMimeType());
-                // System.err.println("result:"+result);
-                // } catch (IOException e) {
-                // e.printStackTrace();
-                // }
+                String url = config.getProperty(null, "aitask.result.url");
+                RequestWorker worker = new RequestWorker(url, null);
+                try {
+                    worker.Post(result_str, ContentType.APPLICATION_JSON);
+                } catch (ConnectException e) {
+                    // e.printStackTrace();
+                    log.error("fail reporting");
+                } finally {
+                    log.info("resp cod : " + worker.getResponseCode());
+                    log.info("resp msg : " + worker.getResponseMessage());
+                }
             }
         } catch (JobExecutionException je) {
             System.err.println("fail?");
-//            je.printStackTrace();
+            // je.printStackTrace();
             IResultFetcher fetcher = (IResultFetcher) context.getMergedJobDataMap().get("result");
             if (fetcher != null && !isJobInterrupted) {
                 String result_str = fetcher.error(context, je);
                 log.info("[" + context.getTrigger().getKey() + "]" + "task fetch result: "
                         + result_str);
+                String url = config.getProperty(null, "aitask.result.url");
+                RequestWorker worker = new RequestWorker(url, null);
                 try {
-                    BasicNameValuePair p = new BasicNameValuePair("xml", result_str);
-                    ArrayList<NameValuePair> l = new ArrayList<NameValuePair>();
-                    l.add(p);
-                    UrlEncodedFormEntity e = new UrlEncodedFormEntity(l, "UTF-8");
-                     String result = HttpClient.post("http://10.1.55.14:8002/aiga/service?action=receivePost&isconvert=true", e,
-                     ContentType.APPLICATION_JSON.getMimeType());
-                     System.err.println("result:"+result);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    worker.Post(result_str, ContentType.APPLICATION_JSON);
+                } catch (ConnectException e) {
+                    // e.printStackTrace();
+                    log.error("fail reporting");
+                } finally {
+                    log.info("resp cod : " + worker.getResponseCode());
+                    log.info("resp msg : " + worker.getResponseMessage());
                 }
             }
         } finally { // TODO 异常处理时无法操作context ?

@@ -18,7 +18,7 @@ import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TriggerUnil;
 
 public class CmdTaskCronTest {
-    final static private Logger log = Logger.getLogger(CmdTaskCronTest.class);
+    final static protected Logger log = Logger.getLogger(CmdTaskCronTest.class);
 
     public static ScheduleDaemon sd;
     
@@ -38,7 +38,7 @@ public class CmdTaskCronTest {
         String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
         log.info(t);
         ts.getDatamap().put("cron", t);
-        ts.generate();
+        ts.build();
         Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
                 ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
         

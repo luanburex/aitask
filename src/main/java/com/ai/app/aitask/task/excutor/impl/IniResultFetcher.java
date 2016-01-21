@@ -17,7 +17,7 @@ import com.ai.app.aitask.task.excutor.IResultFetcher;
 
 public class IniResultFetcher implements IResultFetcher {
 
-    transient final static private Logger log         = Logger.getLogger(IniResultFetcher.class);
+    transient final static protected Logger log         = Logger.getLogger(IniResultFetcher.class);
     String                                result_path = null;
 
     public IniResultFetcher(String result_path) {

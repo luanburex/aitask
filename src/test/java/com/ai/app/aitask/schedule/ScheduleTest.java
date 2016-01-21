@@ -28,26 +28,25 @@ import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
 import com.ai.app.aitask.utils.TriggerUnil;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
-public class ScheduleTester {
+public class ScheduleTest {
 
-    transient final public static Log log = LogFactory.getLog(ScheduleTester.class);
+    transient final public static Log log = LogFactory.getLog(ScheduleTest.class);
 
     private static ScheduleDaemon     daemon;
     private static TestJettyServer    server;
-    private static String             xml_file;
-
+    private static String             response;
     @BeforeClass
     public static void startup() throws Exception {
-        String xml_path = "/com/ai/app/aitask/schedule/task_xml_001.xml";
-        xml_file = FileUtils.readXmlFileInClasspath(xml_path);
         server = new TestJettyServer(9999) {
             @Override
             public void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p) {
                 if ("/fetchTask".equals(u)) {
-                    HashMap<String, String> bean = new HashMap<String, String>();
-                    bean.put("xml", xml_file);
-                    super.handle(new Gson().toJson(bean), r, q, p);
+                    super.handle(response, r, q, p);
                 } else {
                     super.handle(u, r, q, p);
                 }
@@ -57,8 +56,9 @@ public class ScheduleTester {
     }
     @AfterClass
     public static void teardown() throws Exception {
-        if (server == null)
+        if (server == null) {
             server.stop();
+        }
     }
 
     @Before
@@ -73,28 +73,49 @@ public class ScheduleTester {
     }
 
     @Test
-    public void testFetchTask() {
-        
+    public void testFetchTask() throws InterruptedException {
+        String file = FileUtils.readFileInClasspath("task_schedule_001.json");
+        JsonObject json = new JsonParser().parse(file).getAsJsonObject();
+        JsonObject plan = json.get("plan").getAsJsonArray().get(0).getAsJsonObject();
+        Calendar c = Calendar.getInstance();
+        String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
+        System.out.println("bf:"+t);
+        c.setTime(new Date(System.currentTimeMillis() + 5000l));
+        t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
+        System.out.println("af:"+t);
+        plan.addProperty("cron", t);
+        System.out.println("bf:"+file);
+        response = json.toString();
+        System.out.println("af:"+response);
+
+        TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule(), 1000l);
+        fetcher.fetch();
+        Thread.sleep(10000l);
     }
     /**
      * TODO 这个测试后半段不稳定
+     *
      * @throws Exception
      */
     @Test
     public void testReplaceOnBlock() throws Exception {
         // 1.先设置所有的执行时间在两秒后
-        Document document = DocumentHelper.parseText(xml_file);
-        Element root = document.getRootElement();
+        String file = FileUtils.readFileInClasspath("/com/ai/app/aitask/schedule/task_xml_001.xml");
+        Document xml = DocumentHelper.parseText(file);
+        Element root = xml.getRootElement();
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(System.currentTimeMillis() + 2000l));
         String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
+        System.err.println(t);
         Iterator<?> itr = root.elementIterator("task");
         while (itr.hasNext()) {
             Element ele = (Element) itr.next();
             System.out.println(t);
             ele.attribute("cron").setValue(t);
         }
-        xml_file = root.asXML();
+        HashMap<String, String> bean = new HashMap<String, String>();
+        bean.put("xml", root.asXML());
+        response = new Gson().toJson(bean);
 
         TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule(), 1000l);
         fetcher.fetch();
@@ -117,7 +138,7 @@ public class ScheduleTester {
         // 3.重新加载之前的任务
         fetcher.fetch();
         System.out.println(daemon.getTaskSchedule().getTrigerInfo());
-        
+
         Thread.sleep(2000l);// 需要等之前的任务执行完，才会进行替换
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key1, TriggerState.NORMAL, 3000l));
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key2, TriggerState.NORMAL, 3000l));

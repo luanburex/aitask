@@ -14,7 +14,7 @@ import com.ai.app.aitask.task.excutor.IExecutor;
 
 /**
  * Use System shell to run cmd command.
- * 
+ *
  * @author Administrator
  *
  */
@@ -75,16 +75,16 @@ public class CmdTaskExecutor implements IExecutor {
 
     /**
      * run cmd command.
-     * 
+     *
      * @param cmd
      * @return
      * @throws Exception
      */
     @Override
     public int run(JobExecutionContext context) throws JobExecutionException {
-        if (context != null)
+        if (context != null) {
             log.info("[" + context.getTrigger().getKey() + "]" + "start run cmd: " + cmd);
-
+        }
         try {
             this.exectionProcess = Runtime.getRuntime().exec(cmd);
             // BufferedInputStream in = new BufferedInputStream(this.exectionProcess.getInputStream());
@@ -106,14 +106,17 @@ public class CmdTaskExecutor implements IExecutor {
             }
 
             log.info("CMD stdout: " + this.execute_out);
-            if (!"".equals(execute_error))
+            if (!"".equals(execute_error)) {
                 log.error("CMD error: " + this.execute_error);
+            }
 
-            if (context != null)
+            if (context != null) {
                 log.info("[" + context.getTrigger().getKey() + "]" + "start wait cmd end..: " + cmd);
+            }
             int result = this.exectionProcess.waitFor();
-            if (context != null)
+            if (context != null) {
                 log.info("[" + context.getTrigger().getKey() + "]" + "end cmd execution: " + cmd);
+            }
 
             return result;
         } catch (Exception e) {

@@ -1,10 +1,10 @@
 package com.ai.app.aitask.task.builder;
 
+import java.util.Date;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -14,32 +14,30 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
+import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.exception.TaskParseNotFoundException;
 import com.ai.app.aitask.task.builder.impl.SerialTask;
-import com.ai.app.aitask.task.excutor.IDataPreparer;
-import com.ai.app.aitask.task.excutor.IExecutor;
-import com.ai.app.aitask.task.excutor.IResultFetcher;
 
 public abstract class AbstractTaskBuilder implements ITaskBuilder {
 
-    transient final static private Logger log       = Logger.getLogger(AbstractTaskBuilder.class);
+    transient final static protected Logger log        = Logger.getLogger(AbstractTaskBuilder.class);
 
-    protected JobDetail                   jobDetail = null;
-    protected Trigger                     trigger   = null;
-    protected JobDataMap                  datamap   = new JobDataMap();
+    protected JobDetail                   jobDetail  = null;
+    protected Trigger                     trigger    = null;
+    protected JobDataMap                  jobDatamap = new JobDataMap();
 
-    protected IExecutor                   executor  = null;
-    protected IDataPreparer               preparer  = null;
-    protected IResultFetcher              result    = null;
+    //    protected IExecutor                   executor   = null;
+    //    protected IDataPreparer               preparer   = null;
+    //    protected IResultFetcher              result     = null;
 
-    @Override
-    public JobDataMap getDatamap() {
-        return datamap;
-    }
-    @Override
-    public void setDatamap(JobDataMap datamap) {
-        this.datamap = datamap;
-    }
+    //    @Override
+    //    public JobDataMap getDatamap() {
+    //        return jobDatamap;
+    //    }
+    //    @Override
+    //    public void setDatamap(JobDataMap datamap) {
+    //        this.jobDatamap = datamap;
+    //    }
     @Override
     public JobDetail getJobDetail() {
         return jobDetail;
@@ -54,85 +52,70 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
     public void setTrigger(Trigger trigger) {
         this.trigger = trigger;
     }
-    public IExecutor getExecutor() {
-        return executor;
-    }
-    public void setExecutor(IExecutor executor) {
-        this.executor = executor;
-    }
-    public IDataPreparer getPreparer() {
-        return preparer;
-    }
-    public void setPreparer(IDataPreparer preparer) {
-        this.preparer = preparer;
-    }
-    public IResultFetcher getResult() {
-        return result;
-    }
-    public void setResult(IResultFetcher result) {
-        this.result = result;
-    }
+    //    public IExecutor getExecutor() {
+    //        return executor;
+    //    }
+    //    public void setExecutor(IExecutor executor) {
+    //        this.executor = executor;
+    //    }
+    //    public IDataPreparer getPreparer() {
+    //        return preparer;
+    //    }
+    //    public void setPreparer(IDataPreparer preparer) {
+    //        this.preparer = preparer;
+    //    }
+    //    public IResultFetcher getResult() {
+    //        return result;
+    //    }
+    //    public void setResult(IResultFetcher result) {
+    //        this.result = result;
+    //    }
 
     @Override
-    public void parseXml(String xml) throws DocumentException, TaskParseNotFoundException {
-        Document doc = DocumentHelper.parseText(xml);
-        Element root = doc.getRootElement();
-
+    public void parseTask(Map<String, Object> datamap) throws Exception {
         // check
-        if (root.attributeValue("ID") == null)
-            throw new TaskParseNotFoundException("");
-        if (root.attributeValue("instant") == null)
+        Map<String, Object> taskData = Caster.cast(datamap.get("task"));
+        if (taskData.get("task_id") == null) {
+            throw new TaskParseNotFoundException("id");
+        }
+        if (taskData.get("instant") == null) {
             throw new TaskParseNotFoundException("instant");
-        if (root.attributeValue("cron") == null)
+        }
+        if (taskData.get("cron") == null) {
             throw new TaskParseNotFoundException("cron");
+        }
 
-        // set
-        this.datamap.put("task_id", root.attributeValue("ID"));
-        this.datamap.put("task_name", root.attributeValue("name", "noname"));
-        this.datamap.put("task_category", root.attributeValue("category", "nocatory"));
-        this.datamap.put("task_group", "AITASK");
-        this.datamap.put("agent_id", root.attributeValue("agent_id", ""));
-        this.datamap.put("agent_name", root.attributeValue("agent_name", ""));
-        this.datamap.put("group_no", root.attributeValue("group_no", ""));
-        this.datamap.put("group_name", root.attributeValue("group_name", ""));
-        this.datamap.put("instant", root.attributeValue("instant", ""));
-        this.datamap.put("timeout", Long.valueOf(root.attributeValue("timeout", "-1")));
-        this.datamap.put("cron", root.attributeValue("cron", ""));
-
-        // if(TaskCategory.CMD_TASK_TYPE.equals(root.attributeValue("ctype"))){
-        // this.parseCmd(xml);
-        // }else{
-        // throw new TaskParseNotFoundException("ctype");
-        // }
-
-        datamap.put("preparer", this.preparer);
-        datamap.put("executor", this.executor);
-        datamap.put("result", this.result);
+        jobDatamap.put("datamap", datamap);
     }
 
     @Override
-    public void generate() {
-
-        String task_id = this.datamap.getString("task_id");
-        String task_category = this.datamap.getString("task_category");
-        String task_group = this.datamap.getString("task_group");
-        String instant = this.datamap.getString("instant");
-        String cron = this.datamap.getString("cron");
-
+    public void build() {
+        Map<String, Map<String, Object>> datamap = Caster.cast(jobDatamap.get("datamap"));
+        Map<String, Object> task = datamap.get("task");
+        String task_id = (String) task.get("task_id");
+        String task_category = (String) task.get("task_category");
+        String task_group = (String) task.get("task_group");
+        String instant = (String) task.get("instant");
+        String cron = (String) task.get("cron");
         JobKey jobKey = new JobKey(task_category, task_group);
-        this.jobDetail = JobBuilder.newJob(SerialTask.class).withIdentity(jobKey).storeDurably()
-                .build();
 
-        if ("true".equals(instant))
-            this.trigger = TriggerBuilder.newTrigger().withIdentity(task_id, task_group).startNow()
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()).usingJobData(datamap)
-                    .build();
-        else
-            this.trigger = TriggerBuilder.newTrigger().withIdentity(task_id, task_group)
-                    .withSchedule(CronScheduleBuilder.cronSchedule(cron)).usingJobData(datamap)
-                    .build();
-        log.debug("generate task jobKey:" + this.jobDetail.getKey() + "\t task trigger:"
-                + this.trigger.getKey());
+        JobBuilder builder = JobBuilder.newJob(SerialTask.class);
+        this.jobDetail = builder.withIdentity(jobKey).storeDurably().build();
 
+        TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
+        triggerBuilder.withIdentity(task_id, task_group);
+        triggerBuilder.usingJobData(jobDatamap);
+        if ("1".equals(instant)) {
+            triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule());
+        } else {
+            triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cron));
+        }
+        this.trigger = triggerBuilder.build();
+
+        System.out.println("A:"+new Date(System.currentTimeMillis()));
+        System.out.println("B:"+trigger.getFireTimeAfter(new Date()));
+
+        //        new CronExpression(cron).
+        log.debug("generate task key:" + jobDetail.getKey() + "\t trigger:" + trigger.getKey());
     }
 }

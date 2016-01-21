@@ -35,7 +35,7 @@ public class Mapper {
         }
         for (Object c : e.elements()) {
             Element child = (Element) c;
-            List<Object> list = Caster.cast(map.get(child.getName()), null);
+            List<Object> list = Caster.cast(map.get(child.getName()));
             if (null == list) {
                 map.put(child.getName(), list = new LinkedList<Object>());
             }
@@ -88,7 +88,7 @@ public class Mapper {
             Map<String, String> namedDict = dict.get(key);
             Object value = source.get(key);
             if (value instanceof Map) {
-                Map<String, Object> child = Caster.cast(value, null);
+                Map<String, Object> child = Caster.cast(value);
                 if (null != namedDict) {
                     for (String cKey : new HashSet<String>(child.keySet())) {
                         if (namedDict.containsKey(cKey)) {
@@ -98,9 +98,9 @@ public class Mapper {
                 }
                 transfer(child, dict);
             } else if (value instanceof List) {
-                List<Object> list = Caster.cast(value, null);
+                List<Object> list = Caster.cast(value);
                 if (!list.isEmpty() && list.get(0) instanceof Map) {
-                    List<Map<String, Object>> mapList = Caster.cast(list, null);
+                    List<Map<String, Object>> mapList = Caster.cast(list);
                     for (Map<String, Object> child : mapList) {
                         if (null != namedDict) {
                             for (String cKey : new HashSet<String>(child.keySet())) {

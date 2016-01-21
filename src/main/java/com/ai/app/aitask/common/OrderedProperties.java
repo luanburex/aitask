@@ -7,9 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * 
  * @author Administrator
- *
  */
 public class OrderedProperties extends Properties {
 

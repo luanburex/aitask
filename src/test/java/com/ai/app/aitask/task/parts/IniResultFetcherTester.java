@@ -28,7 +28,7 @@ import com.ai.app.aitask.utils.TestJettyServer;
 
 public class IniResultFetcherTester {
 
-    transient final static private Logger log                 = Logger.getLogger(IniResultFetcherTester.class);
+    transient final static protected Logger log                 = Logger.getLogger(IniResultFetcherTester.class);
 
     Mockery                               mock_context        = new Mockery();
     static TestJettyServer                server              = null;

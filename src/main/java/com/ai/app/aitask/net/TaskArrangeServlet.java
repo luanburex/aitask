@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,14 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+
 import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.schedule.TaskSchedule;
-import com.ai.app.aitask.task.TaskDirector;
-import com.ai.app.aitask.task.builder.ITaskBuilder;
 
 public class TaskArrangeServlet extends HttpServlet implements Constants {
     private static final long serialVersionUID = 1L;
@@ -32,7 +29,7 @@ public class TaskArrangeServlet extends HttpServlet implements Constants {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-            IOException {
+    IOException {
         doPost(req, resp);
     }
 
@@ -71,19 +68,19 @@ public class TaskArrangeServlet extends HttpServlet implements Constants {
         }
 
         if (buffer.length() > 0) {
-            Document document;
-            try {
-                document = DocumentHelper.parseText(buffer.toString());
-                Element root = document.getRootElement();
-                for (Object o : root.elements("task")) {
-                    Element e = (Element) o;
-                    ITaskBuilder tb = TaskDirector.generateTaskBuilderByXml(e.asXML());
-                    log.debug("add task:" + tb.getTrigger().getKey());
-                    ts.addTask(tb, true);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            // Document document;
+            // try {
+            // document = DocumentHelper.parseText(buffer.toString());
+            // Element root = document.getRootElement();
+            // for (Object o : root.elements("task")) {
+            // Element e = (Element) o;
+            // ITaskBuilder tb = TaskDirector.generateTaskBuilder(e.asXML());
+            // log.debug("add task:" + tb.getTrigger().getKey());
+            // ts.addTask(tb, true);
+            // }
+            // } catch (Exception e) {
+            // e.printStackTrace();
+            // }
         } else {
             System.out.println("nothin");
         }

@@ -12,60 +12,58 @@ import org.quartz.JobListener;
 
 public class BeforeAndAfterTaskListener implements JobListener {
 
-	private final static transient Logger log = Logger
-			.getLogger(BeforeAndAfterTaskListener.class);
+    private final static transient Logger log = Logger
+            .getLogger(BeforeAndAfterTaskListener.class);
 
-	public BeforeAndAfterTaskListener() throws SQLException, InstantiationException,
-			IllegalAccessException, ClassNotFoundException, IOException {
-	}
+    public BeforeAndAfterTaskListener() throws SQLException, InstantiationException,
+    IllegalAccessException, ClassNotFoundException, IOException {
+    }
 
-	@Override
+    @Override
     public String getName() {
-		return "BeforeAndAfterTaskListener";
-	}
+        return "BeforeAndAfterTaskListener";
+    }
 
-	@Override
+    @Override
     public void jobExecutionVetoed(JobExecutionContext context) {
-	
-	}
 
-	@Override
+    }
+
+    @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-	
-		try {
-			Method m = context.getJobInstance().getClass().getMethod("before",JobExecutionContext.class);
-			m.invoke(context.getJobInstance(),context);
-			JobDataMap data_map = context.getTrigger().getJobDataMap();
-			StringBuilder sb = new StringBuilder();
-			for(Object key: data_map.keySet()){
-				sb.append("[").append(key).append("]:").append(data_map.get(key)).append("\n");
-			}
-			log.info("["+context.getTrigger().getKey().toString()+"]Datas:\n" + sb.toString());
-			
-			
-			log.info("["+context.getTrigger().getKey().toString()+"]"+"run the task BEFORE function.");
-		} catch (Exception e) {
-			log.error("["+context.getTrigger().getKey().toString()+"]"+"run BEFORE function,error: ",e);
-		} 
-	}
 
-	@Override
+        try {
+            Method m = context.getJobInstance().getClass().getMethod("before",JobExecutionContext.class);
+            m.invoke(context.getJobInstance(),context);
+            JobDataMap data_map = context.getTrigger().getJobDataMap();
+            StringBuilder sb = new StringBuilder();
+            for(Object key: data_map.keySet()){
+                sb.append("[").append(key).append("]:").append(data_map.get(key)).append("\n");
+            }
+            log.info("["+context.getTrigger().getKey().toString()+"]Datas:\n" + sb.toString());
+            log.info("["+context.getTrigger().getKey().toString()+"]"+"run the task BEFORE function.");
+        } catch (Exception e) {
+            log.error("["+context.getTrigger().getKey().toString()+"]"+"run BEFORE function,error: ",e);
+        }
+    }
+
+    @Override
     public void jobWasExecuted(JobExecutionContext context,
-			JobExecutionException error) {
+            JobExecutionException error) {
 
-		try {
-			Method m = context.getJobInstance().getClass().getMethod("after",JobExecutionContext.class,JobExecutionException.class);
-			m.invoke(context.getJobInstance(),context,error);
-			JobDataMap data_map = context.getTrigger().getJobDataMap();
-			StringBuilder sb = new StringBuilder();
-			for(Object key: data_map.keySet()){
-				sb.append("[").append(key).append("]:").append(data_map.get(key)).append("\n");
-			}
-			log.info("["+context.getTrigger().getKey().toString()+"]Datas:\n" + sb.toString());
-			log.info("["+context.getTrigger().getKey().toString()+"]"+"run the task AFTER function.");
-		} catch (Exception e) {
-			log.error("["+context.getTrigger().getKey().toString()+"]"+"run AFTER function,error: ",e);
-		}
-	}
+        try {
+            Method m = context.getJobInstance().getClass().getMethod("after",JobExecutionContext.class,JobExecutionException.class);
+            m.invoke(context.getJobInstance(),context,error);
+            JobDataMap data_map = context.getTrigger().getJobDataMap();
+            StringBuilder sb = new StringBuilder();
+            for(Object key: data_map.keySet()){
+                sb.append("[").append(key).append("]:").append(data_map.get(key)).append("\n");
+            }
+            log.info("["+context.getTrigger().getKey().toString()+"]Datas:\n" + sb.toString());
+            log.info("["+context.getTrigger().getKey().toString()+"]"+"run the task AFTER function.");
+        } catch (Exception e) {
+            log.error("["+context.getTrigger().getKey().toString()+"]"+"run AFTER function,error: ",e);
+        }
+    }
 
 }

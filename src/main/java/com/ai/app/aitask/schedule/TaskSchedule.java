@@ -23,134 +23,111 @@ import com.ai.app.aitask.listener.OpenAndCloseListner;
 import com.ai.app.aitask.listener.TaskTimeoutListener;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
-
 public class TaskSchedule {
 
-	private final static transient Logger log = Logger
-			.getLogger(TaskSchedule.class);
+    private final static transient Logger log = Logger.getLogger(TaskSchedule.class);
 
-	/**
-	 * the base scheduler of Quartz
-	 */
-	private Scheduler scheduler;
-	
-	
-	public Scheduler getScheduler(){
-		return this.scheduler;
-	}
-	
-	
-	/**
-	 * the Constructor of the taskschedule:get properties and set listeners.
-	 * 
-	 * @param scheduler
-	 * @throws IOException
-	 * @throws SchedulerException
-	 * @throws SQLException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
-	 */
-	public TaskSchedule(Scheduler scheduler) throws IOException,
-			SchedulerException, SQLException, InstantiationException,
-			IllegalAccessException, ClassNotFoundException {
-		
-		log.debug("["+scheduler.getSchedulerName()+"]"+"set the Scheduler.");
-		this.scheduler = scheduler;
-		
-		log.debug("["+scheduler.getSchedulerName()+"]"+"add the Scheduler listener.");
-		scheduler.getListenerManager().addSchedulerListener(new OpenAndCloseListner());
+    /**
+     * the base scheduler of Quartz
+     */
+    private Scheduler                     scheduler;
 
-		
-		log.debug("["+scheduler.getSchedulerName()+"]"+"add listeners to all task.");
-		
-//		scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener(),
-//				EverythingMatcher.allJobs());
-		scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener());
-		scheduler.getListenerManager().addJobListener(new TaskTimeoutListener());
-		
-		scheduler.start();
-	}
-	
-	
-	/**
-	 * add task to schduler
-	 * 
-	 * @param task
-	 * @throws SchedulerException
-	 * @throws ParseException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 * @throws InstantiationException
-	 * @throws SQLException
-	 */
-	public void addTask(ITaskBuilder taskBuilder, boolean replace)
-			throws SchedulerException, ParseException,
-			IllegalArgumentException, IllegalAccessException, SQLException,
-			InstantiationException, ClassNotFoundException, IOException {
+    public Scheduler getScheduler() {
+        return this.scheduler;
+    }
 
-		JobDetail job = taskBuilder.getJobDetail();
-		Trigger trigger = taskBuilder.getTrigger();
+    /**
+     * the Constructor of the taskschedule:get properties and set listeners.
+     *
+     * @param scheduler
+     * @throws IOException
+     * @throws SchedulerException
+     * @throws SQLException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws ClassNotFoundException
+     */
+    public TaskSchedule(Scheduler scheduler) throws IOException, SchedulerException, SQLException,
+    InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		log.info("["+this.scheduler.getSchedulerName()+"]"+"add the task [" + trigger.getKey().toString() + "]");
+        log.debug("[" + scheduler.getSchedulerName() + "]" + "set the Scheduler.");
+        this.scheduler = scheduler;
 
-		Map<JobDetail, Set<? extends Trigger>> tasks = new HashMap<JobDetail, Set<? extends Trigger>>();
-		Set<Trigger> triggerlist = new HashSet<Trigger>();
-		triggerlist.add(trigger);
-		tasks.put(job, triggerlist);
-		scheduler.scheduleJobs(tasks, replace);
-		
-		log.debug("["+this.scheduler.getSchedulerName()+"]there is " +   scheduler.getCurrentlyExecutingJobs().size()
-				+ " jobs running.");
-		
-		
-		log.info("["+this.scheduler.getSchedulerName()+"]the trigger [" +trigger.getKey() + "] " 
-				+ "will start at" + trigger.getStartTime() + " and trigger state is " 
-				+ this.scheduler.getTriggerState(trigger.getKey()).toString());
+        log.debug("[" + scheduler.getSchedulerName() + "]" + "add the Scheduler listener.");
+        scheduler.getListenerManager().addSchedulerListener(new OpenAndCloseListner());
 
-	}
-	public TriggerState getTaskStateByTrigger(TriggerKey triggerKey) throws SchedulerException{
-		return scheduler.getTriggerState(triggerKey);
-	}
-	
-	public TriggerState getTaskState(TriggerKey triggerKey)
-			throws SchedulerException {
-		return this.getTaskStateByTrigger(triggerKey);
-	}
-	
-	public void interruptByTrigger(TriggerKey triggerKey) throws SchedulerException{
-		
-		JobKey jobKey = this.getScheduler().getTrigger(triggerKey).getJobKey();
-		scheduler.interrupt(jobKey);
-	}
-	
-	public void fireTrigger(TriggerKey triggerkey) throws SchedulerException{
-		
-		Trigger trigger = this.scheduler.getTrigger(triggerkey);
-		this.scheduler.triggerJob(trigger.getJobKey(), trigger.getJobDataMap());
-	}
-	
-	public Set<TriggerKey> getAllTriggerKey() throws SchedulerException{
-		GroupMatcher<TriggerKey> gm = GroupMatcher.anyTriggerGroup();
-		Set<TriggerKey> keys = this.scheduler.getTriggerKeys(gm);
-		return keys;
-	}
-	
-	public String getTrigerInfo() throws SchedulerException{
-		StringBuffer sb = new StringBuffer();
-		for(TriggerKey key : this.getAllTriggerKey()){
-			Trigger trigger = this.scheduler.getTrigger(key);
-			sb.append(trigger.getKey());
-			sb.append("\t");
-			sb.append(scheduler.getTriggerState(key));
-			sb.append("\t");
-			sb.append(trigger.getPreviousFireTime());
-			sb.append("\t");
-			sb.append(trigger.getNextFireTime());
-			sb.append("\n");
-		}
-		return sb.toString();
-	}
+        log.debug("[" + scheduler.getSchedulerName() + "]" + "add listeners to all task.");
+
+        // scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener(),
+        // EverythingMatcher.allJobs());
+        scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener());
+        scheduler.getListenerManager().addJobListener(new TaskTimeoutListener());
+
+        scheduler.start();
+    }
+
+    public void addTask(ITaskBuilder taskBuilder, boolean replace) throws Exception {
+
+        JobDetail job = taskBuilder.getJobDetail();
+        Trigger trigger = taskBuilder.getTrigger();
+
+        log.info("[" + this.scheduler.getSchedulerName() + "]" + "add the task ["
+                + trigger.getKey().toString() + "]");
+
+        Map<JobDetail, Set<? extends Trigger>> tasks = new HashMap<JobDetail, Set<? extends Trigger>>();
+        Set<Trigger> triggerlist = new HashSet<Trigger>();
+        triggerlist.add(trigger);
+        tasks.put(job, triggerlist);
+        scheduler.scheduleJob(job, trigger);
+        //        scheduler.scheduleJobs(tasks, replace);
+
+        log.debug("[" + this.scheduler.getSchedulerName() + "]there is "
+                + scheduler.getCurrentlyExecutingJobs().size() + " jobs running.");
+
+        log.info("[" + this.scheduler.getSchedulerName() + "]the trigger [" + trigger.getKey()
+                + "] " + "will start at" + trigger.getNextFireTime() + " and trigger state is "
+                + this.scheduler.getTriggerState(trigger.getKey()).toString());
+
+    }
+    public TriggerState getTaskStateByTrigger(TriggerKey triggerKey) throws SchedulerException {
+        return scheduler.getTriggerState(triggerKey);
+    }
+
+    public TriggerState getTaskState(TriggerKey triggerKey) throws SchedulerException {
+        return this.getTaskStateByTrigger(triggerKey);
+    }
+
+    public void interruptByTrigger(TriggerKey triggerKey) throws SchedulerException {
+
+        JobKey jobKey = this.getScheduler().getTrigger(triggerKey).getJobKey();
+        scheduler.interrupt(jobKey);
+    }
+
+    public void fireTrigger(TriggerKey triggerkey) throws SchedulerException {
+
+        Trigger trigger = this.scheduler.getTrigger(triggerkey);
+        this.scheduler.triggerJob(trigger.getJobKey(), trigger.getJobDataMap());
+    }
+
+    public Set<TriggerKey> getAllTriggerKey() throws SchedulerException {
+        GroupMatcher<TriggerKey> gm = GroupMatcher.anyTriggerGroup();
+        Set<TriggerKey> keys = this.scheduler.getTriggerKeys(gm);
+        return keys;
+    }
+
+    public String getTrigerInfo() throws SchedulerException {
+        StringBuffer sb = new StringBuffer();
+        for (TriggerKey key : this.getAllTriggerKey()) {
+            Trigger trigger = this.scheduler.getTrigger(key);
+            sb.append(trigger.getKey());
+            sb.append("\t");
+            sb.append(scheduler.getTriggerState(key));
+            sb.append("\t");
+            sb.append(trigger.getPreviousFireTime());
+            sb.append("\t");
+            sb.append(trigger.getNextFireTime());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }

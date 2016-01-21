@@ -22,10 +22,6 @@ import com.ai.app.aitask.common.Mapper;
 import com.ai.app.aitask.net.RequestWorker;
 import com.ai.app.aitask.task.TaskDirector;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class TaskFetcher implements Constants {
 
@@ -70,11 +66,16 @@ public class TaskFetcher implements Constants {
             log.error("no effective content");
             return;
         } else {
-            JsonObject json = new JsonParser().parse(content).getAsJsonObject();
-            if (json.has("xml") && !json.get("xml").getAsString().trim().isEmpty()) {
-                taskList = parseXMLTask(json.get("xml").getAsString());
+            Map<String, Object> sourceMap = Mapper.parseJSON(content);
+            if (sourceMap.containsKey("xml") && !((String) sourceMap.get("xml")).trim().isEmpty()) {
+                try {
+                    taskList = parseXMLTask(Mapper.parseXML((String) sourceMap.get("xml")));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("fail parsing xml");
+                }
             } else {
-                taskList = parseJSONTask(json);
+                taskList = parseJSONTask(sourceMap);
             }
         }
         for (ITaskBuilder task : taskList) {
@@ -92,11 +93,10 @@ public class TaskFetcher implements Constants {
             }
         }
     }
-    private List<ITaskBuilder> parseXMLTask(String xml) {
+    private List<ITaskBuilder> parseXMLTask(Map<String, Object> sourceMap) {
         List<ITaskBuilder> taskList = new LinkedList<ITaskBuilder>();
         try {
-            Map<String, Object> sourceMap = Mapper.parseXML(xml);
-            Document document = DocumentHelper.parseText(xml);
+            Document document = DocumentHelper.parseText(null);
             Element root = document.getRootElement();
             for (Object t : root.elements("task")) {
                 HashMap<String, Object> dataMap = new HashMap<String, Object>();
@@ -112,24 +112,25 @@ public class TaskFetcher implements Constants {
                 dataMap.put("instant", task_elem.attributeValue("instant", ""));
                 dataMap.put("timeout", Long.valueOf(task_elem.attributeValue("timeout", "-1")));
                 dataMap.put("cron", task_elem.attributeValue("cron", ""));
-                for (Object c : task_elem.elements("case")) {
-                    Element case_elem = (Element) c;
-                }
-                ITaskBuilder task = null;
+                //                for (Object c : task_elem.elements("case")) {
+                //                    Element case_elem = (Element) c;
+                //                }
+                //                ITaskBuilder task = null;
                 try {
-                    int data_catagory = Integer.parseInt((String) dataMap.get("task_catagory"));
-                    taskList.add(TaskDirector.generateTaskBuilder(dataMap, data_catagory));
+                    String task_category = (String) dataMap.get("task_catagory");
+                    taskList.add(TaskDirector.getBuilder(dataMap, task_category));
                 } catch (Exception e) {
                     e.printStackTrace();
                     continue;
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("fail parsing xml");
         }
         return taskList;
     }
-    private List<ITaskBuilder> parseJSONTask(JsonObject json) {
+    private List<ITaskBuilder> parseJSONTask(Map<String, Object> sourceMap) {
         Map<String, String> planDict = new HashMap<String, String>();
         Map<String, String> taskDict = new HashMap<String, String>();
         Map<String, String> scriptDict = new HashMap<String, String>();
@@ -185,19 +186,19 @@ public class TaskFetcher implements Constants {
         dict.put("taskScript", taskscriptDict);
         dict.put("taskDataDetail", taskdatadetailDict); // task : detail    1:
 
-        Map<String, Object> sourceMap = Mapper.parseGSONMap(json);
         Mapper.transfer(sourceMap, dict);
 
         System.out.println(sourceMap.get("plan"));
 
-        Gson pretty = new GsonBuilder().setPrettyPrinting().create();
+        com.google.gson.Gson pretty;
+        pretty = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
         //        System.out.println(pretty.toJson(sourceMap));
 
         List<ITaskBuilder> taskList = new LinkedList<ITaskBuilder>();
 
         Map<String, Map<String, Object>> planMap = new HashMap<String, Map<String, Object>>();
-        {
-            List<Map<String, Object>> planList = Caster.cast(sourceMap.get("plan"));   // TODO plan 不应该有
+        {// TODO plan 这个包并不需要, 可以整合到Task里
+            List<Map<String, Object>> planList = Caster.cast(sourceMap.get("plan"));
             for (Map<String, Object> plan : planList) {
                 planMap.put((String) plan.get("plan_id"), plan);
             }
@@ -248,8 +249,12 @@ public class TaskFetcher implements Constants {
         List<Map<String, Object>> tasks = Caster.cast(sourceMap.get("task"));
         for (Map<String, Object> task : tasks) {
             Map<String, Object> taskData = new HashMap<String, Object>();
-            task.put("cron", planMap.get(task.get("plan_id")).get("cron"));
-            task.put("instant", planMap.get(task.get("plan_id")).get("instant"));
+            {// TODO temply
+                task.put("cron", planMap.get(task.get("plan_id")).get("cron"));
+                task.put("instant", planMap.get(task.get("plan_id")).get("instant"));
+                task.put("task_group", "AITASK");
+                task.put("task_category", Integer.toString(TASK_TYPE_BAT));
+            }
 
             String taskId = (String) task.get("task_id");
             String scriptId = task2script.get(taskId);
@@ -259,9 +264,10 @@ public class TaskFetcher implements Constants {
             Map<String, Object> data = dataMap.get(scriptId);
             data.put("detail", detailListMap.get(data.get("data_id")));
             taskData.put("data", data);
-            System.out.println(pretty.toJson(taskData));
+            //            System.out.println(pretty.toJson(taskData));
             try {
-                taskList.add(TaskDirector.generateTaskBuilder(taskData, TASK_TYPE_BAT));
+                String task_category = (String) task.get("task_category");
+                taskList.add(TaskDirector.getBuilder(taskData, task_category));
             } catch (Exception e) {
                 e.printStackTrace();
             }

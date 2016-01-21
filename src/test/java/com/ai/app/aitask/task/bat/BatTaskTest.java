@@ -27,7 +27,7 @@ import com.google.gson.Gson;
 
 public class BatTaskTest {
 
-    final static private Logger  log    = Logger.getLogger(BatTaskTest.class);
+    final static protected Logger  log    = Logger.getLogger(BatTaskTest.class);
 
     public static ScheduleDaemon daemon;
     static TestJettyServer       server = null;
@@ -45,7 +45,7 @@ public class BatTaskTest {
         daemon = ScheduleDaemon.instance();
         daemon.start();
         String xml_path = "/com/ai/app/aitask/task/bat/bat_script_task001.xml";
-        xml_file = FileUtils.readXmlFileInClasspath(xml_path);
+        xml_file = FileUtils.readFileInClasspath(xml_path);
         server = new TestJettyServer(9999) {
             @Override
             public void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p) {

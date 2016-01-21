@@ -1,20 +1,23 @@
 package com.ai.app.aitask.task.builder;
 
-import org.quartz.JobDataMap;
+import java.util.Map;
+
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 
-public interface ITaskBuilder {
+import com.ai.app.aitask.common.Constants;
 
-	public Trigger getTrigger();
-	
-	public JobDetail getJobDetail();
-	
-	public JobDataMap getDatamap() ;
-	
-	public void setDatamap(JobDataMap datamap) ;
-	
-	public void parseXml(String xml) throws Exception;
-	
-	public void generate() throws Exception;
+public interface ITaskBuilder extends Constants {
+
+    public Trigger getTrigger();
+
+    public JobDetail getJobDetail();
+
+    //    public JobDataMap getDatamap();
+
+    //    public void setDatamap(JobDataMap datamap);
+
+    public void build() throws Exception;
+
+    public void parseTask(Map<String, Object> datamap) throws Exception;
 }

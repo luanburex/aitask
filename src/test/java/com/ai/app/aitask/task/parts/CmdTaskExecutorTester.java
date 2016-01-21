@@ -13,7 +13,7 @@ import com.ai.app.aitask.task.excutor.impl.CmdTaskExecutor;
 
 class WaitProcessClass implements Runnable{
     
-    final static private Logger log = Logger.getLogger(WaitProcessClass.class);
+    final static protected Logger log = Logger.getLogger(WaitProcessClass.class);
     
     private boolean result = false;
     private String process_name = null;
@@ -85,7 +85,7 @@ class WaitProcessClass implements Runnable{
 
 public class CmdTaskExecutorTester {
 
-    final static private Logger log = Logger.getLogger(CmdTaskExecutorTester.class);
+    final static protected Logger log = Logger.getLogger(CmdTaskExecutorTester.class);
     
     
     @Test(timeout=3000)
