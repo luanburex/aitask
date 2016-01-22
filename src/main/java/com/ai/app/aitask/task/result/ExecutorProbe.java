@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.excutor;
+package com.ai.app.aitask.task.result;
 
 public class ExecutorProbe {
 	String id;

@@ -12,7 +12,7 @@ import com.ai.app.aitask.exception.TaskParseNotFoundException;
 import com.ai.app.aitask.task.builder.AbstractTaskBuilder;
 import com.ai.app.aitask.task.excutor.impl.BatTaskExecutor;
 import com.ai.app.aitask.task.excutor.impl.CmdTaskExecutor;
-import com.ai.app.aitask.task.excutor.impl.IniResultFetcher;
+import com.ai.app.aitask.task.result.impl.IniResultFetcher;
 
 public class BatTaskBuilder extends AbstractTaskBuilder {
 

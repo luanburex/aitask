@@ -1,7 +1,8 @@
-package com.ai.app.aitask.task.builder.impl;
+package com.ai.app.aitask.task;
 
 import java.net.ConnectException;
 import java.util.Date;
+
 import org.apache.http.entity.ContentType;
 import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
@@ -16,7 +17,7 @@ import com.ai.app.aitask.net.RequestWorker;
 import com.ai.app.aitask.task.builder.ITask;
 import com.ai.app.aitask.task.excutor.IDataPreparer;
 import com.ai.app.aitask.task.excutor.IExecutor;
-import com.ai.app.aitask.task.excutor.IResultFetcher;
+import com.ai.app.aitask.task.result.IResultFetcher;
 
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
@@ -24,11 +25,11 @@ public class SerialTask implements ITask, Constants {
 
     transient final static protected Logger log              = Logger.getLogger(SerialTask.class);
 
-    private volatile boolean              isJobInterrupted = false;
-    private volatile Thread               thisThread;
-    private volatile IExecutor            executor;
-    private Config                        config;
-    private long                          start;
+    private volatile boolean                isJobInterrupted = false;
+    private volatile Thread                 thisThread;
+    private volatile IExecutor              executor;
+    private Config                          config;
+    private long                            start;
     {
         config = Config.instance("client.properties");
     }
@@ -84,7 +85,7 @@ public class SerialTask implements ITask, Constants {
             }
         } catch (JobExecutionException je) {
             System.err.println("fail?");
-            // je.printStackTrace();
+            je.printStackTrace();
             IResultFetcher fetcher = (IResultFetcher) context.getMergedJobDataMap().get("result");
             if (fetcher != null && !isJobInterrupted) {
                 String result_str = fetcher.error(context, je);

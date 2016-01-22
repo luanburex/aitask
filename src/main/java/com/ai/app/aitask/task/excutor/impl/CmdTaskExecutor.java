@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.ai.app.aitask.common.Processor;
 import com.ai.app.aitask.task.excutor.IExecutor;
 
 /**
@@ -86,6 +87,7 @@ public class CmdTaskExecutor implements IExecutor {
             log.info("[" + context.getTrigger().getKey() + "]" + "start run cmd: " + cmd);
         }
         try {
+            Processor p = new Processor("GBK");
             this.exectionProcess = Runtime.getRuntime().exec(cmd);
             // BufferedInputStream in = new BufferedInputStream(this.exectionProcess.getInputStream());
             // byte[] bytes = new byte[4096];

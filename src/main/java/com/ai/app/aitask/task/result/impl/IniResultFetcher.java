@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.excutor.impl;
+package com.ai.app.aitask.task.result.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,8 +12,8 @@ import org.quartz.JobExecutionException;
 
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.OrderedProperties;
-import com.ai.app.aitask.task.excutor.ExecutorProbe;
-import com.ai.app.aitask.task.excutor.IResultFetcher;
+import com.ai.app.aitask.task.result.ExecutorProbe;
+import com.ai.app.aitask.task.result.IResultFetcher;
 
 public class IniResultFetcher implements IResultFetcher {
 

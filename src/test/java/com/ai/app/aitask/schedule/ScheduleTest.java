@@ -80,7 +80,7 @@ public class ScheduleTest {
         Calendar c = Calendar.getInstance();
         String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
         System.out.println("bf:"+t);
-        c.setTime(new Date(System.currentTimeMillis() + 5000l));
+        c.setTime(new Date(System.currentTimeMillis() + 2000l));
         t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
         System.out.println("af:"+t);
         plan.addProperty("cron", t);

@@ -246,12 +246,14 @@ public class TaskFetcher implements Constants {
         }
         System.out.println("detailListMap:" + detailListMap);
 
+        // TODO 任务按脚本执行数据拆分成副本
         List<Map<String, Object>> tasks = Caster.cast(sourceMap.get("task"));
         for (Map<String, Object> task : tasks) {
             Map<String, Object> taskData = new HashMap<String, Object>();
             {// TODO temply
                 task.put("cron", planMap.get(task.get("plan_id")).get("cron"));
                 task.put("instant", planMap.get(task.get("plan_id")).get("instant"));
+                task.put("timeout", "-1");
                 task.put("task_group", "AITASK");
                 task.put("task_category", Integer.toString(TASK_TYPE_BAT));
             }

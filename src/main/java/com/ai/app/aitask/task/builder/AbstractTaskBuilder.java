@@ -1,10 +1,8 @@
 package com.ai.app.aitask.task.builder;
 
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -16,15 +14,15 @@ import org.quartz.TriggerBuilder;
 
 import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.exception.TaskParseNotFoundException;
-import com.ai.app.aitask.task.builder.impl.SerialTask;
+import com.ai.app.aitask.task.SerialTask;
 
 public abstract class AbstractTaskBuilder implements ITaskBuilder {
 
     transient final static protected Logger log        = Logger.getLogger(AbstractTaskBuilder.class);
 
-    protected JobDetail                   jobDetail  = null;
-    protected Trigger                     trigger    = null;
-    protected JobDataMap                  jobDatamap = new JobDataMap();
+    protected JobDetail                     jobDetail  = null;
+    protected Trigger                       trigger    = null;
+    protected JobDataMap                    jobDatamap = new JobDataMap();
 
     //    protected IExecutor                   executor   = null;
     //    protected IDataPreparer               preparer   = null;
@@ -84,7 +82,7 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
         if (taskData.get("cron") == null) {
             throw new TaskParseNotFoundException("cron");
         }
-
+        jobDatamap.put("timeout", Long.parseLong((String) taskData.get("timeout")));
         jobDatamap.put("datamap", datamap);
     }
 
@@ -112,10 +110,6 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
         }
         this.trigger = triggerBuilder.build();
 
-        System.out.println("A:"+new Date(System.currentTimeMillis()));
-        System.out.println("B:"+trigger.getFireTimeAfter(new Date()));
-
-        //        new CronExpression(cron).
         log.debug("generate task key:" + jobDetail.getKey() + "\t trigger:" + trigger.getKey());
     }
 }

@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.excutor;
+package com.ai.app.aitask.task.result;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
