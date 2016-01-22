@@ -69,6 +69,7 @@ public class SerialTask implements ITask, Constants {
             System.err.println("done?");
             if (fetcher != null && !isJobInterrupted) {
                 result_str = fetcher.fetch(context);
+                System.err.println("111"+result_str);
                 log.info("[" + context.getTrigger().getKey() + "]" + "task fetch result: "
                         + result_str);
                 String url = config.getProperty(null, "aitask.result.url");

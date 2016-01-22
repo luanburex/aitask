@@ -1,6 +1,8 @@
 package com.ai.app.aitask.schedule;
 
 import java.net.ConnectException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +47,7 @@ public class TaskFetcher implements Constants {
         String url = config.getProperty(null, "aitask.sync.url");
         String agent_name = config.getProperty(null, "aitask.name");
         HashMap<String, String> queryPairs = new HashMap<String, String>();
-        queryPairs.put("agent_name", agent_name);
+        queryPairs.put("taskId", agent_name);
 
         RequestWorker worker = new RequestWorker(url, null);                                        // 取任务
         try {
@@ -207,7 +209,7 @@ public class TaskFetcher implements Constants {
 
         Map<String, Object> scriptMap = new HashMap<String, Object>();
         {
-            List<Map<String, Object>> scriptList = Caster.cast(sourceMap.get("src"));
+            List<Map<String, Object>> scriptList = Caster.cast(sourceMap.get("scr"));
             for (Map<String, Object> script : scriptList) {
                 scriptMap.put((String) script.get("script_id"), script);
             }
@@ -252,6 +254,12 @@ public class TaskFetcher implements Constants {
             Map<String, Object> taskData = new HashMap<String, Object>();
             {// TODO temply
                 task.put("cron", planMap.get(task.get("plan_id")).get("cron"));
+                Calendar c = Calendar.getInstance();
+                String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
+                System.out.println("bf:"+t);
+                c.setTime(new Date(System.currentTimeMillis() + 2000l));
+                t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
+                task.put("cron", t);
                 task.put("instant", planMap.get(task.get("plan_id")).get("instant"));
                 task.put("timeout", "-1");
                 task.put("task_group", "AITASK");
