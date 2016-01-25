@@ -14,7 +14,6 @@ import org.quartz.UnableToInterruptJobException;
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.net.RequestWorker;
-import com.ai.app.aitask.task.builder.ITask;
 import com.ai.app.aitask.task.excutor.IDataPreparer;
 import com.ai.app.aitask.task.excutor.IExecutor;
 import com.ai.app.aitask.task.result.IResultFetcher;

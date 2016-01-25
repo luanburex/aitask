@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.builder;
+package com.ai.app.aitask.task;
 
 import org.quartz.InterruptableJob;
 import org.quartz.JobExecutionContext;
