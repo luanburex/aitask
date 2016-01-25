@@ -8,5 +8,5 @@ public interface IExecutor {
 
 	
 	public int run(JobExecutionContext context) throws JobExecutionException;
-	public void interupt() throws UnableToInterruptJobException;
+	public void destroy() throws UnableToInterruptJobException;
 }

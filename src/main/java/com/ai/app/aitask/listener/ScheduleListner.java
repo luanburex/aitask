@@ -4,9 +4,9 @@ import org.apache.log4j.Logger;
 import org.quartz.Trigger;
 import org.quartz.listeners.SchedulerListenerSupport;
 
-public class OpenAndCloseListner extends SchedulerListenerSupport {
+public class ScheduleListner extends SchedulerListenerSupport {
 
-	private final static transient Logger log = Logger.getLogger(OpenAndCloseListner.class);
+	private final static transient Logger log = Logger.getLogger(ScheduleListner.class);
 
 	
     @Override

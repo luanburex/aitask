@@ -1,4 +1,4 @@
-package com.ai.app.aitask.listener;
+package com.ai.app.aitask.common;
 
 import org.apache.log4j.Logger;
 import org.quartz.InterruptableJob;

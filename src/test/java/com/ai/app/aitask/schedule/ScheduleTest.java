@@ -28,10 +28,8 @@ import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
 import com.ai.app.aitask.utils.TriggerUnil;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 
 public class ScheduleTest {
 
@@ -73,28 +71,29 @@ public class ScheduleTest {
     }
 
     @Test
-    public void testFetchTask() throws InterruptedException {
+    public void fetchXMLTask() {
+
+    }
+
+    @Test
+    public void fetchJSONTask() throws Exception {
         String file = FileUtils.readFileInClasspath("task_schedule_001.json");
         JsonObject json = new JsonParser().parse(file).getAsJsonObject();
         JsonObject plan = json.get("plan").getAsJsonArray().get(0).getAsJsonObject();
         Calendar c = Calendar.getInstance();
         String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
-        System.out.println("bf:"+t);
         c.setTime(new Date(System.currentTimeMillis() + 2000l));
         t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
-        System.out.println("af:"+t);
         plan.addProperty("cron", t);
-        System.out.println("bf:"+file);
         response = json.toString();
-        System.out.println("af:"+response);
 
         TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule(), 1000l);
         fetcher.fetch();
         Thread.sleep(10000l);
     }
+
     /**
      * TODO 这个测试后半段不稳定
-     *
      * @throws Exception
      */
     @Test

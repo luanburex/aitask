@@ -1,16 +1,14 @@
 package com.ai.app.aitask.task.excutor.impl;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Scanner;
+import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.ai.app.aitask.common.Processor;
+import com.ai.app.aitask.common.Constants;
+import com.ai.app.aitask.common.ProcessWorker;
 import com.ai.app.aitask.task.excutor.IExecutor;
 
 /**
@@ -19,123 +17,79 @@ import com.ai.app.aitask.task.excutor.IExecutor;
  * @author Administrator
  *
  */
-public class CmdTaskExecutor implements IExecutor {
+public class CmdTaskExecutor implements IExecutor, Constants {
 
-    protected transient final static Logger log             = Logger.getLogger(CmdTaskExecutor.class);
-    public static String                    default_charset = "GBK";
+    protected transient final static Logger log      = Logger.getLogger(CmdTaskExecutor.class);
+    private ProcessWorker                   process  = null;
+    private String[]                        commands = null;
 
-    private Process                         exectionProcess = null;
-    private String                          cmd             = null;
-    private String                          execute_out     = null;
-    private String                          execute_error   = null;
-
-    public String getExecute_out() {
-        return execute_out;
+    public String getOutput() {
+        return process.getStandOutput();
     }
 
-    public String getExecute_error() {
-        return execute_error;
+    public String getError() {
+        return process.getErrorOutput();
     }
 
-    public CmdTaskExecutor(String cmd) {
-        this.cmd = cmd;
+    public CmdTaskExecutor(String... commands) {
+        this.commands = commands;
     }
 
-    public void taskkill(String process_name) throws IOException {
-
-        Process process_kill_task = Runtime.getRuntime().exec("taskkill /T /F /IM " + process_name);
-        Scanner in = new Scanner(process_kill_task.getInputStream());
-        while (in.hasNextLine()) {
-            // log.debug(in.nextLine());
-        }
+    public void killTask(String process_name) throws IOException {
+        ProcessWorker process = new ProcessWorker(DEFAULT_CHARSET);
+        process.process("taskkill", "/T", "/F", "/IM", process_name);
 
         try {
             Thread.sleep(2000l);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (this.existsTask(process_name)) {
+        if (taskExist(process_name)) {
             log.error("process kill error:" + process_name);
         }
-        in.close();
     }
-    private boolean existsTask(String process_name) throws IOException {
-        Process process = Runtime.getRuntime().exec("tasklist");
 
-        Scanner in = new Scanner(process.getInputStream());
-        while (in.hasNextLine()) {
-            String p = in.nextLine();
-            if (p.contains(process_name)) {
-                in.close();
-                return true;
+    private boolean taskExist(final String process_name) throws IOException {
+        ProcessWorker process = new ProcessWorker(DEFAULT_CHARSET) {
+            @Override
+            protected void handleStandOutput(String content) {
+                if (content.contains(process_name)) {
+                    destroy();  // force process close will return '1' as result.
+                }
+                super.handleStandOutput(content);
             }
-        }
-        in.close();
-        return false;
+        };
+        return 1 == process.process("tasklist");
     }
-
-    /**
-     * run cmd command.
-     *
-     * @param cmd
-     * @return
-     * @throws Exception
-     */
     @Override
     public int run(JobExecutionContext context) throws JobExecutionException {
         if (context != null) {
-            log.info("[" + context.getTrigger().getKey() + "]" + "start run cmd: " + cmd);
+            log.info("[" + context.getTrigger().getKey() + "]" + "start run cmd: "
+                    + Arrays.toString(commands));
         }
         try {
-            Processor p = new Processor("GBK");
-            this.exectionProcess = Runtime.getRuntime().exec(cmd);
-            // BufferedInputStream in = new BufferedInputStream(this.exectionProcess.getInputStream());
-            // byte[] bytes = new byte[4096];
-            // while (in.read(bytes) != -1) {execute_out += new String(bytes, "UTF-8");}
-            this.execute_out = "";
-            this.execute_error = "";
-            InputStream in = this.exectionProcess.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, default_charset));
-            String str = "";
-            while ((str = br.readLine()) != null) {
-                this.execute_out += str;
-            }
-
-            BufferedReader br_err = new BufferedReader(new InputStreamReader(
-                    this.exectionProcess.getErrorStream(), default_charset));
-            while ((str = br_err.readLine()) != null) {
-                this.execute_error += "\n" + str;
-            }
-
-            log.info("CMD stdout: " + this.execute_out);
-            if (!"".equals(execute_error)) {
-                log.error("CMD error: " + this.execute_error);
-            }
-
+            process = new ProcessWorker(DEFAULT_CHARSET);
             if (context != null) {
-                log.info("[" + context.getTrigger().getKey() + "]" + "start wait cmd end..: " + cmd);
+                log.info("[" + context.getTrigger().getKey() + "]" + "process begin");
             }
-            int result = this.exectionProcess.waitFor();
+            int result = process.process(commands);
             if (context != null) {
-                log.info("[" + context.getTrigger().getKey() + "]" + "end cmd execution: " + cmd);
+                log.info("[" + context.getTrigger().getKey() + "]" + "process end");
             }
-
+            log.info("process stdout: " + process.getStandOutput());
+            if (!process.getErrorOutput().isEmpty()) {
+                log.error("process erroput: " + process.getErrorOutput());
+            }
             return result;
         } catch (Exception e) {
             throw new JobExecutionException(e);
         }
-
     }
-
-    /**
-     * use process.destroy end the process running.
-     */
     @Override
-    public void interupt() {
-        log.info("destroy process: " + cmd + "\t ,and process object :" + this.exectionProcess);
-        if (this.exectionProcess != null) {
-            this.exectionProcess.destroy();
-            // this.exectionProcess.exitValue();
+    public void destroy() {
+        log.info("process destroyed");
+        if (this.process != null) {
+            this.process.destroy();
         }
     }
 }

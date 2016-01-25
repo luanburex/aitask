@@ -10,18 +10,18 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 
-public class BeforeAndAfterTaskListener implements JobListener {
+public class TaskListener implements JobListener {
 
     private final static transient Logger log = Logger
-            .getLogger(BeforeAndAfterTaskListener.class);
+            .getLogger(TaskListener.class);
 
-    public BeforeAndAfterTaskListener() throws SQLException, InstantiationException,
+    public TaskListener() throws SQLException, InstantiationException,
     IllegalAccessException, ClassNotFoundException, IOException {
     }
 
     @Override
     public String getName() {
-        return "BeforeAndAfterTaskListener";
+        return "TaskListener";
     }
 
     @Override
@@ -35,6 +35,7 @@ public class BeforeAndAfterTaskListener implements JobListener {
         try {
             Method m = context.getJobInstance().getClass().getMethod("before",JobExecutionContext.class);
             m.invoke(context.getJobInstance(),context);
+
             JobDataMap data_map = context.getTrigger().getJobDataMap();
             StringBuilder sb = new StringBuilder();
             for(Object key: data_map.keySet()){
@@ -50,10 +51,10 @@ public class BeforeAndAfterTaskListener implements JobListener {
     @Override
     public void jobWasExecuted(JobExecutionContext context,
             JobExecutionException error) {
-
         try {
             Method m = context.getJobInstance().getClass().getMethod("after",JobExecutionContext.class,JobExecutionException.class);
             m.invoke(context.getJobInstance(),context,error);
+
             JobDataMap data_map = context.getTrigger().getJobDataMap();
             StringBuilder sb = new StringBuilder();
             for(Object key: data_map.keySet()){

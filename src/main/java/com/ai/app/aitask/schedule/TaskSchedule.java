@@ -18,8 +18,8 @@ import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
 
-import com.ai.app.aitask.listener.BeforeAndAfterTaskListener;
-import com.ai.app.aitask.listener.OpenAndCloseListner;
+import com.ai.app.aitask.listener.TaskListener;
+import com.ai.app.aitask.listener.ScheduleListner;
 import com.ai.app.aitask.listener.TaskTimeoutListener;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
@@ -54,13 +54,13 @@ public class TaskSchedule {
         this.scheduler = scheduler;
 
         log.debug("[" + scheduler.getSchedulerName() + "]" + "add the Scheduler listener.");
-        scheduler.getListenerManager().addSchedulerListener(new OpenAndCloseListner());
+        scheduler.getListenerManager().addSchedulerListener(new ScheduleListner());
 
         log.debug("[" + scheduler.getSchedulerName() + "]" + "add listeners to all task.");
 
         // scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener(),
         // EverythingMatcher.allJobs());
-        scheduler.getListenerManager().addJobListener(new BeforeAndAfterTaskListener());
+        scheduler.getListenerManager().addJobListener(new TaskListener());
         scheduler.getListenerManager().addJobListener(new TaskTimeoutListener());
 
         scheduler.start();

@@ -113,7 +113,7 @@ public class CmdTaskExecutorTester {
             public void run() {
                 try {
                     Thread.sleep(1000l);
-                    e.interupt();
+                    e.destroy();
                 } catch (Exception e) {
                     e.printStackTrace();
                     Assert.assertTrue("存在报错", false);
@@ -169,7 +169,7 @@ public class CmdTaskExecutorTester {
                 public void run() {
                     try {
                         Thread.sleep(1000l);
-                        e.interupt();
+                        e.destroy();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Assert.assertTrue("存在报错", false);
@@ -198,7 +198,7 @@ public class CmdTaskExecutorTester {
             int ret = e.run(null);
             log.debug(ret);
             Assert.assertTrue(ret == 1);
-            Assert.assertFalse("".equals(e.getExecute_out()));
+            Assert.assertFalse("".equals(e.getOutput()));
             
         } catch (Exception exc) {
             exc.printStackTrace();

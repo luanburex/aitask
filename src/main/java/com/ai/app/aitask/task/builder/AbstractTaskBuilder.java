@@ -13,7 +13,7 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
 import com.ai.app.aitask.common.Caster;
-import com.ai.app.aitask.exception.TaskParseNotFoundException;
+import com.ai.app.aitask.exception.TaskParseException;
 import com.ai.app.aitask.task.SerialTask;
 
 public abstract class AbstractTaskBuilder implements ITaskBuilder {
@@ -74,13 +74,13 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
         // check
         Map<String, Object> taskData = Caster.cast(datamap.get("task"));
         if (taskData.get("task_id") == null) {
-            throw new TaskParseNotFoundException("id");
+            throw new TaskParseException("id");
         }
         if (taskData.get("instant") == null) {
-            throw new TaskParseNotFoundException("instant");
+            throw new TaskParseException("instant");
         }
         if (taskData.get("cron") == null) {
-            throw new TaskParseNotFoundException("cron");
+            throw new TaskParseException("cron");
         }
         jobDatamap.put("timeout", Long.parseLong((String) taskData.get("timeout")));
         jobDatamap.put("datamap", datamap);

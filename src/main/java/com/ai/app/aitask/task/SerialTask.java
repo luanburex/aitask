@@ -119,7 +119,7 @@ public class SerialTask implements ITask, Constants {
         isJobInterrupted = true;
         if (executor != null) {
             log.info("interrupt executor: " + executor.getClass().toString());
-            executor.interupt();
+            executor.destroy();
         }
         if (thisThread != null) {
             log.info("interrupt this thread: " + thisThread.getName());
