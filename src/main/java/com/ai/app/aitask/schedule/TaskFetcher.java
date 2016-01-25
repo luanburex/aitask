@@ -27,27 +27,28 @@ import com.ai.app.aitask.task.builder.ITaskBuilder;
 
 public class TaskFetcher implements Constants {
 
-    private final static Log log              = LogFactory.getLog(TaskFetcher.class);
+    protected final static Log log              = LogFactory.getLog(TaskFetcher.class);
     private TaskSchedule     schedule         = null;
     private TaskSyncRunable  task_sync        = null;
     private Thread           task_sync_thread = null;
     private Config           config;
 
-    public TaskFetcher(TaskSchedule ts, long sync_task_interval_time) {
+    public TaskFetcher(TaskSchedule ts) {
         this.schedule = ts;
         this.config = Config.instance("client.properties");
-        ;
         this.task_sync = new TaskSyncRunable(this.schedule);
-        this.task_sync.setIntervalTime(sync_task_interval_time);
         this.task_sync_thread = new Thread(this.task_sync);
         this.task_sync_thread.start();
     }
 
-    public void fetch() {
+    public void fetch(String taskId) {
         String url = config.getProperty(null, "aitask.sync.url");
         String agent_name = config.getProperty(null, "aitask.name");
         HashMap<String, String> queryPairs = new HashMap<String, String>();
-        queryPairs.put("taskId", agent_name);
+        queryPairs.put("agentName", agent_name);
+        if (null != taskId) {
+            queryPairs.put("taskId", agent_name);
+        }
 
         RequestWorker worker = new RequestWorker(url, null);                                        // 取任务
         try {
@@ -192,8 +193,8 @@ public class TaskFetcher implements Constants {
 
         System.out.println(sourceMap.get("plan"));
 
-        com.google.gson.Gson pretty;
-        pretty = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
+        //        com.google.gson.Gson pretty;
+        //        pretty = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
         //        System.out.println(pretty.toJson(sourceMap));
 
         List<ITaskBuilder> taskList = new LinkedList<ITaskBuilder>();
@@ -256,7 +257,7 @@ public class TaskFetcher implements Constants {
                 task.put("cron", planMap.get(task.get("plan_id")).get("cron"));
                 Calendar c = Calendar.getInstance();
                 String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
-                System.out.println("bf:"+t);
+                System.out.println("bf:" + t);
                 c.setTime(new Date(System.currentTimeMillis() + 2000l));
                 t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
                 task.put("cron", t);

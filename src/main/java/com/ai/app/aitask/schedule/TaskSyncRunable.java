@@ -8,22 +8,21 @@ import org.apache.commons.logging.LogFactory;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
 
+import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
 public class TaskSyncRunable implements Runnable {
 
-    final transient static Log    log           = LogFactory.getLog(TaskSyncRunable.class);
+    final transient static Log    log          = LogFactory.getLog(TaskSyncRunable.class);
 
-    Map<TriggerKey, ITaskBuilder> tasks         = new ConcurrentHashMap<TriggerKey, ITaskBuilder>();
-    TaskSchedule                  taskSchedule  = null;
-    long                          interval_time = 1000l;
+    Map<TriggerKey, ITaskBuilder> tasks        = new ConcurrentHashMap<TriggerKey, ITaskBuilder>();
+    TaskSchedule                  taskSchedule = null;
+    long                          intervalTime = 1000l;
 
     public TaskSyncRunable(TaskSchedule taskSchedule) {
+        Config config = Config.instance("client.properties");
+        this.intervalTime = Long.parseLong(config.getProperty(null, "aitask.sync.interval"));
         this.taskSchedule = taskSchedule;
-    }
-
-    public void setIntervalTime(long time) {
-        this.interval_time = time;
     }
 
     public void putTask(ITaskBuilder tb) {
@@ -44,8 +43,8 @@ public class TaskSyncRunable implements Runnable {
     public void run() {
         try {
             while (true) {
-                Thread.sleep(interval_time);
-                log.info("sleep:" + interval_time);
+                Thread.sleep(intervalTime);
+                log.info("sleep:" + intervalTime);
                 this.sync();
             }
         } catch (Exception e) {

@@ -13,7 +13,7 @@ public class WTFResultFetcher implements IResultFetcher{
 
     @Override
     public String fetch(JobExecutionContext context) throws JobExecutionException {
-        Map<String, Map<String, Object>> datamap = Caster.cast(context.getMergedJobDataMap().get("datamap"));
+        //        Map<String, Map<String, Object>> datamap = Caster.cast(context.getMergedJobDataMap().get("datamap"));
 
         Map<String, Object> casemap = new HashMap<String, Object>();
         casemap.put("taskId", "1");
@@ -52,7 +52,7 @@ public class WTFResultFetcher implements IResultFetcher{
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("caseLog", casemap);
         result.put("stepLog", new Object[]{stepmap});
-        
+
         System.err.println(casemap);
 
         return new com.google.gson.Gson().toJson(result);

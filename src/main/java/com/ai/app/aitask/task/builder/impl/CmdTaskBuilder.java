@@ -4,10 +4,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.task.builder.AbstractTaskBuilder;
 import com.ai.app.aitask.task.excutor.impl.CmdTaskExecutor;
-import com.ai.app.aitask.task.result.impl.IniResultFetcher;
 import com.ai.app.aitask.task.result.impl.WTFResultFetcher;
 
 public class CmdTaskBuilder extends AbstractTaskBuilder {
@@ -16,7 +14,7 @@ public class CmdTaskBuilder extends AbstractTaskBuilder {
 
     @Override
     public void parseTask(Map<String, Object> datamap) throws Exception {
-        Map<String, Object> taskData = Caster.cast(datamap.get("task"));
+        //        Map<String, Object> taskData = Caster.cast(datamap.get("task"));
         jobDatamap.put("preparer", null);
         String cmd_str = "ping www.baidu.com";
         jobDatamap.put("executor", new CmdTaskExecutor(cmd_str));

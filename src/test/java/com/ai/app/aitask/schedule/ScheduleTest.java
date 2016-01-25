@@ -88,7 +88,7 @@ public class ScheduleTest {
         response = json.toString();
 
         TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule(), 1000l);
-        fetcher.fetch();
+        fetcher.fetch(null);
         Thread.sleep(10000l);
     }
 
@@ -117,7 +117,7 @@ public class ScheduleTest {
         response = new Gson().toJson(bean);
 
         TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule(), 1000l);
-        fetcher.fetch();
+        fetcher.fetch(null);
 
         String id1 = ((Element) root.elements("task").get(0)).attributeValue("ID");
         String id2 = ((Element) root.elements("task").get(1)).attributeValue("ID");
@@ -135,7 +135,7 @@ public class ScheduleTest {
         System.out.println(schedule.getTrigerInfo());
         System.err.println("==================================================");
         // 3.重新加载之前的任务
-        fetcher.fetch();
+        fetcher.fetch(null);
         System.out.println(daemon.getTaskSchedule().getTrigerInfo());
 
         Thread.sleep(2000l);// 需要等之前的任务执行完，才会进行替换
