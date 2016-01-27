@@ -16,7 +16,7 @@ import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.schedule.TaskFetcher;
 
 public class TaskArrangeServlet extends HttpServlet implements Constants {
-    private static final long  serialVersionUID = 1L;
+    private static final long serialVersionUID = 4588897907403234206L;
     protected final static Log log              = LogFactory.getLog(TaskArrangeServlet.class);
     private TaskFetcher        fetcher;
     {

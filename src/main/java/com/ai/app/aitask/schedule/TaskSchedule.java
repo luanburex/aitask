@@ -2,13 +2,16 @@ package com.ai.app.aitask.schedule;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -61,7 +64,6 @@ public class TaskSchedule {
         // EverythingMatcher.allJobs());
         scheduler.getListenerManager().addJobListener(new TaskListener());
         scheduler.getListenerManager().addJobListener(new TaskTimeoutListener());
-
         scheduler.start();
     }
 
@@ -128,5 +130,14 @@ public class TaskSchedule {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    public List<JobExecutionContext> getTasks() {
+        try {
+            return scheduler.getCurrentlyExecutingJobs();
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<JobExecutionContext>();
     }
 }

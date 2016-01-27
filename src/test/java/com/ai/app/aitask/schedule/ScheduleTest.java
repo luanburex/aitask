@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,9 +22,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
 
+import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
@@ -45,6 +50,16 @@ public class ScheduleTest {
             public void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p) {
                 if ("/fetchTask".equals(u)) {
                     super.handle(response, r, q, p);
+                } else if ("/query".equals(u)) {
+                    List<JobExecutionContext> list;
+                    list = ScheduleDaemon.instance().getTaskSchedule().getTasks();
+
+                    for (JobExecutionContext context : ScheduleDaemon.instance().getTaskSchedule().getTasks()) {
+                        JobDataMap jobdatamap = context.getMergedJobDataMap();
+                        Map<String, Map<String, Object>> datamap = Caster.cast(jobdatamap.get("datamap"));
+                        System.err.println("query:"+datamap);
+                    }
+                    super.handle(u, r, q, p);
                 } else {
                     super.handle(u, r, q, p);
                 }
@@ -87,13 +102,14 @@ public class ScheduleTest {
         plan.addProperty("cron", t);
         response = json.toString();
 
-        TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule(), 1000l);
+        TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule());
         fetcher.fetch(null);
         Thread.sleep(10000l);
     }
 
     /**
      * TODO 这个测试后半段不稳定
+     *
      * @throws Exception
      */
     @Test
@@ -116,7 +132,7 @@ public class ScheduleTest {
         bean.put("xml", root.asXML());
         response = new Gson().toJson(bean);
 
-        TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule(), 1000l);
+        TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule());
         fetcher.fetch(null);
 
         String id1 = ((Element) root.elements("task").get(0)).attributeValue("ID");
