@@ -1,6 +1,8 @@
 package com.ai.app.aitask.schedule;
 
 import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +48,11 @@ public class TaskFetcher implements Constants {
         String agent_name = config.getProperty(null, "aitask.name");
         HashMap<String, String> queryPairs = new HashMap<String, String>();
         queryPairs.put("agentName", agent_name);
+        try {
+            queryPairs.put("ip", InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         if (null != taskId) {
             queryPairs.put("taskId", taskId);
         }
