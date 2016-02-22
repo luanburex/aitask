@@ -41,14 +41,18 @@ public class TaskSyncRunable implements Runnable {
 
     @Override
     public void run() {
-        try {
-            while (true) {
-                Thread.sleep(intervalTime);
-                log.info("sleep:" + intervalTime);
-                this.sync();
+        if (intervalTime < 1) {
+            log.info("task sync closed (" + intervalTime + ")");
+        } else {
+            try {
+                while (true) {
+                    Thread.sleep(intervalTime);
+                    log.info("sleep:" + intervalTime);
+                    this.sync();
+                }
+            } catch (Exception e) {
+                log.error(e);
             }
-        } catch (Exception e) {
-            log.error(e);
         }
     }
 }

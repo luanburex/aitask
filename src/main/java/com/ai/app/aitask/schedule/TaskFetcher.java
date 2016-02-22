@@ -28,10 +28,10 @@ import com.ai.app.aitask.task.builder.ITaskBuilder;
 public class TaskFetcher implements Constants {
 
     protected final static Log log              = LogFactory.getLog(TaskFetcher.class);
-    private TaskSchedule     schedule         = null;
-    private TaskSyncRunable  task_sync        = null;
-    private Thread           task_sync_thread = null;
-    private Config           config;
+    private TaskSchedule       schedule         = null;
+    private TaskSyncRunable    task_sync        = null;
+    private Thread             task_sync_thread = null;
+    private Config             config;
 
     public TaskFetcher(TaskSchedule ts) {
         this.schedule = ts;
@@ -41,13 +41,16 @@ public class TaskFetcher implements Constants {
         this.task_sync_thread.start();
     }
 
-    public void fetch(String taskId) {
+    public List<ITaskBuilder> fetch(String taskId, String remote) {
         String url = config.getProperty(null, "aitask.sync.url");
         String agent_name = config.getProperty(null, "aitask.name");
         HashMap<String, String> queryPairs = new HashMap<String, String>();
         queryPairs.put("agentName", agent_name);
         if (null != taskId) {
-            queryPairs.put("taskId", agent_name);
+            queryPairs.put("taskId", taskId);
+        }
+        if (null != remote) {
+            url = url.replaceFirst("://.*:", "://".concat(remote).concat(":"));
         }
 
         RequestWorker worker = new RequestWorker(url, null);                                        // 取任务
@@ -56,10 +59,10 @@ public class TaskFetcher implements Constants {
         } catch (ConnectException e1) {
             // e1.printStackTrace();
             log.error("req : failed connecting");
-            return;
+            return null;
         } finally {
             log.info("resp msg:" + worker.getResponseMessage());
-            log.info("resp code:" + worker.getResponseContent());
+            log.info("resp txt:" + worker.getResponseContent());
         }
 
         String content = worker.getResponseContent();
@@ -67,17 +70,18 @@ public class TaskFetcher implements Constants {
         List<ITaskBuilder> taskList = null;
         if (null == content || content.trim().isEmpty()) {
             log.error("no effective content");
-            return;
+            return null;
         } else {
             Map<String, Object> sourceMap = Mapper.parseJSON(content);
-            if (sourceMap.containsKey("xml") && !((String) sourceMap.get("xml")).trim().isEmpty()) {
+            String xml = (String) sourceMap.get("xml");
+            if (sourceMap.containsKey("xml") && !xml.trim().isEmpty()) {    // XML task
                 try {
-                    taskList = parseXMLTask(Mapper.parseXML((String) sourceMap.get("xml")));
+                    taskList = parseXMLTask(Mapper.parseXML(xml));
                 } catch (Exception e) {
                     e.printStackTrace();
                     log.error("fail parsing xml");
                 }
-            } else {
+            } else {                                                        // JSON task
                 taskList = parseJSONTask(sourceMap);
             }
         }
@@ -95,6 +99,7 @@ public class TaskFetcher implements Constants {
                 e.printStackTrace();
             }
         }
+        return taskList;
     }
     private List<ITaskBuilder> parseXMLTask(Map<String, Object> sourceMap) {
         List<ITaskBuilder> taskList = new LinkedList<ITaskBuilder>();
@@ -146,12 +151,17 @@ public class TaskFetcher implements Constants {
         taskDict.put("planId", "plan_id");
         planDict.put("planId", "plan_id");
 
+        taskDict.put("planName", "plan_name");
+        planDict.put("planName", "plan_name");
+
         taskDict.put("taskId", "task_id");
         taskdataDict.put("taskId", "task_id");
         taskscriptDict.put("taskId", "task_id");
 
         taskdataDict.put("dataId", "data_id");
         taskdatadetailDict.put("dataId", "data_id");
+
+        taskdataDict.put("dataName", "data_name");
 
         scriptDict.put("scriptId", "script_id");
         taskdataDict.put("scriptId", "script_id");
@@ -191,22 +201,13 @@ public class TaskFetcher implements Constants {
 
         Mapper.transfer(sourceMap, dict);
 
-        System.out.println(sourceMap.get("plan"));
-
-        //        com.google.gson.Gson pretty;
-        //        pretty = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
-        //        System.out.println(pretty.toJson(sourceMap));
-
-        List<ITaskBuilder> taskList = new LinkedList<ITaskBuilder>();
-
         Map<String, Map<String, Object>> planMap = new HashMap<String, Map<String, Object>>();
-        {// TODO plan 这个包并不需要, 可以整合到Task里
+        {// 测试计划
             List<Map<String, Object>> planList = Caster.cast(sourceMap.get("plan"));
             for (Map<String, Object> plan : planList) {
                 planMap.put((String) plan.get("plan_id"), plan);
             }
         }
-        System.out.println("planMap:" + planMap);
 
         Map<String, Object> scriptMap = new HashMap<String, Object>();
         {
@@ -215,7 +216,6 @@ public class TaskFetcher implements Constants {
                 scriptMap.put((String) script.get("script_id"), script);
             }
         }
-        System.out.println("scriptMap:" + scriptMap);
 
         Map<String, String> task2script = new HashMap<String, String>();
         {
@@ -224,7 +224,6 @@ public class TaskFetcher implements Constants {
                 task2script.put(t2s.get("task_id"), t2s.get("script_id"));
             }
         }
-        System.out.println("task2script:" + task2script);
 
         Map<String, Map<String, Object>> dataMap = new HashMap<String, Map<String, Object>>();
         {
@@ -233,7 +232,6 @@ public class TaskFetcher implements Constants {
                 dataMap.put((String) data.get("script_id"), data);
             }
         }
-        System.out.println("dataMap:" + dataMap);
 
         Map<String, List<Object>> detailListMap = new HashMap<String, List<Object>>();
         {
@@ -247,8 +245,8 @@ public class TaskFetcher implements Constants {
                 list.add(detail);
             }
         }
-        System.out.println("detailListMap:" + detailListMap);
 
+        List<ITaskBuilder> taskList = new LinkedList<ITaskBuilder>();
         // TODO 任务按脚本执行数据拆分成副本
         List<Map<String, Object>> tasks = Caster.cast(sourceMap.get("task"));
         for (Map<String, Object> task : tasks) {
@@ -257,7 +255,6 @@ public class TaskFetcher implements Constants {
                 task.put("cron", planMap.get(task.get("plan_id")).get("cron"));
                 Calendar c = Calendar.getInstance();
                 String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
-                System.out.println("bf:" + t);
                 c.setTime(new Date(System.currentTimeMillis() + 2000l));
                 t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
                 task.put("cron", t);
@@ -275,7 +272,6 @@ public class TaskFetcher implements Constants {
             Map<String, Object> data = dataMap.get(scriptId);
             data.put("detail", detailListMap.get(data.get("data_id")));
             taskData.put("data", data);
-            //            System.out.println(pretty.toJson(taskData));
             try {
                 String task_category = (String) task.get("task_category");
                 taskList.add(TaskDirector.getBuilder(taskData, task_category));

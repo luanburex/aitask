@@ -16,7 +16,7 @@ import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.schedule.TaskFetcher;
 
 public class TaskArrangeServlet extends HttpServlet implements Constants {
-    private static final long serialVersionUID = 4588897907403234206L;
+    private static final long  serialVersionUID = 4588897907403234206L;
     protected final static Log log              = LogFactory.getLog(TaskArrangeServlet.class);
     private TaskFetcher        fetcher;
     {
@@ -29,21 +29,32 @@ public class TaskArrangeServlet extends HttpServlet implements Constants {
         doPost(req, resp);
     }
 
+    public String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        System.out.println("from : " + req.getRemoteAddr());
-        System.out.println("query : " + req.getQueryString());
-
         String taskid = req.getParameter("taskId");
 
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html");
 
         Writer writer = resp.getWriter();
-        writer.write("收到:" + taskid);
+        writer.write("task arrange received:" + taskid);
         writer.flush();
 
-        fetcher.fetch(taskid);
+        fetcher.fetch(taskid, getIpAddr(req));
     }
 }

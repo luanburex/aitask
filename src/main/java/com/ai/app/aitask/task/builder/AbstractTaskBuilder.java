@@ -20,8 +20,8 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
 
     transient final static protected Logger log        = Logger.getLogger(AbstractTaskBuilder.class);
 
-    protected JobDetail                     jobDetail  = null;
     protected Trigger                       trigger    = null;
+    protected JobDetail                     jobDetail  = null;
     protected JobDataMap                    jobDatamap = new JobDataMap();
 
     //    protected IExecutor                   executor   = null;

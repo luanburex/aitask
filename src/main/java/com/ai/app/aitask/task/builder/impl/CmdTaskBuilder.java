@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.ai.app.aitask.task.builder.AbstractTaskBuilder;
 import com.ai.app.aitask.task.excutor.impl.CmdTaskExecutor;
-import com.ai.app.aitask.task.result.impl.WTFResultFetcher;
+import com.ai.app.aitask.task.result.impl.TestResultFetcher;
 
 public class CmdTaskBuilder extends AbstractTaskBuilder {
 
@@ -19,7 +19,7 @@ public class CmdTaskBuilder extends AbstractTaskBuilder {
         String cmd_str = "ping www.baidu.com";
         jobDatamap.put("executor", new CmdTaskExecutor(cmd_str));
         //        jobDatamap.put("executor", new CmdTaskExecutor((String) jobDatamap.get("cmd_str")));
-        jobDatamap.put("result", new WTFResultFetcher());
+        jobDatamap.put("result", new TestResultFetcher());
         super.parseTask(datamap);
     }
 

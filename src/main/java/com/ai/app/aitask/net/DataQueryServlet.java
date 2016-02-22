@@ -40,7 +40,7 @@ public class DataQueryServlet extends HttpServlet {
                 Long end = (Long) jobdatamap.get("end_time");
                 if (null != start && null == end) {
                     String dataId = (String) datamap.get("data").get("data_id");
-                    String dataName = (String) datamap.get("data").get("dataName");
+                    String dataName = (String) datamap.get("data").get("data_name");
 
                     resp.setCharacterEncoding("UTF-8");
                     resp.setContentType(ContentType.APPLICATION_JSON.getMimeType());

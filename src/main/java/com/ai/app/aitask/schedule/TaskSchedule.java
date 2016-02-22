@@ -3,10 +3,7 @@ package com.ai.app.aitask.schedule;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -75,12 +72,7 @@ public class TaskSchedule {
         log.info("[" + this.scheduler.getSchedulerName() + "]" + "add the task ["
                 + trigger.getKey().toString() + "]");
 
-        Map<JobDetail, Set<? extends Trigger>> tasks = new HashMap<JobDetail, Set<? extends Trigger>>();
-        Set<Trigger> triggerlist = new HashSet<Trigger>();
-        triggerlist.add(trigger);
-        tasks.put(job, triggerlist);
         scheduler.scheduleJob(job, trigger);
-        //        scheduler.scheduleJobs(tasks, replace);
 
         log.debug("[" + this.scheduler.getSchedulerName() + "]there is "
                 + scheduler.getCurrentlyExecutingJobs().size() + " jobs running.");

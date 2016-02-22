@@ -9,7 +9,7 @@ import org.quartz.JobExecutionException;
 import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.task.result.IResultFetcher;
 
-public class WTFResultFetcher implements IResultFetcher{
+public class TestResultFetcher implements IResultFetcher{
 
     @Override
     public String fetch(JobExecutionContext context) throws JobExecutionException {
@@ -53,8 +53,6 @@ public class WTFResultFetcher implements IResultFetcher{
         result.put("caseLog", casemap);
         result.put("stepLog", new Object[]{stepmap});
 
-        System.err.println(casemap);
-
         return new com.google.gson.Gson().toJson(result);
     }
 
@@ -62,7 +60,6 @@ public class WTFResultFetcher implements IResultFetcher{
     public String error(JobExecutionContext context, JobExecutionException exception)
             throws JobExecutionException {
         Map<String, Object> datamap = Caster.cast(context.getMergedJobDataMap().get("datamap"));
-        System.out.println(datamap);
         return fetch(context);
     }
 

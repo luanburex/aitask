@@ -29,8 +29,9 @@ public class TestJettyServer {
         server.start();
     }
     public final void stop() throws Exception {
-        if (server != null)
+        if (server != null) {
             server.stop();
+        }
     }
     public void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p) {
         p.setContentType("text/html;charset=utf-8");
@@ -40,7 +41,6 @@ public class TestJettyServer {
         Writer writer = null;
         try {
             writer = p.getWriter();
-            System.err.println(content);
             writer.write(content);
             writer.flush();
         } catch (IOException e) {

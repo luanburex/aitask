@@ -26,7 +26,7 @@ public class TaskSyncDaemon {
             @Override
             public void run() {
                 log.info("try task synchronize");
-                fetcher.fetch(null);
+                fetcher.fetch(null, null);
             }
         }, 100l, 1000l);
     }
