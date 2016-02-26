@@ -19,7 +19,7 @@ public class CmdTaskTimeoutTest {
     final static protected Logger log = Logger.getLogger(CmdTaskTest.class);
 
     public static ScheduleDaemon sd;
-    
+
     @BeforeClass
     public static void start() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SchedulerException, IOException, SQLException{
         sd = ScheduleDaemon.instance();
@@ -28,16 +28,16 @@ public class CmdTaskTimeoutTest {
     @Test
     public void testTimeout() throws Exception, IllegalAccessException, ClassNotFoundException, SchedulerException, IOException, SQLException{
         ScheduleDaemon sd = ScheduleDaemon.instance();
-        String xml_file = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString() 
+        String xml_file = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString()
                 + "/com/ai/app/aitask/task/cmd_script_task004_timeout.xml";
         String xml_str = FileUtils.readFileToString(xml_file);
-        ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
+        ITaskBuilder ts = TaskDirector.getBuilder(null, Integer.toString(TaskDirector.TASK_TYPE_CMD));
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
                 ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
         sd.getTaskSchedule().addTask(ts, true);
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
                 ts.getTrigger().getKey(), TriggerState.BLOCKED, 1000l));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
                 ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
     }
 }

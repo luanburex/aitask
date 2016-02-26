@@ -21,41 +21,44 @@ public class CmdTaskCronTest {
     final static protected Logger log = Logger.getLogger(CmdTaskCronTest.class);
 
     public static ScheduleDaemon sd;
-    
+
     @BeforeClass
     public static void start() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SchedulerException, IOException, SQLException{
         sd = ScheduleDaemon.instance();
     }
-    
+
     @Test
     public void testCronRun() throws Exception{
-        String xml_file = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString() 
+        String xml_file = Thread.currentThread().getContextClassLoader().getResource("").getPath().toString()
                 + "/com/ai/app/aitask/task/cmd_script_task005_cron.xml";
         String xml_str = FileUtils.readFileToString(xml_file);
-        ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
+        //        ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
+        ITaskBuilder ts = TaskDirector.getBuilder(null, Integer.toString(TaskDirector.TASK_TYPE_CMD));
+
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(System.currentTimeMillis() + 2000l));
         String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
         log.info(t);
-        ts.getDatamap().put("cron", t);
+        //        ts.getDatamap().put("cron", t);
+        ts.getJobDetail().getJobDataMap().put("cron", t);
         ts.build();
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
                 ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
-        
+
         sd.getTaskSchedule().addTask(ts, true);
-        
+
         log.info(sd.getTaskSchedule().getTaskState(ts.getTrigger().getKey()));
-        
+
         log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getPreviousFireTime());
         log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getNextFireTime());
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
                 ts.getTrigger().getKey(), TriggerState.NORMAL, 2000l));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
                 ts.getTrigger().getKey(), TriggerState.BLOCKED, 5000l));
         log.info(sd.getTaskSchedule().getTaskState(ts.getTrigger().getKey()));
         log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getPreviousFireTime());
         log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getNextFireTime());
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(), 
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
                 ts.getTrigger().getKey(), TriggerState.NORMAL, 5000l));
 
     }

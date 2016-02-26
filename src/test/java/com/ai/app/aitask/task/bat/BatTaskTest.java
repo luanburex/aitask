@@ -36,8 +36,9 @@ public class BatTaskTest {
 
     @AfterClass
     public static void teardown() throws Exception {
-        if (server == null)
+        if (server == null) {
             server.stop();
+        }
     }
 
     @BeforeClass
@@ -77,7 +78,8 @@ public class BatTaskTest {
                         .toString()).getPath()
                         + "/com/ai/app/aitask/task/bat/bat_script_task001.ini");
 
-        ITaskBuilder ts = TaskDirector.getBatTaskBuilder(root.asXML());
+        //        ITaskBuilder ts = TaskDirector.getBatTaskBuilder(root.asXML());
+        ITaskBuilder ts = TaskDirector.getBuilder(null, Integer.toString(TaskDirector.TASK_TYPE_BAT));
         Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getTaskSchedule(), ts.getTrigger()
                 .getKey(), TriggerState.NONE, 1000l));
         daemon.getTaskSchedule().addTask(ts, true);
