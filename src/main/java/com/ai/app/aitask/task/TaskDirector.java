@@ -13,8 +13,10 @@ public class TaskDirector implements Constants {
         switch (Integer.parseInt(type)) {
         case TASK_TYPE_BAT:
             builder = new BatTaskBuilder();
+            break;
         case TASK_TYPE_CMD:
             builder = new CmdTaskBuilder();
+            break;
         }
         if (null != builder) {
             builder.parseTask(data);

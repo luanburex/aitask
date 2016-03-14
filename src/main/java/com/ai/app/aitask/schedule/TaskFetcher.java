@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -168,6 +169,8 @@ public class TaskFetcher implements Constants {
         taskdataDict.put("dataId", "data_id");
         taskdatadetailDict.put("dataId", "data_id");
 
+        taskdatadetailDict.put("datadetailId", "detail_id");
+
         taskdataDict.put("dataName", "data_name");
 
         scriptDict.put("scriptId", "script_id");
@@ -201,7 +204,7 @@ public class TaskFetcher implements Constants {
         Map<String, Map<String, String>> dict = new HashMap<String, Map<String, String>>();
         dict.put("plan", planDict);                     // plan : task      1:n
         dict.put("task", taskDict);
-        dict.put("src", scriptDict);                    // task : src       1:1
+        dict.put("scr", scriptDict);                    // task : src       1:1
         dict.put("taskData", taskdataDict);             // task : data      1:1
         dict.put("taskScript", taskscriptDict);
         dict.put("taskDataDetail", taskdatadetailDict); // task : detail    1:
@@ -236,7 +239,7 @@ public class TaskFetcher implements Constants {
         {
             List<Map<String, Object>> dataList = Caster.cast(sourceMap.get("taskData"));
             for (Map<String, Object> data : dataList) {
-                dataMap.put((String) data.get("script_id"), data);
+                dataMap.put((String) data.get("data_id"), data);
             }
         }
 
@@ -264,26 +267,32 @@ public class TaskFetcher implements Constants {
                 String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
                 c.setTime(new Date(System.currentTimeMillis() + 2000l));
                 t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
+                // TODO 延迟两秒
                 task.put("cron", t);
                 task.put("instant", planMap.get(task.get("plan_id")).get("instant"));
+                // TODO 缺的东西
                 task.put("timeout", "-1");
                 task.put("task_group", "AITASK");
-                task.put("task_category", Integer.toString(TASK_TYPE_BAT));
+                task.put("task_category", Integer.toString(TASK_TYPE_CMD));
             }
 
             String taskId = (String) task.get("task_id");
             String scriptId = task2script.get(taskId);
             taskData.put("task", task);
             taskData.put("script", scriptMap.get(scriptId));
+            for (Entry<String, Map<String, Object>> entry : dataMap.entrySet()) {
+                String dataid = entry.getKey();
 
-            Map<String, Object> data = dataMap.get(scriptId);
-            data.put("detail", detailListMap.get(data.get("data_id")));
-            taskData.put("data", data);
-            try {
-                String task_category = (String) task.get("task_category");
-                taskList.add(TaskDirector.getBuilder(taskData, task_category));
-            } catch (Exception e) {
-                e.printStackTrace();
+                Map<String, Object> data = entry.getValue();
+                data.put("detail", detailListMap.get(dataid));
+                Map<String, Object> copy = new HashMap<String, Object>(taskData);
+                copy.put("data", data);
+                try {
+                    String task_category = (String) task.get("task_category");
+                    taskList.add(TaskDirector.getBuilder(copy, task_category));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         return taskList;

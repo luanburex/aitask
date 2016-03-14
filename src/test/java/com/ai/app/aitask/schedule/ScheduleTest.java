@@ -1,5 +1,10 @@
 package com.ai.app.aitask.schedule;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,12 +58,13 @@ public class ScheduleTest {
         server = new TestJettyServer(9999) {
             @Override
             public void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p) {
-                log.info("from:"+r.getRemoteAddr());
-                log.info("user:"+r.getRemoteUser());
+                log.info("from:" + r.getRemoteAddr());
+                log.info("user:" + r.getRemoteUser());
 
-                String url = Config.instance("client.properties").getProperty(null, "aitask.sync.url");
-                log.info("url1:"+url);
-                log.info("url2:"+url.replace("http(s?)://(.*):", "http://1.2.3.4:"));
+                String url = Config.instance("client.properties").getProperty(null,
+                        "aitask.sync.url");
+                log.info("url1:" + url);
+                log.info("url2:" + url.replace("http(s?)://(.*):", "http://1.2.3.4:"));
                 System.out.println("https?://.*:");
                 if ("/fetchTask".equals(u)) {
                     super.handle(response, r, q, p);
@@ -70,6 +76,20 @@ public class ScheduleTest {
                         log.info("query:" + datamap);
                     }
                     super.handle(u, r, q, p);
+                } else if ("/result".equals(u)) {
+                    System.out.println(r.getContentLength());
+                    try {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                                r.getInputStream(), "UTF-8"));
+                        for (String line = reader.readLine(); null != line; line = reader.readLine()) {
+                            System.out.println("rst:" + line);
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    super.handle("done", r, q, p);
                 } else {
                     super.handle(u, r, q, p);
                 }
@@ -103,15 +123,15 @@ public class ScheduleTest {
         String file = FileUtils.readFileInClasspath("task_schedule_001.json");
         JsonObject json = new JsonParser().parse(file).getAsJsonObject();
         response = json.toString();
-        System.err.println(gson.toJson(json));
+        //        System.err.println(gson.toJson(json));
 
         TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule());
         List<ITaskBuilder> taskList = fetcher.fetch(null, null);
         for (ITaskBuilder taskBuilder : taskList) {
             Map<String, Object> map = taskBuilder.getTrigger().getJobDataMap().getWrappedMap();
-            System.out.println(map);
+            //            System.out.println(map);
             map = Caster.cast(map.get("datamap"));
-            System.err.println(gson.toJson(map));
+            //            System.err.println(gson.toJson(map));
 
             Assert.assertTrue("不包含任务结构", map.containsKey("task"));
             Map<String, Object> taskmap = Caster.cast(map.get("task"));
@@ -137,6 +157,27 @@ public class ScheduleTest {
                  */
             }
         }
+        for (List<?> list = daemon.getTaskSchedule().getTasks(); list.size() == 0;) {
+            list = daemon.getTaskSchedule().getTasks();
+            Thread.sleep(50);
+        }
+        int counter = 0;
+        for (List<JobExecutionContext> list = daemon.getTaskSchedule().getTasks(); list.size() != 0;) {
+            if (counter % 5 == 0) {
+                for (JobExecutionContext context : list) {
+                    String info = context.getTrigger().getKey().toString();
+                    System.err.println("exe:[" + list.size() + "]" + info);
+                }
+            }
+            Thread.sleep(100);
+            counter++;
+            list = daemon.getTaskSchedule().getTasks();
+        }
+        List<?> list = daemon.getTaskSchedule().getTasks();
+        System.err.println("fin1:[" + list.size() + "]");
+        Thread.sleep(10000);
+        list = daemon.getTaskSchedule().getTasks();
+        System.err.println("fin2:[" + list.size() + "]");
     }
     /**
      * 终端发起-任务同步

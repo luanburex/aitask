@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.apache.http.entity.ContentType;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.log.Log;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -68,7 +69,6 @@ public class SerialTask implements ITask, Constants {
             System.err.println("done?");
             if (fetcher != null && !isJobInterrupted) {
                 result_str = fetcher.fetch(context);
-                System.err.println("111" + result_str);
                 log.info("[" + context.getTrigger().getKey() + "]" + "task fetch result: "
                         + result_str);
                 String url = config.getProperty(null, "aitask.result.url");

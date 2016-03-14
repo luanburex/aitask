@@ -33,7 +33,7 @@ public class ScheduleDaemon {
 
     /**
      * return the singleton ScheduleDaemon Object
-     * 
+     *
      * @return
      */
     public static ScheduleDaemon instance() {
@@ -51,6 +51,7 @@ public class ScheduleDaemon {
         Config config = Config.instance("agent.properties");
         try {
             scheduler = new StdSchedulerFactory(config.getProperties(null)).getScheduler();
+
             scheduler.standby();
             this.taskscheduler = new TaskSchedule(scheduler);
             log.info("Quartz daemon start.");
@@ -71,7 +72,7 @@ public class ScheduleDaemon {
 
     /**
      * shutdown the Quartz Daemon
-     * 
+     *
      * @throws SchedulerException
      */
     public void shutdown() throws SchedulerException {
@@ -81,7 +82,7 @@ public class ScheduleDaemon {
 
     /**
      * return Quartz Schdule Name.
-     * 
+     *
      * @return
      * @throws SchedulerException
      */

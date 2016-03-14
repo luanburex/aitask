@@ -37,8 +37,9 @@ public class IniResultFetcher implements IResultFetcher {
         Config file = Config.instance(this.result_path);
 
         OrderedProperties result_section = file.getProperties("探测结果");
-        if (result_section == null)
+        if (result_section == null) {
             result_section = new OrderedProperties();
+        }
         String data_id = result_section.getProperty("数据ID", "");
         String data_value = result_section.getProperty("数据值", "");
         String data_desc = result_section.getProperty("数据描述", "");
@@ -124,8 +125,10 @@ public class IniResultFetcher implements IResultFetcher {
             String result_save_url = Config.instance("client.properties").getProperty(null,
                     "aitask.result.url");
             if (result_save_url == null)
+             {
                 throw new Exception("aitask.result.save.url not found");
             // HttpClient.post(result_save_url, root.asXML(), "text/xml");
+            }
         } catch (Exception e) {
             log.error(e);
         }
@@ -161,8 +164,10 @@ public class IniResultFetcher implements IResultFetcher {
             Config config = Config.instance("agent.properties");
             String result_save_url = config.getProperty(null, "aitask.result.save.url");
             if (result_save_url == null)
+             {
                 throw new Exception("aitask.result.save.url not found");
             // HttpClient.post(result_save_url, root.asXML(), "text/xml");
+            }
         } catch (Exception e) {
             log.error(e);
         }

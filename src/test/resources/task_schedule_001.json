@@ -9,7 +9,7 @@
             "modifyAt":"",
             "modifyBy":"",
             "planDesc":"收费脚本",
-            "planId":"1",
+            "planId":"planid",
             "planName":"测试计划1",
             "projectId":"0"
         }
@@ -23,7 +23,7 @@
         {
             "createBy":"",
             "planDesc":"收费脚本",
-            "planId":"1",
+            "planId":"planid",
             "planName":"测试计划1",
             "taskId":"taskId"
         }

@@ -91,17 +91,21 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
         Map<String, Map<String, Object>> datamap = Caster.cast(jobDatamap.get("datamap"));
         Map<String, Object> task = datamap.get("task");
         String task_id = (String) task.get("task_id");
+        String plan_id = (String) task.get("plan_id");
+        Map<String, Object> data = Caster.cast(datamap.get("data"));
+        String data_id = (String) data.get("data_id");
         //        String task_category = (String) task.get("task_category");
         String task_group = (String) task.get("task_group");
         String instant = (String) task.get("instant");
         String cron = (String) task.get("cron");
-        JobKey jobKey = new JobKey(task_id, task_group);
+        String keystr = plan_id + "." + task_id + "." + data_id;
+        JobKey jobKey = new JobKey(keystr, task_group);
 
         JobBuilder builder = JobBuilder.newJob(SerialTask.class);
         this.jobDetail = builder.withIdentity(jobKey).storeDurably().build();
 
         TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
-        triggerBuilder.withIdentity(task_id, task_group);
+        triggerBuilder.withIdentity(keystr, task_group);
         triggerBuilder.usingJobData(jobDatamap);
         if ("1".equals(instant)) {
             triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule());

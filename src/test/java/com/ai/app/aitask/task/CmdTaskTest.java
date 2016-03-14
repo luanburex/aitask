@@ -36,6 +36,7 @@ public class CmdTaskTest implements Constants {
         String xml_str = FileUtils.readFileToString(xml_file);
         ITaskBuilder ts = TaskDirector.getBuilder(Mapper.parseXML(xml_str),
                 Integer.toString(TASK_TYPE_CMD));
+
         Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
                 ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
         sd.getTaskSchedule().addTask(ts, true);

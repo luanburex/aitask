@@ -2,6 +2,7 @@ package com.ai.app.aitask.common;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -52,10 +53,16 @@ public class Config {
         }
         if (null == input) {
             try {
-                throw new FileNotFoundException("resource not found:" + filename);
-            } catch (FileNotFoundException e) {
+                new File(filename).createNewFile();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+            input = ClassLoader.getSystemResourceAsStream(filename);
+            //            try {
+            //                throw new FileNotFoundException("resource not found:" + filename);
+            //            } catch (FileNotFoundException e) {
+            //                e.printStackTrace();
+            //            }
         } else {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
