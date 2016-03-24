@@ -17,9 +17,9 @@ import com.ai.app.aitask.task.excutor.IExecutor;
  * @author Administrator
  *
  */
-public class CmdTaskExecutor implements IExecutor, Constants {
+public class DefaultTaskExecutor implements IExecutor, Constants {
 
-    protected transient final static Logger log      = Logger.getLogger(CmdTaskExecutor.class);
+    protected final static Logger log      = Logger.getLogger(DefaultTaskExecutor.class);
     private ProcessWorker                   process  = null;
     private String[]                        commands = null;
 
@@ -31,7 +31,7 @@ public class CmdTaskExecutor implements IExecutor, Constants {
         return process.getErrorOutput();
     }
 
-    public CmdTaskExecutor(String... commands) {
+    public DefaultTaskExecutor(String... commands) {
         this.commands = commands;
     }
 
@@ -62,7 +62,7 @@ public class CmdTaskExecutor implements IExecutor, Constants {
         return 1 == process.process("tasklist");
     }
     @Override
-    public int run(JobExecutionContext context) throws JobExecutionException {
+    public int execute(JobExecutionContext context) throws JobExecutionException {
         if (context != null) {
             log.info("[" + context.getTrigger().getKey() + "]" + "start run cmd: "
                     + Arrays.toString(commands));
@@ -86,7 +86,7 @@ public class CmdTaskExecutor implements IExecutor, Constants {
         }
     }
     @Override
-    public void destroy() {
+    public void interrupt() {
         log.info("process destroyed");
         if (this.process != null) {
             this.process.destroy();

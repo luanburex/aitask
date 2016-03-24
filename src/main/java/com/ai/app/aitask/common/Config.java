@@ -17,14 +17,13 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class Config {
-
-    protected final static Logger                      log = Logger.getLogger(Config.class);
-    protected transient static Map<String, Config>     files;
-    protected transient OrderedProperties              current;
-    protected transient OrderedProperties              builtin;
-    protected transient Map<String, OrderedProperties> sections;
-    protected transient String                         filename;
-    protected transient String                         currentSecion;
+    protected final static Logger            log = Logger.getLogger(Config.class);
+    protected static Map<String, Config>     files;
+    protected OrderedProperties              current;
+    protected OrderedProperties              builtin;
+    protected Map<String, OrderedProperties> sections;
+    protected String                         filename;
+    protected String                         currentSecion;
     static {
         files = new HashMap<String, Config>();
     }

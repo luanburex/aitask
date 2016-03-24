@@ -31,10 +31,10 @@ public class RequestWorker implements Constants {
         this.requestURL = url;
         this.requestQuery = query;
     }
-    public RequestWorker Get() throws ConnectException {
-        return Post(null, ContentType.DEFAULT_TEXT);
+    public RequestWorker get() throws ConnectException {
+        return post(null, ContentType.DEFAULT_TEXT);
     }
-    public RequestWorker Post(String content, ContentType type) throws ConnectException {
+    public RequestWorker post(String content, ContentType type) throws ConnectException {
         StringBuffer buffer = new StringBuffer(requestURL);
         if (null != requestQuery && !requestQuery.isEmpty()) {
             try {
@@ -100,13 +100,13 @@ public class RequestWorker implements Constants {
         this.responseContent = responseContent.toString();
         return this;
     }
-    public String getResponseContent() {
+    public String getRespContent() {
         return responseContent;
     }
-    public String getResponseMessage() {
+    public String getRespMsg() {
         return responseMessage;
     }
-    public Integer getResponseCode() {
+    public Integer getRespCode() {
         return responseCode;
     }
     public static String formEntity(Map<String, String> pairmap) {

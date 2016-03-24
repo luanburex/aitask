@@ -15,7 +15,7 @@ import org.quartz.UnableToInterruptJobException;
  */
 public class TimeOutThread extends Thread {
 
-    private final static transient Logger log = Logger
+    protected final static Logger log = Logger
             .getLogger(TimeOutThread.class);
     /**
      * the default overtime is 30 minutes

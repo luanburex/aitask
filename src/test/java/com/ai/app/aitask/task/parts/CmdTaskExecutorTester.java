@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.ai.app.aitask.task.excutor.impl.CmdTaskExecutor;
+import com.ai.app.aitask.task.excutor.impl.DefaultTaskExecutor;
 
 
 class WaitProcessClass implements Runnable{
@@ -90,10 +90,10 @@ public class CmdTaskExecutorTester {
     
     @Test(timeout=3000)
     public void testSimpleExecute(){
-        CmdTaskExecutor e = new CmdTaskExecutor("ping -n 2 127.0.0.1");
+        DefaultTaskExecutor e = new DefaultTaskExecutor("ping -n 2 127.0.0.1");
         
         try {
-            int ret = e.run(null);
+            int ret = e.execute(null);
             log.debug(ret);
             Assert.assertTrue(ret == 0);
             
@@ -106,14 +106,14 @@ public class CmdTaskExecutorTester {
     
     @Test
     public void testInterrupt(){
-        final CmdTaskExecutor e = new CmdTaskExecutor("ping -n 2 127.0.0.1");
+        final DefaultTaskExecutor e = new DefaultTaskExecutor("ping -n 2 127.0.0.1");
         Thread t = new Thread(new Runnable(){
             
             @Override
             public void run() {
                 try {
                     Thread.sleep(1000l);
-                    e.destroy();
+                    e.interrupt();
                 } catch (Exception e) {
                     e.printStackTrace();
                     Assert.assertTrue("存在报错", false);
@@ -125,7 +125,7 @@ public class CmdTaskExecutorTester {
         
         try {
             t.start();
-            int ret = e.run(null);
+            int ret = e.execute(null);
             log.debug(ret);
             Assert.assertTrue(ret == 1);
             
@@ -139,12 +139,12 @@ public class CmdTaskExecutorTester {
     public void testNotepadExecute(){
         
         if(System.getProperty("os.name").toLowerCase().indexOf("win")>=0){
-            CmdTaskExecutor e = new CmdTaskExecutor("notepad.exe");
+            DefaultTaskExecutor e = new DefaultTaskExecutor("notepad.exe");
             
             try {
                 Thread t = new Thread(new WaitProcessClass("notepad.exe"));
                 t.start();
-                int ret = e.run(null);
+                int ret = e.execute(null);
                 
                 
                 log.debug(ret);
@@ -162,14 +162,14 @@ public class CmdTaskExecutorTester {
         
         if(System.getProperty("os.name").toLowerCase().indexOf("win")>=0){
             
-            final CmdTaskExecutor e = new CmdTaskExecutor("notepad.exe");
+            final DefaultTaskExecutor e = new DefaultTaskExecutor("notepad.exe");
             Thread t = new Thread(new Runnable(){
     
                 @Override
                 public void run() {
                     try {
                         Thread.sleep(1000l);
-                        e.destroy();
+                        e.interrupt();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Assert.assertTrue("存在报错", false);
@@ -181,7 +181,7 @@ public class CmdTaskExecutorTester {
             
             try {
                 t.start();
-                int ret = e.run(null);
+                int ret = e.execute(null);
                 System.err.println("ret:"+ret);
             } catch (Exception e1) {
                 e1.printStackTrace();
@@ -192,10 +192,10 @@ public class CmdTaskExecutorTester {
     
     @Test(timeout=3000)
     public void testErrorExecute(){
-        CmdTaskExecutor e = new CmdTaskExecutor("cmd /c/q d:/run.cmd");
+        DefaultTaskExecutor e = new DefaultTaskExecutor("cmd /c/q d:/run.cmd");
         
         try {
-            int ret = e.run(null);
+            int ret = e.execute(null);
             log.debug(ret);
             Assert.assertTrue(ret == 1);
             Assert.assertFalse("".equals(e.getOutput()));

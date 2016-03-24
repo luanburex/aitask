@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger.TriggerState;
 
+import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
@@ -33,33 +34,33 @@ public class CmdTaskCronTest {
                 + "/com/ai/app/aitask/task/cmd_script_task005_cron.xml";
         String xml_str = FileUtils.readFileToString(xml_file);
         //        ITaskBuilder ts = TaskDirector.getCmdTaskBuilder(xml_str);
-        ITaskBuilder ts = TaskDirector.getBuilder(null, Integer.toString(TaskDirector.TASK_TYPE_CMD));
+        ITaskBuilder ts = TaskBuilderFactory.getBuilder(null, Integer.toString(Constants.TASK_TYPE_CMD));
 
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(System.currentTimeMillis() + 2000l));
         String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
         log.info(t);
         //        ts.getDatamap().put("cron", t);
-        ts.getJobDetail().getJobDataMap().put("cron", t);
+        ts.getContent().getJobDataMap().put("cron", t);
         ts.build();
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
-                ts.getTrigger().getKey(), TriggerState.NONE, 1000l));
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
+                ts.getAuth().mapKey(), TriggerState.NONE, 1000l));
 
-        sd.getTaskSchedule().addTask(ts, true);
+        sd.getScheduler().addTask(ts, true);
 
-        log.info(sd.getTaskSchedule().getTaskState(ts.getTrigger().getKey()));
+        log.info(sd.getScheduler().getTaskState(ts.getAuth().mapKey()));
 
-        log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getPreviousFireTime());
-        log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getNextFireTime());
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
-                ts.getTrigger().getKey(), TriggerState.NORMAL, 2000l));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
-                ts.getTrigger().getKey(), TriggerState.BLOCKED, 5000l));
-        log.info(sd.getTaskSchedule().getTaskState(ts.getTrigger().getKey()));
-        log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getPreviousFireTime());
-        log.info(sd.getTaskSchedule().getScheduler().getTrigger(ts.getTrigger().getKey()).getNextFireTime());
-        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getTaskSchedule(),
-                ts.getTrigger().getKey(), TriggerState.NORMAL, 5000l));
+        log.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getPreviousFireTime());
+        log.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getNextFireTime());
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
+                ts.getAuth().mapKey(), TriggerState.NORMAL, 2000l));
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
+                ts.getAuth().mapKey(), TriggerState.BLOCKED, 5000l));
+        log.info(sd.getScheduler().getTaskState(ts.getAuth().mapKey()));
+        log.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getPreviousFireTime());
+        log.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getNextFireTime());
+        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
+                ts.getAuth().mapKey(), TriggerState.NORMAL, 5000l));
 
     }
 }

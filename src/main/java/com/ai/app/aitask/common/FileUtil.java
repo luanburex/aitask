@@ -44,6 +44,14 @@ public class FileUtil {
         }
     }
 
+    public static String readFile(String path) {
+        return readFile(path, "UTF-8");
+    }
+
+    public static String readFile(String path, String charset) {
+        return readFile(readReader(path, charset));
+    }
+
     public static String readFile(Reader reader) {
         StringBuffer buffer = new StringBuffer();
         try {

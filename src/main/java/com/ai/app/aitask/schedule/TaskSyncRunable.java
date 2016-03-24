@@ -1,40 +1,50 @@
 package com.ai.app.aitask.schedule;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.quartz.Trigger.TriggerState;
-import org.quartz.TriggerKey;
 
 import com.ai.app.aitask.common.Config;
+import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
 public class TaskSyncRunable implements Runnable {
 
-    final transient static Log    log          = LogFactory.getLog(TaskSyncRunable.class);
+    protected final static Log  log = LogFactory.getLog(TaskSyncRunable.class);
 
-    Map<TriggerKey, ITaskBuilder> tasks        = new ConcurrentHashMap<TriggerKey, ITaskBuilder>();
-    TaskSchedule                  taskSchedule = null;
-    long                          intervalTime = 1000l;
+    private Config              config;
+    private long                intervalTime;
+    private Queue<ITaskBuilder> taskSyncQueue;
+    private ITaskScheduler      taskScheduler;
 
-    public TaskSyncRunable(TaskSchedule taskSchedule) {
-        Config config = Config.instance("client.properties");
+    public TaskSyncRunable() {
+        this.config = Config.instance("client.properties");
         this.intervalTime = Long.parseLong(config.getProperty(null, "aitask.sync.interval"));
-        this.taskSchedule = taskSchedule;
+        this.taskSyncQueue = new ConcurrentLinkedQueue<ITaskBuilder>();
+        this.taskScheduler = ScheduleDaemon.instance().getScheduler();
     }
 
-    public void putTask(ITaskBuilder tb) {
-        tasks.put(tb.getTrigger().getKey(), tb);
+    public void offerTask(ITaskBuilder task) {
+        // TODO keys & info & states
+        Object state = taskScheduler.getTaskState(task.getTrigger());
+        if (taskScheduler.addTask(task, true)) {
+            log.debug("task in sync : " + task.getTrigger().get("info") + state);
+        } else {
+            taskSyncQueue.offer(task);
+            log.debug("task out of sync : " + task.getTrigger().get("info") + state);
+        }
+
     }
 
-    public synchronized void sync() throws Exception {
-        for (TriggerKey key : tasks.keySet()) {
-            if (!TriggerState.BLOCKED.equals(taskSchedule.getTaskState(key))) {
-                log.debug("sync task: " + key + " , status: " + taskSchedule.getTaskState(key));
-                this.taskSchedule.addTask(tasks.get(key), true);
-                tasks.remove(key);
+    private void sync() {
+        for (ITaskBuilder task : taskSyncQueue) {
+            if (taskScheduler.addTask(task, true)) {
+                // TODO keys & info & states
+                Object state = taskScheduler.getTaskState(task.getTrigger());
+                log.debug("sync in task : " + task.getTrigger().get("info") + state);
+                taskSyncQueue.remove(task);
             }
         }
     }
@@ -42,16 +52,17 @@ public class TaskSyncRunable implements Runnable {
     @Override
     public void run() {
         if (intervalTime < 1) {
-            log.info("task sync closed (" + intervalTime + ")");
+            log.info(String.format("task sync unabled (%d)", intervalTime));
         } else {
+            log.info(String.format("task sync enabled (%d)", intervalTime));
             try {
                 while (true) {
+                    log.info("task sync");
+                    sync();
                     Thread.sleep(intervalTime);
-                    log.info("sleep:" + intervalTime);
-                    this.sync();
                 }
             } catch (Exception e) {
-                log.error(e);
+                e.printStackTrace();
             }
         }
     }

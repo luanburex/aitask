@@ -1,40 +1,40 @@
 {
-    "caselog":[
+    "caselog": [
         {
-            "taskId":"",
-            "scriptId":"",
-            "scriptName":"",
-            "scriptType":"",
-            "dataId":"",
-            "dataName":"",
-            "system":"",
-            "business":"",
-            "startTime":"",
-            "endTime":"",
-            "keyEclapse":"",
-            "result":"",
-            "firstExecuteTime":"",
-            "executeNum":"",
-            "groupNo":"",
-            "geoupName":"",
-            "log":"",
-            "dataDesc":"",
-            "dataTags":""
+            "taskId": "",
+            "scriptId": "",
+            "scriptName": "",
+            "scriptType": "",
+            "dataId": "",
+            "dataName": "",
+            "system": "",
+            "business": "",
+            "startTime": "",p
+            "endTime": "",
+            "keyEclapse": "",
+            "result": "",
+            "firstExecuteTime": "",
+            "executeNum": "",
+            "groupNo": "",
+            "geoupName": "",
+            "log": "",
+            "dataDesc": "",
+            "dataTags": ""
         }
     ],
-    "steplog":[
+    "steplog": [
         {
-            "caseLogId":"",
-            "stepId":"",
-            "stepName":"",
-            "stepDesc":"",
-            "stepExpectResult":"",
-            "startTime":"",
-            "endTime":"",
-            "eclapse":"",
-            "result":"",
-            "screenshot":"",
-            "log":""
+            "caseLogId": "",
+            "stepId": "",
+            "stepName": "",
+            "stepDesc": "",
+            "stepExpectResult": "",
+            "startTime": "",
+            "endTime": "",
+            "eclapse": "",
+            "result": "",
+            "screenshot": "",
+            "log": ""
         }
     ]
 }

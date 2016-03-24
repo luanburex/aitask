@@ -46,7 +46,7 @@ import com.google.gson.JsonParser;
 
 public class ScheduleTest {
 
-    transient final public static Log log = LogFactory.getLog(ScheduleTest.class);
+    final public static Log log = LogFactory.getLog(ScheduleTest.class);
 
     private static Gson               gson;
     private static ScheduleDaemon     daemon;
@@ -69,7 +69,7 @@ public class ScheduleTest {
                 if ("/fetchTask".equals(u)) {
                     super.handle(response, r, q, p);
                 } else if ("/query".equals(u)) {
-                    for (JobExecutionContext context : daemon.getTaskSchedule().getTasks()) {
+                    for (JobExecutionContext context : daemon.getScheduler().getTasks()) {
                         JobDataMap jobdatamap = context.getMergedJobDataMap();
                         Map<String, Map<String, Object>> datamap;
                         datamap = Caster.cast(jobdatamap.get("datamap"));
@@ -125,10 +125,10 @@ public class ScheduleTest {
         response = json.toString();
         //        System.err.println(gson.toJson(json));
 
-        TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule());
+        TaskFetcher fetcher = new TaskFetcher(daemon.getScheduler());
         List<ITaskBuilder> taskList = fetcher.fetch(null, null);
         for (ITaskBuilder taskBuilder : taskList) {
-            Map<String, Object> map = taskBuilder.getTrigger().getJobDataMap().getWrappedMap();
+            Map<String, Object> map = taskBuilder.getAuth().getJobDataMap().getWrappedMap();
             //            System.out.println(map);
             map = Caster.cast(map.get("datamap"));
             //            System.err.println(gson.toJson(map));
@@ -157,12 +157,12 @@ public class ScheduleTest {
                  */
             }
         }
-        for (List<?> list = daemon.getTaskSchedule().getTasks(); list.size() == 0;) {
-            list = daemon.getTaskSchedule().getTasks();
+        for (List<?> list = daemon.getScheduler().getTasks(); list.size() == 0;) {
+            list = daemon.getScheduler().getTasks();
             Thread.sleep(50);
         }
         int counter = 0;
-        for (List<JobExecutionContext> list = daemon.getTaskSchedule().getTasks(); list.size() != 0;) {
+        for (List<JobExecutionContext> list = daemon.getScheduler().getTasks(); list.size() != 0;) {
             if (counter % 5 == 0) {
                 for (JobExecutionContext context : list) {
                     String info = context.getTrigger().getKey().toString();
@@ -171,12 +171,12 @@ public class ScheduleTest {
             }
             Thread.sleep(100);
             counter++;
-            list = daemon.getTaskSchedule().getTasks();
+            list = daemon.getScheduler().getTasks();
         }
-        List<?> list = daemon.getTaskSchedule().getTasks();
+        List<?> list = daemon.getScheduler().getTasks();
         System.err.println("fin1:[" + list.size() + "]");
         Thread.sleep(10000);
-        list = daemon.getTaskSchedule().getTasks();
+        list = daemon.getScheduler().getTasks();
         System.err.println("fin2:[" + list.size() + "]");
     }
     /**
@@ -208,7 +208,7 @@ public class ScheduleTest {
         plan.addProperty("cron", t);
         response = json.toString();
 
-        TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule());
+        TaskFetcher fetcher = new TaskFetcher(daemon.getScheduler());
         fetcher.fetch(null, null);
         Thread.sleep(10000l);
     }
@@ -245,7 +245,7 @@ public class ScheduleTest {
         bean.put("xml", root.asXML());
         response = new Gson().toJson(bean);
 
-        TaskFetcher fetcher = new TaskFetcher(daemon.getTaskSchedule());
+        TaskFetcher fetcher = new TaskFetcher(daemon.getScheduler());
         fetcher.fetch(null, null);
 
         String id1 = ((Element) root.elements("task").get(0)).attributeValue("ID");
@@ -254,7 +254,7 @@ public class ScheduleTest {
         TriggerKey key2 = TriggerKey.triggerKey(id2, "AITASK");
         System.err.println("==================================================");
         // 2.等待任务执行完毕
-        TaskSchedule schedule = daemon.getTaskSchedule();
+        ITaskScheduler schedule = daemon.getScheduler();
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key1, TriggerState.NORMAL, 500l));
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key2, TriggerState.NORMAL, 500l));
 

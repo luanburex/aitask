@@ -1,93 +1,47 @@
 package com.ai.app.aitask.deamon;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 import org.apache.log4j.Logger;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
 
 import com.ai.app.aitask.common.Config;
-import com.ai.app.aitask.schedule.TaskSchedule;
+import com.ai.app.aitask.schedule.ITaskScheduler;
 
 public class ScheduleDaemon {
+    protected final static Logger log = Logger.getLogger(ScheduleDaemon.class);
 
-    private final static transient Logger log           = Logger.getLogger(ScheduleDaemon.class);
+    private static ScheduleDaemon instance;
+    private ITaskScheduler        scheduler;
 
-    /** The Base Scheduler of Quartz */
-    private Scheduler                     scheduler     = null;
-    /** The Schduler of Task */
-    private TaskSchedule                  taskscheduler = null;
-    private static ScheduleDaemon         singleton     = null;
-
-    /** return the Scheduler of Task */
-    public TaskSchedule getTaskSchedule() {
-        return taskscheduler;
-    }
-    /**
-     * the private singleton Constructor of ScheduleDaemon
-     */
     private ScheduleDaemon() {
-    }
-
-    /**
-     * return the singleton ScheduleDaemon Object
-     *
-     * @return
-     */
-    public static ScheduleDaemon instance() {
-        if (null == singleton) {
-            return singleton = new ScheduleDaemon();
-        } else {
-            return singleton;
-        }
-    }
-
-    /**
-     * start the Quartz Daemon
-     */
-    public void start() {
-        Config config = Config.instance("agent.properties");
+        Config config = Config.instance("aitask.properties");
         try {
-            scheduler = new StdSchedulerFactory(config.getProperties(null)).getScheduler();
-
-            scheduler.standby();
-            this.taskscheduler = new TaskSchedule(scheduler);
-            log.info("Quartz daemon start.");
-        } catch (SchedulerException e) {
-            e.printStackTrace();
+            Class<?> schedulerClass = Class.forName(config.getProperty(null, "scheduler"));
+            scheduler = schedulerClass.asSubclass(ITaskScheduler.class).newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
-    /**
-     * shutdown the Quartz Daemon
-     *
-     * @throws SchedulerException
-     */
-    public void shutdown() throws SchedulerException {
+    public static ScheduleDaemon instance() {
+        if (null == instance) {
+            return instance = new ScheduleDaemon();
+        } else {
+            return instance;
+        }
+    }
+
+    public ITaskScheduler getScheduler() {
+        return scheduler;
+    }
+
+    public void start() {
+        scheduler.start();
+    }
+
+    public void shutdown() {
         scheduler.shutdown();
-        log.info("Quartz daemon stop.");
     }
-
-    /**
-     * return Quartz Schdule Name.
-     *
-     * @return
-     * @throws SchedulerException
-     */
-    public String getScheName() throws SchedulerException {
-        return scheduler.getSchedulerName();
-    }
-
 }

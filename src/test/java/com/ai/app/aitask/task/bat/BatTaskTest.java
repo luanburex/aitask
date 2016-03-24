@@ -17,8 +17,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.quartz.Trigger.TriggerState;
 
+import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
-import com.ai.app.aitask.task.TaskDirector;
+import com.ai.app.aitask.task.TaskBuilderFactory;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
@@ -79,15 +80,15 @@ public class BatTaskTest {
                         + "/com/ai/app/aitask/task/bat/bat_script_task001.ini");
 
         //        ITaskBuilder ts = TaskDirector.getBatTaskBuilder(root.asXML());
-        ITaskBuilder ts = TaskDirector.getBuilder(null, Integer.toString(TaskDirector.TASK_TYPE_BAT));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getTaskSchedule(), ts.getTrigger()
-                .getKey(), TriggerState.NONE, 1000l));
-        daemon.getTaskSchedule().addTask(ts, true);
-        log.info(daemon.getTaskSchedule().getTaskState(ts.getTrigger().getKey()));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getTaskSchedule(), ts.getTrigger()
-                .getKey(), TriggerState.BLOCKED, 1000l));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getTaskSchedule(), ts.getTrigger()
-                .getKey(), TriggerState.NONE, 9000l));
+        ITaskBuilder ts = TaskBuilderFactory.getBuilder(null, Integer.toString(Constants.TASK_TYPE_BAT));
+        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
+                .mapKey(), TriggerState.NONE, 1000l));
+        daemon.getScheduler().addTask(ts, true);
+        log.info(daemon.getScheduler().getTaskState(ts.getAuth().mapKey()));
+        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
+                .mapKey(), TriggerState.BLOCKED, 1000l));
+        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
+                .mapKey(), TriggerState.NONE, 9000l));
         Thread.sleep(3000l);
     }
 }

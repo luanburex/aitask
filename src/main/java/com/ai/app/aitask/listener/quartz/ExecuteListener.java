@@ -1,4 +1,4 @@
-package com.ai.app.aitask.listener;
+package com.ai.app.aitask.listener.quartz;
 
 import org.apache.log4j.Logger;
 import org.quartz.JobDataMap;
@@ -8,16 +8,13 @@ import org.quartz.JobListener;
 
 import com.ai.app.aitask.task.ITask;
 
-public class TaskListener implements JobListener {
+public class ExecuteListener implements JobListener {
 
-    private final static transient Logger log = Logger.getLogger(TaskListener.class);
-
-    public TaskListener() {
-    }
+    protected final static Logger log = Logger.getLogger(ExecuteListener.class);
 
     @Override
     public String getName() {
-        return "TaskListener";
+        return "TaskExecuteListener";
     }
 
     @Override

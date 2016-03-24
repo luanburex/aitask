@@ -17,7 +17,7 @@ import com.ai.app.aitask.task.result.IResultFetcher;
 
 public class IniResultFetcher implements IResultFetcher {
 
-    transient final static protected Logger log         = Logger.getLogger(IniResultFetcher.class);
+    final static protected Logger log         = Logger.getLogger(IniResultFetcher.class);
     String                                result_path = null;
 
     public IniResultFetcher(String result_path) {
@@ -125,9 +125,9 @@ public class IniResultFetcher implements IResultFetcher {
             String result_save_url = Config.instance("client.properties").getProperty(null,
                     "aitask.result.url");
             if (result_save_url == null)
-             {
+            {
                 throw new Exception("aitask.result.save.url not found");
-            // HttpClient.post(result_save_url, root.asXML(), "text/xml");
+                // HttpClient.post(result_save_url, root.asXML(), "text/xml");
             }
         } catch (Exception e) {
             log.error(e);
@@ -164,9 +164,9 @@ public class IniResultFetcher implements IResultFetcher {
             Config config = Config.instance("agent.properties");
             String result_save_url = config.getProperty(null, "aitask.result.save.url");
             if (result_save_url == null)
-             {
+            {
                 throw new Exception("aitask.result.save.url not found");
-            // HttpClient.post(result_save_url, root.asXML(), "text/xml");
+                // HttpClient.post(result_save_url, root.asXML(), "text/xml");
             }
         } catch (Exception e) {
             log.error(e);

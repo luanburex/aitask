@@ -28,13 +28,13 @@ import com.ai.app.aitask.utils.TestJettyServer;
 
 public class IniResultFetcherTester {
 
-    transient final static protected Logger log                 = Logger.getLogger(IniResultFetcherTester.class);
+    final static protected Logger       log                 = Logger.getLogger(IniResultFetcherTester.class);
 
-    Mockery                               mock_context        = new Mockery();
-    static TestJettyServer                server              = null;
+    Mockery                             mock_context        = new Mockery();
+    static TestJettyServer              server              = null;
 
-    protected final JobExecutionContext   job_execute_context = mock_context
-                                                                      .mock(JobExecutionContext.class);
+    protected final JobExecutionContext job_execute_context = mock_context
+            .mock(JobExecutionContext.class);
 
     @BeforeClass
     public static void startup() throws Exception {
@@ -51,8 +51,9 @@ public class IniResultFetcherTester {
     }
     @AfterClass
     public static void teardown() throws Exception {
-        if (server == null)
+        if (server == null) {
             server.stop();
+        }
     }
 
     @Before
