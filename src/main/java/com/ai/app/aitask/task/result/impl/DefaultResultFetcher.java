@@ -1,17 +1,11 @@
 package com.ai.app.aitask.task.result.impl;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
-import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.FileUtil;
 import com.ai.app.aitask.task.result.IResultFetcher;

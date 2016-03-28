@@ -63,6 +63,33 @@ public class CopyOfTaskScheduler {
         scheduler.getListenerManager().addJobListener(new TimeoutListener());
         scheduler.start();
     }
+    
+    public void fetch() throws Exception{
+        String url = AgentProperties.getInstance().getProperty("aitask.task.sync.url");
+        String agent_name = AgentProperties.getInstance().getProperty("aitask.name", AgentProperties.getInstance().getProperty("org.quartz.scheduler.instanceName"));
+        
+        url = url.trim();
+        agent_name = agent_name.trim();
+        String task_xml = HttpClient.post(url, "agent_name=" + agent_name, "x-www-form-urlencoded");
+        System.out.println(task_xml);
+        
+        Document document = DocumentHelper.parseText(task_xml);
+        Element root = document.getRootElement();
+        
+        Iterator<Element> elements = root.elementIterator("task");
+        while(elements.hasNext()){
+            Element current_element = elements.next();
+            ITaskBuilder tb = TaskDirector.generateTaskBuilderByXml(current_element.asXML());
+            if(TriggerState.BLOCKED.equals(this.ts.getTaskState(tb.getTrigger().getKey()))){
+                log.debug("task is BLOCKED, add to sync queue." + tb.getTrigger().getKey());
+                this.task_sync.putTask(tb.getTrigger().getKey(), current_element.asXML());
+            }else{
+                log.debug("add task:" + tb.getTrigger().getKey());
+                this.ts.addTask(tb, true);
+            }
+        }
+    }
+    
 
     public void addTask(ITaskBuilder taskBuilder, boolean replace) throws Exception {
 

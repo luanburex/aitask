@@ -136,7 +136,7 @@ public class CmdTaskBuilder extends AbstractTaskBuilder {
         } else {
             triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cron));
         }
-        this.trigger = triggerBuilder.build();
+        this.trigger = triggerBuilder.build();trigger.getJobKey()J
 
         log.debug("generate task key:" + jobDetail.getKey() + "\t trigger:" + trigger.getKey());
     }

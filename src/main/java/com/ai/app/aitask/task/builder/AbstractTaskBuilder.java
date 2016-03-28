@@ -14,23 +14,20 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
 
     protected Map<String, Object> key;
     protected Map<String, Object> content;
-    protected Map<String, Object> datamap; 
+    protected Map<String, Object> datamap;
 
     protected IExecutor           executor;
     protected IDataPreparer       preparer;
     protected IResultFetcher      fetcher;
     @Override
     public void parse(Map<String, Object> datamap) {
+        this.key = new HashMap<String, Object>();
+        this.content = new HashMap<String, Object>();
         this.datamap = datamap;
     }
 
     @Override
     public void build() {
-        key = new HashMap<String, Object>();
-        content = new HashMap<String, Object>();
-        
-        
-        
         content.put("executor", executor);
         content.put("preparer", preparer);
         content.put("fetcher", fetcher);

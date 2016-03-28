@@ -56,7 +56,6 @@ public class TaskFetcher implements Constants {
             log.info("resp msg:" + worker.getRespMsg());
             log.info("resp txt:" + worker.getRespContent());
         }
-
         String content = worker.getRespContent();
         if (null == content || content.trim().isEmpty()) {
             log.error("no effective content");

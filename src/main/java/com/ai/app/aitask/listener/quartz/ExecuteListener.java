@@ -24,7 +24,7 @@ public class ExecuteListener implements JobListener {
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
         ITask task = (ITask) context.getJobInstance();
-        task.before(context);
+//        task.before(context);
 
         JobDataMap data_map = context.getTrigger().getJobDataMap();
         StringBuilder sb = new StringBuilder();
@@ -39,7 +39,7 @@ public class ExecuteListener implements JobListener {
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException error) {
         ITask task = (ITask) context.getJobInstance();
-        task.after(context, error);
+//        task.after(context, error);
 
         JobDataMap data_map = context.getTrigger().getJobDataMap();
         StringBuilder sb = new StringBuilder();

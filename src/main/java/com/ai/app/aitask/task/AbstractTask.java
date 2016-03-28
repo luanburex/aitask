@@ -17,10 +17,10 @@ import com.ai.app.aitask.task.result.IResultFetcher;
 public class AbstractTask implements ITask, Constants {
     protected final static Logger log = Logger.getLogger(AbstractTask.class);
 
-    private volatile boolean      interrupted;
-    private volatile Thread       thread;
+    private Thread                thread;
     private Config                config;
     private String                prefix;
+    private boolean               interrupted;
     private Map<String, Object>   runtimeData;
     {
         config = Config.instance("client.properties");
@@ -77,18 +77,22 @@ public class AbstractTask implements ITask, Constants {
             thread.interrupt();
         }
     }
+
     @Override
     public void after(Map<String, Object> trigger, Map<String, Object> datamap) {
         IResultFetcher fetcher = (IResultFetcher) datamap.get("fetcher");
         if (runtimeData.containsKey("exception")) { // fail
             if (null != fetcher) {
-                String result = fetcher.error(datamap, (Exception) runtimeData.get("exception"));
+                //TODO result
+                Map<String, Object> result = fetcher.error(datamap,
+                        (Exception) runtimeData.get("exception"));
                 log.info(String.format("[%s] execut failed : %d", prefix, result));
                 //TODO RequestWorker should move to a TaskFinishListener
                 String url = config.getProperty(null, "aitask.result.url");
                 RequestWorker worker = new RequestWorker(url, null);
                 try {
-                    worker.post(result, ContentType.APPLICATION_JSON);
+                    worker.post(new com.google.gson.Gson().toJson(result),
+                            ContentType.APPLICATION_JSON);
                 } catch (ConnectException e) {
                     log.error(String.format("[%s] report failed :  %s", prefix, e.getMessage()));
                 } finally {
@@ -98,12 +102,13 @@ public class AbstractTask implements ITask, Constants {
             }
         } else {
             if (null != fetcher) {
-                String result = fetcher.fetch(datamap);
+                Map<String, Object> result = fetcher.fetch(datamap);
                 log.info(String.format("[%s] execut finished : %d", prefix, result));
                 String url = config.getProperty(null, "aitask.result.url");
                 RequestWorker worker = new RequestWorker(url, null);
                 try {
-                    worker.post(result, ContentType.APPLICATION_JSON);
+                    worker.post(new com.google.gson.Gson().toJson(result),
+                            ContentType.APPLICATION_JSON);
                 } catch (ConnectException e) {
                     log.error(String.format("[%s] report failed : %s", prefix, e.getMessage()));
                 } finally {

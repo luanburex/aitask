@@ -21,5 +21,6 @@ public class ScheduleListner extends SchedulerListenerSupport {
     @Override
     public void jobScheduled(Trigger trigger) {
         // do something with the event, maybe.
+        System.out.println("scheduled:"+trigger);
     }
 }

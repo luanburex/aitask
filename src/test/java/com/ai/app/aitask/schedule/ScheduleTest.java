@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
+import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
 
@@ -46,12 +47,12 @@ import com.google.gson.JsonParser;
 
 public class ScheduleTest {
 
-    final public static Log log = LogFactory.getLog(ScheduleTest.class);
+    final public static Log        log = LogFactory.getLog(ScheduleTest.class);
 
-    private static Gson               gson;
-    private static ScheduleDaemon     daemon;
-    private static TestJettyServer    server;
-    private static String             response;
+    private static Gson            gson;
+    private static ScheduleDaemon  daemon;
+    private static TestJettyServer server;
+    private static String          response;
 
     @BeforeClass
     public static void startup() throws Exception {
@@ -69,10 +70,10 @@ public class ScheduleTest {
                 if ("/fetchTask".equals(u)) {
                     super.handle(response, r, q, p);
                 } else if ("/query".equals(u)) {
-                    for (JobExecutionContext context : daemon.getScheduler().getTasks()) {
-                        JobDataMap jobdatamap = context.getMergedJobDataMap();
+                    for (Object context : daemon.getScheduler().getTasks()) {
+                        JobDataMap jobmap = ((JobExecutionContext) context).getMergedJobDataMap();
                         Map<String, Map<String, Object>> datamap;
-                        datamap = Caster.cast(jobdatamap.get("datamap"));
+                        datamap = Caster.cast(jobmap.get("datamap"));
                         log.info("query:" + datamap);
                     }
                     super.handle(u, r, q, p);
@@ -81,7 +82,8 @@ public class ScheduleTest {
                     try {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(
                                 r.getInputStream(), "UTF-8"));
-                        for (String line = reader.readLine(); null != line; line = reader.readLine()) {
+                        for (String line = reader.readLine(); null != line; line = reader
+                                .readLine()) {
                             System.out.println("rst:" + line);
                         }
                     } catch (UnsupportedEncodingException e) {
@@ -125,46 +127,47 @@ public class ScheduleTest {
         response = json.toString();
         //        System.err.println(gson.toJson(json));
 
-        TaskFetcher fetcher = new TaskFetcher(daemon.getScheduler());
+        TaskFetcher fetcher = new TaskFetcher();
         List<ITaskBuilder> taskList = fetcher.fetch(null, null);
         for (ITaskBuilder taskBuilder : taskList) {
-            Map<String, Object> map = taskBuilder.getAuth().getJobDataMap().getWrappedMap();
-            //            System.out.println(map);
+            Map<String, Object> map = taskBuilder.getContent();
             map = Caster.cast(map.get("datamap"));
-            //            System.err.println(gson.toJson(map));
 
             Assert.assertTrue("不包含任务结构", map.containsKey("task"));
             Map<String, Object> taskmap = Caster.cast(map.get("task"));
             Assert.assertTrue("不包含执行计划", taskmap.containsKey("cron"));
-            Assert.assertTrue("不包含执任务ID", taskmap.containsKey("task_id"));
-            Assert.assertTrue("不包含执计划组织", taskmap.containsKey("task_group"));
-            Assert.assertTrue("不包含执计划策略", taskmap.containsKey("task_category"));
-            Assert.assertTrue("不包含执计划ID", taskmap.containsKey("plan_id"));
-            Assert.assertTrue("不包含执计划名称", taskmap.containsKey("plan_name"));
+            Assert.assertTrue("不包含执任务ID", taskmap.containsKey("taskId"));
+            Assert.assertTrue("不包含执计划组织", taskmap.containsKey("taskGroup"));
+            //            Assert.assertTrue("不包含执计划策略", taskmap.containsKey("taskCategory"));
+            Assert.assertTrue("不包含执计划ID", taskmap.containsKey("planId"));
+            Assert.assertTrue("不包含执计划名称", taskmap.containsKey("planName"));
 
-            Assert.assertTrue("不包含任务数据结构", map.containsKey("data"));
-            Map<String, Object> datamap = Caster.cast(map.get("data"));
-            Assert.assertTrue("不包含任务数据ID", datamap.containsKey("data_id"));
+            Assert.assertTrue("不包含任务数据结构", map.containsKey("datalist"));
+            List<Map<String, Object>> datalist = Caster.cast(map.get("datalist"));
+            Map<String, Object> datamap = datalist.get(0);
+            Assert.assertTrue("不包含任务数据ID", datamap.containsKey("dataId"));
             Assert.assertTrue("不包含任务数据标签", datamap.containsKey("tags"));
-            Assert.assertTrue("不包含任务数据名称", datamap.containsKey("data_name"));
-            Assert.assertTrue("不包含任务脚本ID", datamap.containsKey("script_id"));
-            Assert.assertTrue("不包含任务数据细节", datamap.containsKey("detail"));
-
-            List<Map<String, Object>> detaillist = Caster.cast(datamap.get("detail"));
-            for (Map<String, Object> detailmap : detaillist) {
-                /**
-                 * bla bla
-                 */
-            }
+            Assert.assertTrue("不包含任务数据名称", datamap.containsKey("dataName"));
+            Assert.assertTrue("不包含任务脚本ID", datamap.containsKey("scriptId"));
+            
+            Assert.assertTrue("不包含任务数据细节", map.containsKey("detaillist"));
+            String dataId = (String) datamap.get("dataId");
+            Map<String, Map<String, Object>> detaillist = Caster.cast(map.get("detaillist"));
         }
-        for (List<?> list = daemon.getScheduler().getTasks(); list.size() == 0;) {
-            list = daemon.getScheduler().getTasks();
-            Thread.sleep(50);
+        for (ITaskBuilder taskBuilder : taskList) {
+            boolean result = daemon.getScheduler().addTask(taskBuilder, true);
+            System.out.println(result);
         }
+        
+//        for (List<?> list = daemon.getScheduler().getTasks(); list.size() == 0;) {
+//            list = daemon.getScheduler().getTasks();
+//            Thread.sleep(50);
+//        }
         int counter = 0;
-        for (List<JobExecutionContext> list = daemon.getScheduler().getTasks(); list.size() != 0;) {
+        for (List<Object> list = daemon.getScheduler().getTasks(); list.size() != 0;) {
             if (counter % 5 == 0) {
-                for (JobExecutionContext context : list) {
+                for (Object obj : list) {
+                    JobExecutionContext context = (JobExecutionContext) obj;
                     String info = context.getTrigger().getKey().toString();
                     System.err.println("exe:[" + list.size() + "]" + info);
                 }
@@ -175,7 +178,7 @@ public class ScheduleTest {
         }
         List<?> list = daemon.getScheduler().getTasks();
         System.err.println("fin1:[" + list.size() + "]");
-        Thread.sleep(10000);
+        Thread.sleep(50000);
         list = daemon.getScheduler().getTasks();
         System.err.println("fin2:[" + list.size() + "]");
     }
@@ -208,7 +211,7 @@ public class ScheduleTest {
         plan.addProperty("cron", t);
         response = json.toString();
 
-        TaskFetcher fetcher = new TaskFetcher(daemon.getScheduler());
+        TaskFetcher fetcher = new TaskFetcher();
         fetcher.fetch(null, null);
         Thread.sleep(10000l);
     }
@@ -245,7 +248,7 @@ public class ScheduleTest {
         bean.put("xml", root.asXML());
         response = new Gson().toJson(bean);
 
-        TaskFetcher fetcher = new TaskFetcher(daemon.getScheduler());
+        TaskFetcher fetcher = new TaskFetcher();
         fetcher.fetch(null, null);
 
         String id1 = ((Element) root.elements("task").get(0)).attributeValue("ID");
@@ -261,11 +264,11 @@ public class ScheduleTest {
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key1, TriggerState.BLOCKED, 3000l));
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key2, TriggerState.BLOCKED, 3000l));
 
-        log.info("s2 trigger info : " + schedule.getTrigerInfo());
+        log.info("s2 trigger info : " + schedule.getInfo());
         System.err.println("==================================================");
         // 3.重新加载之前的任务
         fetcher.fetch(null, null);
-        log.info("s3 trigger info : " + schedule.getTrigerInfo());
+        log.info("s3 trigger info : " + schedule.getInfo());
 
         Thread.sleep(2000l);// 需要等之前的任务执行完，才会进行替换
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key1, TriggerState.NORMAL, 3000l));
@@ -274,10 +277,12 @@ public class ScheduleTest {
         // 4.查看是否为最新任务
         Assert.assertTrue(TriggerUnil.waitPreviousTimeNull(schedule, key1, 5000l));
         Assert.assertTrue(TriggerUnil.waitPreviousTimeNull(schedule, key2, 5000l));
-        Assert.assertEquals(null, schedule.getScheduler().getTrigger(key1).getPreviousFireTime());
-        Assert.assertEquals(null, schedule.getScheduler().getTrigger(key2).getPreviousFireTime());
+        Trigger trigger1 = (Trigger) schedule.getTrigger(key1);
+        Trigger trigger2 = (Trigger) schedule.getTrigger(key2);
+        Assert.assertEquals(null, trigger1.getPreviousFireTime());
+        Assert.assertEquals(null, trigger2.getPreviousFireTime());
 
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key1, TriggerState.NORMAL, 5000l));
-        log.info("s4 trigger info : " + schedule.getTrigerInfo());
+        log.info("s4 trigger info : " + schedule.getInfo());
     }
 }

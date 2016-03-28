@@ -26,6 +26,8 @@ public class TaskBuilderFactory implements Constants {
         for (Map<String, Object> datamap : datamaplist) {
             ITaskBuilder builder = new DefaultTaskBuilder();
             builder.parse(datamap);
+            builder.build();
+            builderList.add(builder);
         }
         return builderList;
     }
@@ -51,40 +53,41 @@ public class TaskBuilderFactory implements Constants {
         Map<String, Object> planMap = new HashMap<String, Object>();
         Map<String, Object> scriptMap = new HashMap<String, Object>();
         Map<String, List<Object>> dataMap = new HashMap<String, List<Object>>();
-        Map<String, List<Object>> detailMap = new HashMap<String, List<Object>>();
+        Map<String, Map<String, Object>> detailMap = new HashMap<String, Map<String, Object>>();
         Map<String, String> taskScriptPair = new HashMap<String, String>();
-        PlanMap: {
+        PlanMap: {          // Plan 1:1 Task
             List<Map<String, Object>> planList = Caster.cast(rawmap.get("plan"));
             for (Map<String, Object> plan : planList) {
                 planMap.put((String) plan.get("planId"), plan);
             }
         }
-        ScriptMap: {
+        ScriptMap: {        // Script 1:1 Task
             List<Map<String, Object>> scriptList = Caster.cast(rawmap.get("scr"));
             for (Map<String, Object> script : scriptList) {
                 scriptMap.put((String) script.get("scriptId"), script);
             }
         }
-        DetailMap: {
+        DetailMap: {        // Detail N:1 Data
             List<Map<String, Object>> detailList = Caster.cast(rawmap.get("taskDataDetail"));
             for (Map<String, Object> detail : detailList) {
                 String dataId = (String) detail.get("dataId");
                 if (!detailMap.containsKey(dataId)) {
-                    detailMap.put(dataId, new LinkedList<Object>());
+                    detailMap.put(dataId, new HashMap<String, Object>());
                 }
-                detailMap.get(dataId).add(detail);
+                detailMap.get(dataId).put((String) detail.get("datadetailId"), detail);
             }
         }
-        DataMap: {
+        DataMap: {          // Data N:1 Task
             List<Map<String, Object>> dataList = Caster.cast(rawmap.get("taskData"));
             for (Map<String, Object> data : dataList) {
                 String taskId = (String) data.get("taskId");
                 if (!dataMap.containsKey(taskId)) {
                     dataMap.put(taskId, new LinkedList<Object>());
-                    detailMap.put(taskId, new LinkedList<Object>());
+                    detailMap.put(taskId, new HashMap<String, Object>());
                 }
                 dataMap.get(taskId).add(data);
-                detailMap.get(taskId).add(detailMap.remove(data.get("dataId")));
+                String dataId = (String) data.get("dataId");
+                detailMap.get("taskId").put(dataId, detailMap.remove(dataId));
             }
         }
         TaskScriptPair: {
@@ -93,8 +96,9 @@ public class TaskBuilderFactory implements Constants {
                 taskScriptPair.put(tsp.get("taskId"), tsp.get("scriptId"));
             }
         }
-        List<Map<String, Object>> taskList = Caster.cast(rawmap.get("task"));
-        for (Map<String, Object> task : taskList) {
+        List<Map<String, Object>> taskList = new LinkedList<Map<String, Object>>();
+        List<Map<String, Object>> tasks = Caster.cast(rawmap.get("task"));
+        for (Map<String, Object> task : tasks) {
             Map<String, Object> datamap = new HashMap<String, Object>();
             String taskId = (String) task.get("taskId");
             datamap.put("task", task);
@@ -102,10 +106,10 @@ public class TaskBuilderFactory implements Constants {
             datamap.put("script", scriptMap.get(taskScriptPair.get(taskId)));
             datamap.put("datalist", dataMap.get(taskId));
             datamap.put("detaillist", detailMap.get(taskId));
+            taskList.add(datamap);
         }
         return taskList;
     }
-
     private void parseJSONTask(Map<String, Object> sourceMap) {
         Map<String, String> planDict = new HashMap<String, String>();
         Map<String, String> taskDict = new HashMap<String, String>();
@@ -171,7 +175,7 @@ public class TaskBuilderFactory implements Constants {
 
         Mapper.transfer(sourceMap, dict);
     }
-    
+
     private List<ITaskBuilder> parseXMLTask(Map<String, Object> sourceMap) {
         List<ITaskBuilder> taskList = new LinkedList<ITaskBuilder>();
         try {
@@ -197,7 +201,7 @@ public class TaskBuilderFactory implements Constants {
                 //                ITaskBuilder task = null;
                 try {
                     String task_category = (String) dataMap.get("task_catagory");
-//                    taskList.add(TaskBuilderFactory.getBuilder(dataMap, task_category));
+                    //                    taskList.add(TaskBuilderFactory.getBuilder(dataMap, task_category));
                 } catch (Exception e) {
                     e.printStackTrace();
                     continue;
