@@ -57,7 +57,6 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
         String pathResult = new File(pathWorkspace, "rst").getAbsolutePath();
         String pathLog = new File(pathWorkspace, "log").getAbsolutePath();
 
-        exedata.put("pathWorkspace", pathWorkspace);
         exedata.put("pathExedata", pathExedata);
         exedata.put("pathScript", pathScript);
         exedata.put("pathResult", pathResult);

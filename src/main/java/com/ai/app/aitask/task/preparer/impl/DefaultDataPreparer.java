@@ -19,14 +19,12 @@ public class DefaultDataPreparer implements IDataPreparer {
 
     @Override
     public void prepare(Map<String, Object> datamap) {
-        String pathWorkspace = (String) exedata.get("pathWorkspace");
         String pathExedata = (String) exedata.get("pathExedata");
         String pathScript = (String) exedata.get("pathScript");
         String pathResult = (String) exedata.get("pathResult");
         String pathLog = (String) exedata.get("pathLog");
 
-        FileUtil.makeFile(new File(pathWorkspace, pathLog), "some logs");
-
+        FileUtil.makeFile(pathLog, "some logs");
         // The log file
         FileUtil.makeFile(pathLog, "some logs");
         // The result file
@@ -36,6 +34,7 @@ public class DefaultDataPreparer implements IDataPreparer {
         Map<String, String> scriptmap = Caster.cast(datamap.get("script"));
         FileUtil.makeFile(pathScript, scriptmap.get("script"));
 
+        new File(pathExedata).delete();
         Config config = Config.instance(pathExedata);
         config.setProperty("task", "log", pathLog);
         config.setProperty("task", "result", pathResult);
@@ -44,15 +43,14 @@ public class DefaultDataPreparer implements IDataPreparer {
         for (Entry<String, Object> entry : taskmap.entrySet()) {
             config.setProperty("task", entry.getKey(), String.valueOf(entry.getValue()));
         }
-        System.out.println(taskmap);
         Map<String, Map<String, Map<String, Object>>> detailmap;
         detailmap = Caster.cast(datamap.get("detaillist"));
-        for (Entry<String, Map<String, Map<String, Object>>> pair : detailmap.entrySet()) {
-            for (Entry<String, Map<String, Object>> data : pair.getValue().entrySet()) {
-                config.setProperty("data", pair.getKey(), data.getKey());
-                for (Entry<String, Object> detail : data.getValue().entrySet()) {
-                    config.setProperty(data.getKey(), detail.getKey(),
-                            String.valueOf(detail.getValue()));
+        for (Entry<String, Map<String, Map<String, Object>>> data : detailmap.entrySet()) {
+            for (Entry<String, Map<String, Object>> detail : data.getValue().entrySet()) {
+                config.setProperty("data", detail.getKey(), data.getKey());
+                for (Entry<String, Object> entry : detail.getValue().entrySet()) {
+                    config.setProperty(detail.getKey(), entry.getKey(),
+                            String.valueOf(entry.getValue()));
                 }
             }
         }
