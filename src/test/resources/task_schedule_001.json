@@ -69,7 +69,7 @@
         },
         {
             "dataId":"dataId2",
-            "datadetailId":"detailId1",
+            "datadetailId":"detailId3",
             "paramClob":"",
             "paramDesc":"111",
             "paramName":"111",
@@ -79,7 +79,7 @@
         },
         {
             "dataId":"dataId2",
-            "datadetailId":"detailId2",
+            "datadetailId":"detailId4",
             "paramClob":"",
             "paramDesc":"111",
             "paramName":"111",

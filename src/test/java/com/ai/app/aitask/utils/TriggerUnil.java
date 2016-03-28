@@ -6,10 +6,10 @@ import org.quartz.Trigger.TriggerState;
 import org.quartz.TriggerKey;
 
 import com.ai.app.aitask.schedule.ITaskScheduler;
-import com.ai.app.aitask.task.bat.BatTaskTest;
+import com.ai.app.aitask.task.execute.ExecuteTest;
 
 public class TriggerUnil {
-    final static protected Logger log = Logger.getLogger(BatTaskTest.class);
+    final static protected Logger log = Logger.getLogger(ExecuteTest.class);
 
     public static boolean waitStateUntil(ITaskScheduler s, TriggerKey triggerKey, TriggerState state,
             long wait_time) throws InterruptedException, SchedulerException {
@@ -34,9 +34,9 @@ public class TriggerUnil {
 
         long _wait = 0l;
         while (_wait < wait_time) {
-            if (s.getScheduler().getTrigger(triggerKey).getPreviousFireTime() == null) {
-                return true;
-            }
+//            if (s.getScheduler().getTrigger(triggerKey).getPreviousFireTime() == null) {
+//                return true;
+//            }
             Thread.sleep(100l);
             _wait += 100l;
         }

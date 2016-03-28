@@ -7,6 +7,7 @@ import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 
 import com.ai.app.aitask.task.ITask;
+import com.ai.app.aitask.task.wrapper.QuartzTaskWrapper;
 
 public class ExecuteListener implements JobListener {
 
@@ -23,8 +24,8 @@ public class ExecuteListener implements JobListener {
 
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-        ITask task = (ITask) context.getJobInstance();
-//        task.before(context);
+        ITask task = ((QuartzTaskWrapper) context.getJobInstance()).getWrapped();
+        task.before(context.getTrigger().getJobDataMap(), context.getJobDetail().getJobDataMap());
 
         JobDataMap data_map = context.getTrigger().getJobDataMap();
         StringBuilder sb = new StringBuilder();
@@ -38,8 +39,10 @@ public class ExecuteListener implements JobListener {
 
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException error) {
-        ITask task = (ITask) context.getJobInstance();
-//        task.after(context, error);
+        ITask task = ((QuartzTaskWrapper) context.getJobInstance()).getWrapped();
+        task.after(context.getTrigger().getJobDataMap(), context.getJobDetail().getJobDataMap());
+        // TODO handle the error
+        //                task.after(context, error);
 
         JobDataMap data_map = context.getTrigger().getJobDataMap();
         StringBuilder sb = new StringBuilder();

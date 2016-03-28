@@ -10,7 +10,7 @@ import com.ai.app.aitask.common.TimeOutThread;
 public class TimeoutListener implements JobListener {
 
     protected final static Logger log = Logger.getLogger(TimeoutListener.class);
-    private TimeOutThread                   _timeoutthread;
+    private TimeOutThread         _timeoutthread;
 
     @Override
     public String getName() {
@@ -42,5 +42,4 @@ public class TimeoutListener implements JobListener {
             _timeoutthread.interrupt();
         }
     }
-
 }

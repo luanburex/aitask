@@ -9,6 +9,9 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
+/**
+ * TODO 干嘛的?
+ */
 public class Lang {
 
     public static boolean isNumeric(String str) {

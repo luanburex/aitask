@@ -1,4 +1,4 @@
-package com.ai.app.aitask.net;
+package com.ai.app.aitask.common;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,8 +17,6 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.entity.ContentType;
-
-import com.ai.app.aitask.common.Constants;
 
 public class RequestWorker implements Constants {
     private final Log log = LogFactory.getLog(getClass());

@@ -107,6 +107,7 @@ public class QuartzScheduler implements ITaskScheduler {
 
             log.debug(String.format("[%s] add task : %s @ %s", name, trigger.getKey(), state));
             log.debug(String.format("[%s] run task : %s @ %s", name, trigger.getKey(), fire));
+            System.out.println(getTasks().size());
             return true;
         } catch (SchedulerException e) {
             e.printStackTrace();
@@ -118,8 +119,10 @@ public class QuartzScheduler implements ITaskScheduler {
         TriggerBuilder<Trigger> builder = TriggerBuilder.newTrigger();
         builder.withIdentity((String) triggerMap.get("key"), (String) triggerMap.get("group"));
         if ((Boolean) triggerMap.get("instant")) {
-            builder.withSchedule(SimpleScheduleBuilder.simpleSchedule());
+            log.debug("instant trigger");
+            builder.withSchedule(SimpleScheduleBuilder.simpleSchedule()).startNow();
         } else {
+            log.debug("cron trigger");
             builder.withSchedule(CronScheduleBuilder.cronSchedule((String) triggerMap.get("cron")));
         }
         return builder.usingJobData(new JobDataMap(triggerMap)).build();

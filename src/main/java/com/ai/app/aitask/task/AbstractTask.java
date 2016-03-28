@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.Constants;
-import com.ai.app.aitask.net.RequestWorker;
+import com.ai.app.aitask.common.RequestWorker;
 import com.ai.app.aitask.task.excutor.IExecutor;
 import com.ai.app.aitask.task.preparer.IDataPreparer;
 import com.ai.app.aitask.task.result.IResultFetcher;
@@ -22,7 +22,8 @@ public class AbstractTask implements ITask, Constants {
     private String                prefix;
     private boolean               interrupted;
     private Map<String, Object>   runtimeData;
-    {
+
+    public AbstractTask() {
         config = Config.instance("client.properties");
         interrupted = false;
         runtimeData = new HashMap<String, Object>();
@@ -35,6 +36,8 @@ public class AbstractTask implements ITask, Constants {
         if (null != preparer && !interrupted) {
             log.info(String.format("[%s] prepare %s", prefix, preparer.getClass()));
             preparer.prepare(datamap);
+        } else {
+            log.info(String.format("[%s] preparer is null", prefix));
         }
     }
 
@@ -51,10 +54,12 @@ public class AbstractTask implements ITask, Constants {
             log.info(String.format("[%s] to execute", prefix));
             if (null == executor) {
                 // TODO Executor is Null!!! tell somebody...
+                log.info(String.format("[%s] executor is null", prefix));
+            } else {
+                int result = executor.execute(datamap);
+                log.info(String.format("[%s] executed, return(%d)", prefix, result));
+                runtimeData.put("exitCode", result);
             }
-            int result = executor.execute(datamap);
-            log.info(String.format("[%s] executed, return(%d)", prefix, result));
-            runtimeData.put("exitCode", result);
         } catch (Exception e) {
             e.printStackTrace();
             runtimeData.put("exception", e);
@@ -86,7 +91,7 @@ public class AbstractTask implements ITask, Constants {
                 //TODO result
                 Map<String, Object> result = fetcher.error(datamap,
                         (Exception) runtimeData.get("exception"));
-                log.info(String.format("[%s] execut failed : %d", prefix, result));
+                log.info(String.format("[%s] execut failed : %s", prefix, result));
                 //TODO RequestWorker should move to a TaskFinishListener
                 String url = config.getProperty(null, "aitask.result.url");
                 RequestWorker worker = new RequestWorker(url, null);
@@ -99,11 +104,13 @@ public class AbstractTask implements ITask, Constants {
                     log.info(String.format("[%s] resp cod : %s", prefix, worker.getRespCode()));
                     log.info(String.format("[%s] resp msg : %s", prefix, worker.getRespMsg()));
                 }
+            } else {
+                log.info(String.format("[%s] fetcher is null", prefix));
             }
         } else {
             if (null != fetcher) {
                 Map<String, Object> result = fetcher.fetch(datamap);
-                log.info(String.format("[%s] execut finished : %d", prefix, result));
+                log.info(String.format("[%s] execut finished : %s", prefix, result));
                 String url = config.getProperty(null, "aitask.result.url");
                 RequestWorker worker = new RequestWorker(url, null);
                 try {
@@ -115,6 +122,8 @@ public class AbstractTask implements ITask, Constants {
                     log.info(String.format("[%s] resp cod : %s", prefix, worker.getRespCode()));
                     log.info(String.format("[%s] resp msg : %s", prefix, worker.getRespMsg()));
                 }
+            } else {
+                log.info(String.format("[%s] fetcher is null", prefix));
             }
         }
     }

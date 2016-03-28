@@ -156,7 +156,6 @@ public class ScheduleTest {
         }
         for (ITaskBuilder taskBuilder : taskList) {
             boolean result = daemon.getScheduler().addTask(taskBuilder, true);
-            System.out.println(result);
         }
         
 //        for (List<?> list = daemon.getScheduler().getTasks(); list.size() == 0;) {
@@ -213,7 +212,7 @@ public class ScheduleTest {
 
         TaskFetcher fetcher = new TaskFetcher();
         fetcher.fetch(null, null);
-        Thread.sleep(10000l);
+        Thread.sleep(5000l);
     }
     /**
      * 平台发起-发布任务

@@ -2,6 +2,7 @@ package com.ai.app.aitask.task.excutor.impl;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
@@ -20,8 +21,8 @@ import com.ai.app.aitask.task.excutor.IExecutor;
 public class DefaultTaskExecutor implements IExecutor, Constants {
 
     protected final static Logger log      = Logger.getLogger(DefaultTaskExecutor.class);
-    private ProcessWorker                   process  = null;
-    private String[]                        commands = null;
+    private ProcessWorker         process  = null;
+    private String[]              commands = null;
 
     public String getOutput() {
         return process.getStandOutput();
@@ -61,30 +62,22 @@ public class DefaultTaskExecutor implements IExecutor, Constants {
         };
         return 1 == process.process("tasklist");
     }
+
     @Override
-    public int execute(JobExecutionContext context) throws JobExecutionException {
-        if (context != null) {
-            log.info("[" + context.getTrigger().getKey() + "]" + "start run cmd: "
-                    + Arrays.toString(commands));
+    public int execute(Map<String, Object> datamap) {
+        log.info("executing:" + Arrays.toString(commands));
+        //TODO run run run
+        process = new ProcessWorker(DEFAULT_CHARSET);
+        log.info("process begin");
+        int result = process.process(commands);
+        log.info("process end");
+        log.info("process stdout: " + process.getStandOutput());
+        if (!process.getErrorOutput().isEmpty()) {
+            log.error("process erroput: " + process.getErrorOutput());
         }
-        try {
-            process = new ProcessWorker(DEFAULT_CHARSET);
-            if (context != null) {
-                log.info("[" + context.getTrigger().getKey() + "]" + "process begin");
-            }
-            int result = process.process(commands);
-            if (context != null) {
-                log.info("[" + context.getTrigger().getKey() + "]" + "process end");
-            }
-            log.info("process stdout: " + process.getStandOutput());
-            if (!process.getErrorOutput().isEmpty()) {
-                log.error("process erroput: " + process.getErrorOutput());
-            }
-            return result;
-        } catch (Exception e) {
-            throw new JobExecutionException(e);
-        }
+        return result;
     }
+
     @Override
     public void interrupt() {
         log.info("process destroyed");

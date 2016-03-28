@@ -1,11 +1,13 @@
 package com.ai.app.aitask.task.builder.impl;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.ai.app.aitask.common.Caster;
+import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.task.builder.AbstractTaskBuilder;
 import com.ai.app.aitask.task.excutor.impl.DefaultTaskExecutor;
 import com.ai.app.aitask.task.preparer.impl.DefaultDataPreparer;
@@ -38,21 +40,30 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
     public void build() {
         {
             Map<String, Object> task = Caster.cast(datamap.get("task"));
-//            Map<String, Object> plan = Caster.cast(datamap.get("plan"));
+            //            Map<String, Object> plan = Caster.cast(datamap.get("plan"));
             key.put("key", task.get("taskId"));
             key.put("cron", task.get("cron"));
             key.put("group", task.get("taskGroup"));
+            key.put("timeout", task.get("timeout"));
             key.put("instant", task.get("instant"));
             content.put("datamap", datamap);
         }
-
+        Config config = Config.instance("aitask.properties");
         Map<String, Object> exedata = new HashMap<String, Object>();
-        exedata.put("pathExedata", "path");
-        exedata.put("pathScript", "path");
-        exedata.put("pathResult", "path");
-        exedata.put("pathLog", "path");
+
+        String pathWorkspace = config.getProperty(null, "workspace");
+        String pathExedata = new File(pathWorkspace, "exe").getAbsolutePath();
+        String pathScript = new File(pathWorkspace, "scr").getAbsolutePath();
+        String pathResult = new File(pathWorkspace, "rst").getAbsolutePath();
+        String pathLog = new File(pathWorkspace, "log").getAbsolutePath();
+
+        exedata.put("pathWorkspace", pathWorkspace);
+        exedata.put("pathExedata", pathExedata);
+        exedata.put("pathScript", pathScript);
+        exedata.put("pathResult", pathResult);
+        exedata.put("pathLog", pathLog);
         preparer = new DefaultDataPreparer(exedata);
-        executor = new DefaultTaskExecutor("some commands");
+        executor = new DefaultTaskExecutor("net", "user");
         fetcher = new DefaultResultFetcher(exedata);
         super.build();
     }

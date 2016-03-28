@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.bat;
+package com.ai.app.aitask.task.execute;
 
 import java.io.File;
 import java.util.HashMap;
@@ -19,16 +19,16 @@ import org.quartz.Trigger.TriggerState;
 
 import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
-import com.ai.app.aitask.task.TaskBuilderFactory;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
+import com.ai.app.aitask.task.builder.TaskBuilderFactory;
 import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
 import com.ai.app.aitask.utils.TriggerUnil;
 import com.google.gson.Gson;
 
-public class BatTaskTest {
+public class ExecuteTest {
 
-    final static protected Logger  log    = Logger.getLogger(BatTaskTest.class);
+    final static protected Logger  log    = Logger.getLogger(ExecuteTest.class);
 
     public static ScheduleDaemon daemon;
     static TestJettyServer       server = null;
@@ -80,15 +80,15 @@ public class BatTaskTest {
                         + "/com/ai/app/aitask/task/bat/bat_script_task001.ini");
 
         //        ITaskBuilder ts = TaskDirector.getBatTaskBuilder(root.asXML());
-        ITaskBuilder ts = TaskBuilderFactory.getBuilder(null, Integer.toString(Constants.TASK_TYPE_BAT));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
-                .mapKey(), TriggerState.NONE, 1000l));
-        daemon.getScheduler().addTask(ts, true);
-        log.info(daemon.getScheduler().getTaskState(ts.getAuth().mapKey()));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
-                .mapKey(), TriggerState.BLOCKED, 1000l));
-        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
-                .mapKey(), TriggerState.NONE, 9000l));
-        Thread.sleep(3000l);
+//        ITaskBuilder ts = TaskBuilderFactory.parseBuilder(content).getBuilder(null, Integer.toString(Constants.TASK_TYPE_BAT));
+//        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
+//                .mapKey(), TriggerState.NONE, 1000l));
+//        daemon.getScheduler().addTask(ts, true);
+//        log.info(daemon.getScheduler().getTaskState(ts.getAuth().mapKey()));
+//        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
+//                .mapKey(), TriggerState.BLOCKED, 1000l));
+//        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
+//                .mapKey(), TriggerState.NONE, 9000l));
+//        Thread.sleep(3000l);
     }
 }

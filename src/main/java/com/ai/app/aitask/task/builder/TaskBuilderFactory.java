@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task;
+package com.ai.app.aitask.task.builder;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,7 +13,6 @@ import org.dom4j.Element;
 import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.common.Mapper;
-import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.task.builder.impl.DefaultTaskBuilder;
 
 public class TaskBuilderFactory implements Constants {
