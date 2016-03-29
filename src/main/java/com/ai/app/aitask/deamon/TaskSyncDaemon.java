@@ -10,6 +10,9 @@ import com.ai.app.aitask.schedule.TaskFetcher;
 import com.ai.app.aitask.schedule.TaskSyncRunable;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
+/**
+ * @author renzq
+ */
 public class TaskSyncDaemon {
     protected final static Logger log = Logger.getLogger(ScheduleDaemon.class);
     private static TaskSyncDaemon instance;
@@ -25,6 +28,7 @@ public class TaskSyncDaemon {
     }
 
     public void syncTask(List<ITaskBuilder> tasks) {
+        log.info("try synchronize tasklist : " + tasks.size());
         for (ITaskBuilder task : tasks) {
             syncRunnable.offerTask(task);
         }
@@ -37,7 +41,6 @@ public class TaskSyncDaemon {
             private TaskFetcher fetcher = new TaskFetcher();
             @Override
             public void run() {
-                log.info("try synchronize tasklist");
                 syncTask(fetcher.fetch(null, null));
             }
         }, 100l, 1000l);

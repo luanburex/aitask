@@ -1,31 +1,22 @@
 package com.ai.app.aitask.net.servlet;
 
 import java.io.IOException;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-
-import com.ai.app.aitask.common.Caster;
-import com.ai.app.aitask.deamon.ScheduleDaemon;
-import com.google.gson.Gson;
-
+/**
+ * @author Alex Xu
+ */
 public class StepQueryServlet extends HttpServlet {
     private static final long serialVersionUID = 880300319427022262L;
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
     IOException {
         doPost(req, resp);
     }
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {

@@ -10,7 +10,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 /**
- * TODO 干嘛的?
+ * @author renzq
  */
 public class Lang {
 

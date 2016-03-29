@@ -18,6 +18,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.entity.ContentType;
 
+/**
+ * @author Alex Xu
+ */
 public class RequestWorker implements Constants {
     private final Log log = LogFactory.getLog(getClass());
     private String    requestURL;
@@ -29,9 +32,11 @@ public class RequestWorker implements Constants {
         this.requestURL = url;
         this.requestQuery = query;
     }
+
     public RequestWorker get() throws ConnectException {
         return post(null, ContentType.DEFAULT_TEXT);
     }
+
     public RequestWorker post(String content, ContentType type) throws ConnectException {
         StringBuffer buffer = new StringBuffer(requestURL);
         if (null != requestQuery && !requestQuery.isEmpty()) {
@@ -98,15 +103,19 @@ public class RequestWorker implements Constants {
         this.responseContent = responseContent.toString();
         return this;
     }
+
     public String getRespContent() {
         return responseContent;
     }
+
     public String getRespMsg() {
         return responseMessage;
     }
+
     public Integer getRespCode() {
         return responseCode;
     }
+
     public static String formEntity(Map<String, String> pairmap) {
         StringBuffer buffer = new StringBuffer();
         for (Entry<String, String> pair : pairmap.entrySet()) {
@@ -114,6 +123,7 @@ public class RequestWorker implements Constants {
         }
         return buffer.substring(0, buffer.length() - 1);
     }
+
     public static String formEntityEX(Map<String, String> pairmap) {
         return "?".concat(formEntity(pairmap));
     }

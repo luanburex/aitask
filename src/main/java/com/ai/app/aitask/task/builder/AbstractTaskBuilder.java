@@ -9,6 +9,10 @@ import com.ai.app.aitask.task.excutor.IExecutor;
 import com.ai.app.aitask.task.preparer.IDataPreparer;
 import com.ai.app.aitask.task.result.IResultFetcher;
 
+/**
+ * @author renzq
+ * @author Alex Xu
+ */
 public abstract class AbstractTaskBuilder implements ITaskBuilder {
     protected final static Logger log = Logger.getLogger(AbstractTaskBuilder.class);
 
@@ -25,14 +29,12 @@ public abstract class AbstractTaskBuilder implements ITaskBuilder {
         this.content = new HashMap<String, Object>();
         this.datamap = datamap;
     }
-
     @Override
     public void build() {
         content.put("executor", executor);
         content.put("preparer", preparer);
         content.put("fetcher", fetcher);
     }
-
     @Override
     public Map<String, Object> getTrigger() {
         return key;

@@ -18,7 +18,9 @@ public class TaskSyncListener {
     }
 
     public boolean beforeTaskEnqueue(ITaskBuilder task) {
-        return false;
+        boolean vetoed = false;
+        log.info("Task Enqueue Vetoed : " + vetoed);
+        return vetoed;
     }
 
     public void afterTaskEnqueue(ITaskBuilder task, boolean succeed) {
@@ -27,7 +29,9 @@ public class TaskSyncListener {
     }
 
     public boolean beforeTaskSchedule(ITaskBuilder task) {
-        return false;
+        boolean vetoed = false;
+        log.info("Task Schedule Vetoed : " + vetoed);
+        return vetoed;
     }
 
     public void afterTaskSchedule(ITaskBuilder task, boolean succeed) {

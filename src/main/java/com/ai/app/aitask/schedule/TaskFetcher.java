@@ -16,6 +16,10 @@ import com.ai.app.aitask.common.RequestWorker;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.task.builder.TaskBuilderFactory;
 
+/**
+ * @author renzq
+ * @author Alex Xu
+ */
 public class TaskFetcher implements Constants {
     protected final static Logger log = Logger.getLogger(TaskFetcher.class);
     private Config                config;

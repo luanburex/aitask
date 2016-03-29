@@ -19,6 +19,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+/**
+ * @author Alex Xu
+ */
 public class Mapper {
     public static Map<String, Object> parseXML(String content) throws Exception {
         try {
@@ -27,6 +30,7 @@ public class Mapper {
             throw new Exception("fail parse xml");
         }
     }
+
     private static Map<String, Object> parseXML(Element e) {
         Map<String, Object> map = new HashMap<String, Object>();
         for (Object a : e.attributes()) {
@@ -43,9 +47,11 @@ public class Mapper {
         }
         return map;
     }
+
     public static Map<String, Object> parseJSON(String content) {
         return parseGSONMap(new JsonParser().parse(content).getAsJsonObject());
     }
+
     public static Map<String, Object> parseGSONMap(JsonObject j) {
         Map<String, Object> map = new HashMap<String, Object>();
         for (Entry<String, JsonElement> entry : j.entrySet()) {
@@ -60,6 +66,7 @@ public class Mapper {
         }
         return map;
     }
+
     private static List<Object> parseGSONArray(JsonArray j) {
         List<Object> list = new LinkedList<Object>();
         for (Iterator<JsonElement> i = j.getAsJsonArray().iterator(); i.hasNext();) {
@@ -74,10 +81,7 @@ public class Mapper {
         }
         return list;
     }
-    /**
-     * dict中的有值key可以匹配替换source中该key对应的子Array/Map
-     * dict中""空值key可以匹配其他entry
-     */
+
     public static void transfer(Map<String, Object> source, Map<String, Map<String, String>> dict) {
         Map<String, String> generalDict = dict.get("");
         Set<String> set = new HashSet<String>(source.keySet());

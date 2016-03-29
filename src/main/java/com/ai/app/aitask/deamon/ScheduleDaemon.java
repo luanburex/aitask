@@ -6,6 +6,9 @@ import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.schedule.ITaskScheduler;
 
+/**
+ * @author renzq
+ */
 public class ScheduleDaemon implements Constants{
     protected final static Logger log = Logger.getLogger(ScheduleDaemon.class);
     private static ScheduleDaemon instance;

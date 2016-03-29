@@ -8,12 +8,15 @@ import org.apache.http.entity.ContentType;
 import org.apache.log4j.Logger;
 
 import com.ai.app.aitask.common.Config;
-import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.common.RequestWorker;
 import com.ai.app.aitask.task.excutor.IExecutor;
 import com.ai.app.aitask.task.preparer.IDataPreparer;
 import com.ai.app.aitask.task.result.IResultFetcher;
 
+/**
+ * @author renzq
+ * @author Alex Xu
+ */
 public class AbstractTask implements ITask {
     protected final static Logger log = Logger.getLogger(AbstractTask.class);
 
@@ -34,7 +37,6 @@ public class AbstractTask implements ITask {
         prefix = (String) trigger.get("info");
         IDataPreparer preparer = (IDataPreparer) datamap.get("preparer");
         if (null != preparer && !interrupted) {
-            log.info(String.format("[%s] prepare %s", prefix, preparer.getClass()));
             preparer.prepare(datamap);
         } else {
             log.info(String.format("[%s] preparer is null", prefix));

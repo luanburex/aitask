@@ -9,6 +9,9 @@ import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.FileUtil;
 import com.ai.app.aitask.task.preparer.IDataPreparer;
 
+/**
+ * @author Alex Xu
+ */
 public class DefaultDataPreparer implements IDataPreparer {
 
     private Map<String, Object> exedata;
@@ -16,7 +19,6 @@ public class DefaultDataPreparer implements IDataPreparer {
     public DefaultDataPreparer(Map<String, Object> exedata) {
         this.exedata = exedata;
     }
-
     @Override
     public void prepare(Map<String, Object> datamap) {
         String pathExedata = (String) exedata.get("pathExedata");

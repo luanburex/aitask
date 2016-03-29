@@ -10,6 +10,10 @@ import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.FileUtil;
 import com.ai.app.aitask.task.result.IResultFetcher;
 
+/**
+ * @author renzq
+ * @author Alex Xu
+ */
 public class DefaultResultFetcher implements IResultFetcher {
 
     private Map<String, Object> exedata;
@@ -17,7 +21,6 @@ public class DefaultResultFetcher implements IResultFetcher {
     public DefaultResultFetcher(Map<String, Object> exedata) {
         this.exedata = exedata;
     }
-
     @Override
     public Map<String, Object> fetch(Map<String, Object> datamap) {
         String pathWorkspace = (String) exedata.get("pathWorkspace");

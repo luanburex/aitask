@@ -33,6 +33,10 @@ import com.ai.app.aitask.schedule.ITaskScheduler;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.task.wrapper.QuartzTaskWrapper;
 
+/**
+ * @author renzq
+ * @author Alex Xu
+ */
 public class QuartzScheduler implements ITaskScheduler {
     protected final static Logger log = Logger.getLogger(QuartzScheduler.class);
     private Scheduler             scheduler;
@@ -65,7 +69,6 @@ public class QuartzScheduler implements ITaskScheduler {
             }
         }
     }
-
     @Override
     public void start() {
         try {
@@ -75,7 +78,6 @@ public class QuartzScheduler implements ITaskScheduler {
             e.printStackTrace();
         }
     }
-
     @Override
     public void shutdown() {
         try {
@@ -85,7 +87,6 @@ public class QuartzScheduler implements ITaskScheduler {
             e.printStackTrace();
         }
     }
-
     @Override
     public boolean addTask(ITaskBuilder taskBuilder, boolean replace) {
         try {
@@ -138,7 +139,6 @@ public class QuartzScheduler implements ITaskScheduler {
         builder.storeDurably();
         return builder.usingJobData(new JobDataMap(contentMap)).build();
     }
-
     @Override
     public Object getTaskState(Object... keys) {
         TriggerKey key;
@@ -156,7 +156,6 @@ public class QuartzScheduler implements ITaskScheduler {
             return null;
         }
     }
-
     @Override
     public void fireTask(Object... keys) {
         Trigger trigger;
@@ -173,7 +172,6 @@ public class QuartzScheduler implements ITaskScheduler {
             e.printStackTrace();
         }
     }
-
     @Override
     public void suspendTask(Object... keys) {
         JobKey key;
@@ -197,7 +195,6 @@ public class QuartzScheduler implements ITaskScheduler {
             e.printStackTrace();
         }
     }
-
     @Override
     public Object getTrigger(Object... keys) {
         Trigger trigger = null;
@@ -216,7 +213,6 @@ public class QuartzScheduler implements ITaskScheduler {
         }
         return trigger;
     }
-
     @Override
     public Set<Object> getTriggers() {
         try {
@@ -226,7 +222,6 @@ public class QuartzScheduler implements ITaskScheduler {
         }
         return new HashSet<Object>();
     }
-
     @Override
     public List<Object> getTasks() {
         try {
@@ -236,7 +231,6 @@ public class QuartzScheduler implements ITaskScheduler {
             return new ArrayList<Object>();
         }
     }
-
     @Override
     public String getInfo() {
         StringBuffer buffer = new StringBuffer();

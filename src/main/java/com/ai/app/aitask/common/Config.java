@@ -47,7 +47,7 @@ public class Config {
             } catch (FileNotFoundException e) {
                 try {
                     new File(filename).createNewFile();
-                    input = ClassLoader.getSystemResourceAsStream(filename);
+                    input = new FileInputStream(filename);
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 }

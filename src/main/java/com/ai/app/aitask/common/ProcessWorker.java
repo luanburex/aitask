@@ -9,6 +9,9 @@ import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author Alex Xu
+ */
 public class ProcessWorker implements Constants {
     protected Logger     log = Logger.getLogger(ProcessWorker.class);
     private StringBuffer standBuffer;

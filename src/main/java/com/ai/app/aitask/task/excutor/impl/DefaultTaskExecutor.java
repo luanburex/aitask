@@ -11,9 +11,9 @@ import com.ai.app.aitask.task.excutor.IExecutor;
 
 /**
  * Use System shell to run cmd command.
- *
- * @author Administrator
- *
+ * 
+ * @author renzq
+ * @author Alex Xu
  */
 public class DefaultTaskExecutor implements IExecutor {
 
@@ -59,7 +59,6 @@ public class DefaultTaskExecutor implements IExecutor {
         };
         return 1 == process.process("tasklist");
     }
-
     @Override
     public int execute(Map<String, Object> datamap) {
         log.info("executing:" + Arrays.toString(commands));
@@ -74,7 +73,6 @@ public class DefaultTaskExecutor implements IExecutor {
         }
         return result;
     }
-
     @Override
     public void interrupt() {
         log.info("process destroyed");

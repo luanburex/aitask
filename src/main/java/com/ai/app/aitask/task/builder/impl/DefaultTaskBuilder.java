@@ -13,6 +13,10 @@ import com.ai.app.aitask.task.excutor.impl.DefaultTaskExecutor;
 import com.ai.app.aitask.task.preparer.impl.DefaultDataPreparer;
 import com.ai.app.aitask.task.result.impl.DefaultResultFetcher;
 
+/**
+ * @author renzq
+ * @author Alex Xu
+ */
 public class DefaultTaskBuilder extends AbstractTaskBuilder {
 
     @Override
@@ -35,7 +39,6 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
         }
         super.parse(datamap);
     }
-
     @Override
     public void build() {
         {

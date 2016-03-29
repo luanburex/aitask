@@ -12,6 +12,9 @@ import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.listener.TaskSyncListener;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
+/**
+ * @author renzq
+ */
 public class TaskSyncRunable implements Runnable, Constants {
 
     protected final static Log  log = LogFactory.getLog(TaskSyncRunable.class);
@@ -31,9 +34,9 @@ public class TaskSyncRunable implements Runnable, Constants {
     }
 
     public void offerTask(ITaskBuilder task) {
-        if (taskSyncListener.beforeTaskSchedule(task) && taskScheduler.addTask(task, true)) {
+        if (!taskSyncListener.beforeTaskSchedule(task) && taskScheduler.addTask(task, true)) {
             taskSyncListener.afterTaskSchedule(task, true);
-        } else if (taskSyncListener.beforeTaskEnqueue(task)) {
+        } else if (!taskSyncListener.beforeTaskEnqueue(task)) {
             taskSyncQueue.offer(task);
             taskSyncListener.afterTaskEnqueue(task, true);
         }
@@ -41,7 +44,7 @@ public class TaskSyncRunable implements Runnable, Constants {
 
     private void sync() {
         for (ITaskBuilder task : taskSyncQueue) {
-            if (taskSyncListener.beforeTaskSchedule(task) && taskScheduler.addTask(task, true)) {
+            if (!taskSyncListener.beforeTaskSchedule(task) && taskScheduler.addTask(task, true)) {
                 taskSyncListener.afterTaskSchedule(task, true);
                 taskSyncQueue.remove(task);
             }

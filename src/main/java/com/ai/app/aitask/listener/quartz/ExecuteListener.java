@@ -9,6 +9,9 @@ import org.quartz.JobListener;
 import com.ai.app.aitask.task.ITask;
 import com.ai.app.aitask.task.wrapper.QuartzTaskWrapper;
 
+/**
+ * @author renzq
+ */
 public class ExecuteListener implements JobListener {
 
     protected final static Logger log = Logger.getLogger(ExecuteListener.class);

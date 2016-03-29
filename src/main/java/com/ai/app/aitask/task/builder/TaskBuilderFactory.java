@@ -15,6 +15,10 @@ import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.common.Mapper;
 import com.ai.app.aitask.task.builder.impl.DefaultTaskBuilder;
 
+/**
+ * @author renzq
+ * @author Alex Xu
+ */
 public class TaskBuilderFactory implements Constants {
     protected final static Logger log = Logger.getLogger(TaskBuilderFactory.class);
 
