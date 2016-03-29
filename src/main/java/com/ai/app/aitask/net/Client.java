@@ -11,24 +11,25 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import com.ai.app.aitask.common.Config;
+import com.ai.app.aitask.common.Constants;
 
 /**
+ * Simple Servlet Container
  * 
  * @author Alex Xu
- *
  */
-public class Client {
-    protected Logger log = Logger.getLogger(getClass());
-    private Server   server;
-    private Config   config;
+public class Client implements Constants{
+    protected final static Logger log = Logger.getLogger(Client.class);
+    private Server                server;
+    private Config                config;
     public Client() {
-        this.config = Config.instance("client.properties");
+        this.config = Config.instance(CONFIG_CLIENT);
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         for (Entry<Object, Object> servlet : config.getProperties("servlets").entrySet()) {
-            log.info(servlet.getKey() + " @ " + servlet.getValue());
             try {
                 Class<?> clazz = Class.forName((String) servlet.getKey());
                 handler.addServlet(clazz.asSubclass(Servlet.class), (String) servlet.getValue());
+                log.info(servlet.getKey() + " @ " + servlet.getValue());
             } catch (ClassNotFoundException e) {
                 log.error("Servlet not found : " + (String) servlet.getKey());
             }
@@ -38,6 +39,7 @@ public class Client {
         server = new Server(port);
         server.setHandler(handler);
     }
+
     public void start() {
         try {
             server.start();
@@ -45,6 +47,7 @@ public class Client {
             e.printStackTrace();
         }
     }
+
     public static String getHardwareAddress() {
         StringBuffer stringBuffer = new StringBuffer();
         byte[] mac = new byte[0];

@@ -5,10 +5,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
-import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.common.ProcessWorker;
 import com.ai.app.aitask.task.excutor.IExecutor;
 
@@ -18,7 +15,7 @@ import com.ai.app.aitask.task.excutor.IExecutor;
  * @author Administrator
  *
  */
-public class DefaultTaskExecutor implements IExecutor, Constants {
+public class DefaultTaskExecutor implements IExecutor {
 
     protected final static Logger log      = Logger.getLogger(DefaultTaskExecutor.class);
     private ProcessWorker         process  = null;

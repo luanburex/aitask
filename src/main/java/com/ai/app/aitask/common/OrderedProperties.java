@@ -7,10 +7,9 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * @author Administrator
+ * @author renzq
  */
 public class OrderedProperties extends Properties {
-
     private static final long           serialVersionUID = -4627607243846121965L;
     private final LinkedHashSet<Object> keys             = new LinkedHashSet<Object>();
     @Override

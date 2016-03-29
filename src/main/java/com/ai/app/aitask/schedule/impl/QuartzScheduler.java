@@ -38,7 +38,7 @@ public class QuartzScheduler implements ITaskScheduler {
     private Scheduler             scheduler;
     private String                name;
     public QuartzScheduler() throws SchedulerException {
-        Config config = Config.instance("quartz.properties");
+        Config config = Config.instance(CONFIG_QUARTZ);
         scheduler = new StdSchedulerFactory(config.getProperties(null)).getScheduler();
         name = scheduler.getSchedulerName();
         scheduler.standby();
@@ -96,22 +96,26 @@ public class QuartzScheduler implements ITaskScheduler {
             return false;
         }
 
-        try {
-            Trigger trigger = parseTrigger(taskBuilder.getTrigger());
-            JobDetail detail = parseDetail(trigger.getKey(), taskBuilder.getContent());
-            // TODO check if the task could be add.
-            scheduler.scheduleJob(detail, trigger);
-
-            Date fire = trigger.getNextFireTime();
-            TriggerState state = (TriggerState) getTaskState(trigger.getKey());
-
-            log.debug(String.format("[%s] add task : %s @ %s", name, trigger.getKey(), state));
-            log.debug(String.format("[%s] run task : %s @ %s", name, trigger.getKey(), fire));
-            System.out.println(getTasks().size());
-            return true;
-        } catch (SchedulerException e) {
-            e.printStackTrace();
+        Trigger trigger = parseTrigger(taskBuilder.getTrigger());
+        JobDetail detail = parseDetail(trigger.getKey(), taskBuilder.getContent());
+        TriggerState state = (TriggerState) getTaskState(trigger.getKey());
+        if (TriggerState.BLOCKED == state) {
+            log.debug(String.format("[%s] block task : %s @ %s", name, trigger.getKey(), state));
             return false;
+        } else {
+            try {
+                scheduler.scheduleJob(detail, trigger);
+
+                Date fire = trigger.getNextFireTime();
+                state = (TriggerState) getTaskState(trigger.getKey());
+
+                log.debug(String.format("[%s] add task : %s @ %s", name, trigger.getKey(), state));
+                log.debug(String.format("[%s] run task : %s @ %s", name, trigger.getKey(), fire));
+                return true;
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 

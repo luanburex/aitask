@@ -3,18 +3,18 @@ package com.ai.app.aitask.deamon;
 import org.apache.log4j.Logger;
 
 import com.ai.app.aitask.common.Config;
+import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.schedule.ITaskScheduler;
 
-public class ScheduleDaemon {
+public class ScheduleDaemon implements Constants{
     protected final static Logger log = Logger.getLogger(ScheduleDaemon.class);
-
     private static ScheduleDaemon instance;
     private ITaskScheduler        scheduler;
 
     private ScheduleDaemon() {
-        Config config = Config.instance("aitask.properties");
+        Config config = Config.instance(CONFIG_AITASK);
         try {
-            Class<?> schedulerClass = Class.forName(config.getProperty(null, "scheduler"));
+            Class<?> schedulerClass = Class.forName(config.getProperty("scheduler"));
             scheduler = schedulerClass.asSubclass(ITaskScheduler.class).newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -25,12 +25,8 @@ public class ScheduleDaemon {
         }
     }
 
-    public static ScheduleDaemon instance() {
-        if (null == instance) {
-            return instance = new ScheduleDaemon();
-        } else {
-            return instance;
-        }
+    public static synchronized ScheduleDaemon instance() {
+        return null == instance ? instance = new ScheduleDaemon() : instance;
     }
 
     public ITaskScheduler getScheduler() {

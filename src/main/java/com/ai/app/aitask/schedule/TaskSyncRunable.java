@@ -7,52 +7,50 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ai.app.aitask.common.Config;
+import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
+import com.ai.app.aitask.listener.TaskSyncListener;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
-public class TaskSyncRunable implements Runnable {
+public class TaskSyncRunable implements Runnable, Constants {
 
     protected final static Log  log = LogFactory.getLog(TaskSyncRunable.class);
 
-    private Config              config;
-    private long                intervalTime;
+    private TaskSyncListener    taskSyncListener;
     private Queue<ITaskBuilder> taskSyncQueue;
     private ITaskScheduler      taskScheduler;
+    private long                intervalTime;
+    private Config              config;
 
     public TaskSyncRunable() {
-        this.config = Config.instance("client.properties");
-        this.intervalTime = Long.parseLong(config.getProperty(null, "aitask.sync.interval"));
-        this.taskSyncQueue = new ConcurrentLinkedQueue<ITaskBuilder>();
-        this.taskScheduler = ScheduleDaemon.instance().getScheduler();
+        config = Config.instance(CONFIG_CLIENT);
+        intervalTime = Long.parseLong(config.getProperty("aitask.sync.interval"));
+        taskSyncQueue = new ConcurrentLinkedQueue<ITaskBuilder>();
+        taskScheduler = ScheduleDaemon.instance().getScheduler();
+        taskSyncListener = new TaskSyncListener();
     }
 
     public void offerTask(ITaskBuilder task) {
-        // TODO keys & info & states
-        Object state = taskScheduler.getTaskState(task.getTrigger());
-        if (taskScheduler.addTask(task, true)) {
-            log.debug("task in sync : " + task.getTrigger().get("info") + state);
-        } else {
+        if (taskSyncListener.beforeTaskSchedule(task) && taskScheduler.addTask(task, true)) {
+            taskSyncListener.afterTaskSchedule(task, true);
+        } else if (taskSyncListener.beforeTaskEnqueue(task)) {
             taskSyncQueue.offer(task);
-            log.debug("task out of sync : " + task.getTrigger().get("info") + state);
+            taskSyncListener.afterTaskEnqueue(task, true);
         }
-
     }
 
     private void sync() {
         for (ITaskBuilder task : taskSyncQueue) {
-            if (taskScheduler.addTask(task, true)) {
-                // TODO keys & info & states
-                Object state = taskScheduler.getTaskState(task.getTrigger());
-                log.debug("sync in task : " + task.getTrigger().get("info") + state);
+            if (taskSyncListener.beforeTaskSchedule(task) && taskScheduler.addTask(task, true)) {
+                taskSyncListener.afterTaskSchedule(task, true);
                 taskSyncQueue.remove(task);
             }
         }
     }
-
     @Override
     public void run() {
         if (intervalTime < 1) {
-            log.info(String.format("task sync unabled (%d)", intervalTime));
+            log.info(String.format("task sync disabled (%d)", intervalTime));
         } else {
             log.info(String.format("task sync enabled (%d)", intervalTime));
             try {

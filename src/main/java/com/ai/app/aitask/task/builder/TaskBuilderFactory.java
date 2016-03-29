@@ -111,8 +111,10 @@ public class TaskBuilderFactory implements Constants {
             datamap.put("detaillist", detailMap.get(taskId));
             taskList.add(datamap);
         }
-         return taskList;
+        return taskList;
     }
+
+    // TODO old sample code
     private void parseJSONTask(Map<String, Object> sourceMap) {
         Map<String, String> planDict = new HashMap<String, String>();
         Map<String, String> taskDict = new HashMap<String, String>();
@@ -178,7 +180,7 @@ public class TaskBuilderFactory implements Constants {
 
         Mapper.transfer(sourceMap, dict);
     }
-
+    // TODO old sample code
     private List<ITaskBuilder> parseXMLTask(Map<String, Object> sourceMap) {
         List<ITaskBuilder> taskList = new LinkedList<ITaskBuilder>();
         try {

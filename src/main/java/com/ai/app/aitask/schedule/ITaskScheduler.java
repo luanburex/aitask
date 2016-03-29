@@ -3,9 +3,10 @@ package com.ai.app.aitask.schedule;
 import java.util.List;
 import java.util.Set;
 
+import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 
-public interface ITaskScheduler {
+public interface ITaskScheduler extends Constants {
     public void start();
     public void shutdown();
     public boolean addTask(ITaskBuilder taskBuilder, boolean replace);

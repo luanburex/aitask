@@ -1,6 +1,10 @@
 package com.ai.app.aitask.common;
 
 public interface Constants {
-    public String DEFAULT_CHARSET = "GBK";
-    public String LINE_SEPARATOR  = System.getProperty("line.separator");
+    String DEFAULT_CHARSET = "GBK";
+    String LINE_SEPARATOR  = System.getProperty("line.separator");
+    
+    String CONFIG_CLIENT = "client.properties";
+    String CONFIG_AITASK = "aitask.properties";
+    String CONFIG_QUARTZ = "quartz.properties";
 }

@@ -21,7 +21,7 @@ public class TaskFetcher implements Constants {
     private Config                config;
 
     public TaskFetcher() {
-        this.config = Config.instance("client.properties");
+        this.config = Config.instance(CONFIG_CLIENT);
     }
 
     private String getIp() {

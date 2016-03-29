@@ -14,13 +14,10 @@ public class TaskSyncDaemon {
     protected final static Logger log = Logger.getLogger(ScheduleDaemon.class);
     private static TaskSyncDaemon instance;
     private TaskSyncRunable       syncRunnable;
+    private Timer                 timer;
 
     public static synchronized TaskSyncDaemon instance() {
-        if (null == instance) {
-            return instance = new TaskSyncDaemon();
-        } else {
-            return instance;
-        }
+        return null == instance ? instance = new TaskSyncDaemon() : instance;
     }
 
     private TaskSyncDaemon() {
@@ -35,7 +32,8 @@ public class TaskSyncDaemon {
 
     public void start() {
         new Thread(syncRunnable).start();
-        new Timer().schedule(new TimerTask() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
             private TaskFetcher fetcher = new TaskFetcher();
             @Override
             public void run() {
@@ -43,5 +41,9 @@ public class TaskSyncDaemon {
                 syncTask(fetcher.fetch(null, null));
             }
         }, 100l, 1000l);
+    }
+
+    public void shutdown() {
+        timer.cancel();
     }
 }

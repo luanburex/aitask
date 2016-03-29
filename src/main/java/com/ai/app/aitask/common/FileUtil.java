@@ -12,6 +12,9 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * @author Alex Xu
+ */
 public class FileUtil {
     public static void makeFile(String path, String content) {
         makeFile(new File(path), content);
@@ -89,7 +92,6 @@ public class FileUtil {
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            System.out.println(path + " not found");
         }
         return null;
     }

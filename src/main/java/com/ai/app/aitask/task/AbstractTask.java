@@ -14,7 +14,7 @@ import com.ai.app.aitask.task.excutor.IExecutor;
 import com.ai.app.aitask.task.preparer.IDataPreparer;
 import com.ai.app.aitask.task.result.IResultFetcher;
 
-public class AbstractTask implements ITask, Constants {
+public class AbstractTask implements ITask {
     protected final static Logger log = Logger.getLogger(AbstractTask.class);
 
     private Thread                thread;
@@ -24,7 +24,7 @@ public class AbstractTask implements ITask, Constants {
     private Map<String, Object>   runtimeData;
 
     public AbstractTask() {
-        config = Config.instance("client.properties");
+        config = Config.instance(CONFIG_CLIENT);
         interrupted = false;
         runtimeData = new HashMap<String, Object>();
     }

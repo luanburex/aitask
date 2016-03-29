@@ -1,6 +1,5 @@
 package com.ai.app.aitask.schedule;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,6 +34,7 @@ import org.quartz.TriggerKey;
 
 import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.common.Config;
+import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
@@ -45,7 +45,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class ScheduleTest {
+public class ScheduleTest implements Constants{
 
     final public static Log        log = LogFactory.getLog(ScheduleTest.class);
 
@@ -62,7 +62,7 @@ public class ScheduleTest {
                 log.info("from:" + r.getRemoteAddr());
                 log.info("user:" + r.getRemoteUser());
 
-                String url = Config.instance("client.properties").getProperty(null,
+                String url = Config.instance(CONFIG_CLIENT).getProperty(null,
                         "aitask.sync.url");
                 log.info("url1:" + url);
                 log.info("url2:" + url.replace("http(s?)://(.*):", "http://1.2.3.4:"));

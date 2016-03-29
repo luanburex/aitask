@@ -4,7 +4,6 @@ import com.ai.app.aitask.deamon.ScheduleDaemon;
 import com.ai.app.aitask.deamon.TaskSyncDaemon;
 import com.ai.app.aitask.net.Client;
 
-/** entrance */
 public class App {
     public static void main(String[] args) {
         ScheduleDaemon.instance().start();

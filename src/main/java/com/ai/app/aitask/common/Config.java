@@ -10,144 +10,128 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author renzq
+ * @author Alex Xu
+ */
 public class Config {
-    protected final static Logger            log = Logger.getLogger(Config.class);
-    protected static Map<String, Config>     files;
-    protected OrderedProperties              current;
-    protected OrderedProperties              builtin;
-    protected Map<String, OrderedProperties> sections;
-    protected String                         filename;
-    protected String                         currentSecion;
-    static {
-        files = new HashMap<String, Config>();
-    }
+    protected final static Logger            log         = Logger.getLogger(Config.class);
+    protected static Map<String, Config>     configCache = new HashMap<String, Config>();
+    protected OrderedProperties              builtinSection;
+    protected OrderedProperties              cursorSection;
+    protected Map<String, OrderedProperties> sectionMap;
+    protected String                         cursorTag;
+    protected String                         fileName;
 
     public static synchronized Config instance(String filename) {
-        Config config;
-        if (files.containsKey(filename)) {
-            config = files.get(filename);
-        } else {
-            files.put(filename, config = new Config(filename));
+        if (!configCache.containsKey(filename)) {
+            configCache.put(filename, new Config(filename));
+            log.debug(String.format("config %s cached", filename));
         }
-        return config;
+        return configCache.get(filename);
     }
 
-    protected Config(String filename) {
-        this.builtin = new OrderedProperties();
-        this.sections = new HashMap<String, OrderedProperties>();
-        this.filename = filename;
+    private Config(String filename) {
+        this.builtinSection = new OrderedProperties();
+        this.sectionMap = new HashMap<String, OrderedProperties>();
+        this.fileName = filename;
         InputStream input = ClassLoader.getSystemResourceAsStream(filename);
         if (null == input) {
             try {
                 input = new FileInputStream(filename);
             } catch (FileNotFoundException e) {
-                // e.printStackTrace();
+                try {
+                    new File(filename).createNewFile();
+                    input = ClassLoader.getSystemResourceAsStream(filename);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
             }
         }
-        if (null == input) {
-            try {
-                new File(filename).createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+            for (String line = reader.readLine(); null != line; line = reader.readLine()) {
+                parseLine(line);
             }
-            input = ClassLoader.getSystemResourceAsStream(filename);
-            //            try {
-            //                throw new FileNotFoundException("resource not found:" + filename);
-            //            } catch (FileNotFoundException e) {
-            //                e.printStackTrace();
-            //            }
-        } else {
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
-                for (String line = reader.readLine(); null != line; line = reader.readLine()) {
-                    // log.debug(line);
-                    parseLine(line);
-                }
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    protected void parseLine(String line) {
+    private void parseLine(String line) {
         line = line.trim();
-        if (line.isEmpty()) {
-        } else if ('#' == line.charAt(0)) {
+        if (line.isEmpty() || '#' == line.charAt(0)) {
+            // let it
         } else if (line.matches(".?\\[.*\\]")) {
-            currentSecion = line.replaceFirst(".?\\[(.*)\\]", "$1");
-            current = new OrderedProperties();
-            sections.put(currentSecion, current);
+            cursorTag = line.replaceFirst(".?\\[(.*)\\]", "$1");
+            cursorSection = new OrderedProperties();
+            sectionMap.put(cursorTag, cursorSection);
         } else if (line.matches(".*=.*")) {
-            if (current == null) {
-                current = builtin;
+            if (cursorSection == null) {
+                cursorSection = builtinSection;
             }
             int i = line.indexOf('=');
             String name = line.substring(0, i).trim();
             String value = line.substring(i + 1).trim();
-            current.setProperty(name, value);
+            cursorSection.setProperty(name, value);
         }
-    }
-    public String[] getSections() {
-        ArrayList<String> section_arraylist = new ArrayList<String>();
-        for (String key : sections.keySet()) {
-            section_arraylist.add(key);
-        }
-        return section_arraylist.toArray(new String[section_arraylist.size()]);
     }
 
-    public String getProperty(String section, String name) {
-        OrderedProperties p = getProperties(section);
-        if (null == p) {
-            return null;
-        } else {
-            String value = p.getProperty(name);
-            return value;
-        }
+    public String[] getSectionTags() {
+        return sectionMap.keySet().toArray(new String[sectionMap.size()]);
+    }
+
+    public String getProperty(String propertyName) {
+        return getProperty(null, propertyName);
+    }
+
+    public String getProperty(String sectionTag, String propertyName) {
+        OrderedProperties section = getProperties(sectionTag);
+        return null == section ? null : section.getProperty(propertyName);
     }
 
     public OrderedProperties getProperties(String section) {
-        return null == section ? builtin : sections.get(section);
+        return null == section ? builtinSection : sectionMap.get(section);
     }
 
-    public void setProperty(String section, String name, String value) {
-        OrderedProperties properties;
-        if (null == section) {
-            properties = builtin;
-        } else if (!sections.containsKey(section)) {
-            sections.put(section, properties = new OrderedProperties());
+    public void setProperty(String sectionTag, String propertyName, String value) {
+        OrderedProperties section;
+        if (null == sectionTag) {
+            section = builtinSection;
+        } else if (!sectionMap.containsKey(sectionTag)) {
+            sectionMap.put(sectionTag, section = new OrderedProperties());
         } else {
-            properties = sections.get(section);
+            section = sectionMap.get(sectionTag);
         }
-        properties.setProperty(name, value);
+        section.setProperty(propertyName, value);
     }
 
     public void write() {
         BufferedOutputStream stream = null;
         OutputStreamWriter writer = null;
         try {
-            stream = new BufferedOutputStream(new FileOutputStream(this.filename));
+            stream = new BufferedOutputStream(new FileOutputStream(this.fileName));
             writer = new OutputStreamWriter(stream, "UTF-8");
-            // TODO linux 文件头?
-            // stream.write(Integer.parseInt("EF", 16));
-            // stream.write(Integer.parseInt("BB", 16));
-            // stream.write(Integer.parseInt("BF", 16));
-            {
-                for (String key : builtin.stringPropertyNames()) {
-                    writer.write(key + "=" + builtin.getProperty(key) + "\r\n");
-                }
+            /*
+             * TODO linux header
+             * stream.write(Integer.parseInt("EF", 16));
+             * stream.write(Integer.parseInt("BB", 16));
+             * stream.write(Integer.parseInt("BF", 16));
+             */
+            for (String key : builtinSection.stringPropertyNames()) {
+                writer.write(key + "=" + builtinSection.getProperty(key) + "\r\n");
             }
-            for (String section : sections.keySet()) {
+            for (String section : sectionMap.keySet()) {
                 writer.write("\r\n");
                 writer.write("[" + section + "]");
-                for (String key : sections.get(section).stringPropertyNames()) {
-                    writer.write("\r\n" + key + "=" + sections.get(section).getProperty(key));
+                for (String key : sectionMap.get(section).stringPropertyNames()) {
+                    writer.write("\r\n" + key + "=" + sectionMap.get(section).getProperty(key));
                 }
             }
         } catch (IOException e) {

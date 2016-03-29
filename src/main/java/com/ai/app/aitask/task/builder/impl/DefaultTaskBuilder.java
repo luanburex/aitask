@@ -48,7 +48,7 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
             key.put("instant", task.get("instant"));
             content.put("datamap", datamap);
         }
-        Config config = Config.instance("aitask.properties");
+        Config config = Config.instance(CONFIG_AITASK);
         Map<String, Object> exedata = new HashMap<String, Object>();
 
         String pathWorkspace = config.getProperty(null, "workspace");
