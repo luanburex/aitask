@@ -2,10 +2,8 @@ package com.ai.app.aitask.task.preparer.impl;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.ai.app.aitask.common.Caster;
-import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.FileUtil;
 import com.ai.app.aitask.task.preparer.IDataPreparer;
 
@@ -37,25 +35,11 @@ public class DefaultDataPreparer implements IDataPreparer {
         FileUtil.makeFile(pathScript, scriptmap.get("script"));
 
         new File(pathExedata).delete();
-        Config config = Config.instance(pathExedata);
-        config.setProperty("task", "log", pathLog);
-        config.setProperty("task", "result", pathResult);
-        config.setProperty("task", "script", pathScript);
-        Map<String, Object> taskmap = Caster.cast(datamap.get("task"));
-        for (Entry<String, Object> entry : taskmap.entrySet()) {
-            config.setProperty("task", entry.getKey(), String.valueOf(entry.getValue()));
-        }
-        Map<String, Map<String, Map<String, Object>>> detailmap;
-        detailmap = Caster.cast(datamap.get("detaillist"));
-        for (Entry<String, Map<String, Map<String, Object>>> data : detailmap.entrySet()) {
-            for (Entry<String, Map<String, Object>> detail : data.getValue().entrySet()) {
-                config.setProperty("data", detail.getKey(), data.getKey());
-                for (Entry<String, Object> entry : detail.getValue().entrySet()) {
-                    config.setProperty(detail.getKey(), entry.getKey(),
-                            String.valueOf(entry.getValue()));
-                }
-            }
-        }
-        config.write();
+        com.google.gson.Gson gson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
+
+        datamap.put("log", pathLog);
+        datamap.put("result", pathResult);
+        datamap.put("script", pathScript);
+        FileUtil.makeFile(pathExedata, gson.toJson(datamap));
     }
 }

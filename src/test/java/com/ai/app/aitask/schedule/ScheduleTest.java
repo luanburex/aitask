@@ -84,7 +84,8 @@ public class ScheduleTest implements Constants{
                                 r.getInputStream(), "UTF-8"));
                         for (String line = reader.readLine(); null != line; line = reader
                                 .readLine()) {
-                            System.out.println("rst:" + line);
+                            Object rst = gson.fromJson(line, Map.class);
+                            System.err.println(rst);
                         }
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();

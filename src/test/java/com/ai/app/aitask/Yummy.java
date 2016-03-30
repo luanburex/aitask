@@ -1,18 +1,16 @@
 package com.ai.app.aitask;
 
-import java.util.Timer;
+import java.util.Arrays;
 
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobDataMap;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
+import com.ai.app.aitask.common.Config;
+import com.ai.app.aitask.common.Constants;
+import com.ai.app.aitask.common.OrderedProperties;
 
-public class Yummy {
 
+public class Yummy implements Constants{
     public static void main(String[] args) throws Exception {
-        Timer timer = new Timer();
-        Thread.sleep(1000);
-        timer.cancel();
+        String path = "C:\\workspace\\aitaskdev\\exe";
+        path = path.replaceAll("\\\\", "\\\\\\\\");
+        System.out.println("a".replaceAll("a", path));
     }
 }

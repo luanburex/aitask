@@ -18,7 +18,6 @@ import com.ai.app.aitask.task.result.impl.DefaultResultFetcher;
  * @author Alex Xu
  */
 public class DefaultTaskBuilder extends AbstractTaskBuilder {
-
     @Override
     public void parse(Map<String, Object> datamap) {
         TEMP: { // TODO Temp
@@ -41,17 +40,17 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
     }
     @Override
     public void build() {
-        {
-            Map<String, Object> task = Caster.cast(datamap.get("task"));
-            //            Map<String, Object> plan = Caster.cast(datamap.get("plan"));
-            key.put("key", task.get("taskId"));
-            key.put("cron", task.get("cron"));
-            key.put("group", task.get("taskGroup"));
-            key.put("timeout", task.get("timeout"));
-            key.put("instant", task.get("instant"));
-            content.put("datamap", datamap);
-        }
         Config config = Config.instance(CONFIG_AITASK);
+
+        Map<String, Object> task = Caster.cast(datamap.get("task"));
+        //            Map<String, Object> plan = Caster.cast(datamap.get("plan"));
+        key.put("key", task.get("taskId"));
+        key.put("cron", task.get("cron"));
+        key.put("group", task.get("taskGroup"));
+        key.put("timeout", task.get("timeout"));
+        key.put("instant", task.get("instant"));
+        content.put("datamap", datamap);
+
         Map<String, Object> exedata = new HashMap<String, Object>();
 
         String pathWorkspace = config.getProperty(null, "workspace");
@@ -64,8 +63,13 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
         exedata.put("pathScript", pathScript);
         exedata.put("pathResult", pathResult);
         exedata.put("pathLog", pathLog);
+
+        Map<String, Object> script = Caster.cast(datamap.get("script"));
+        String command = config.getProperty("processcommand", (String) script.get("scriptType"));
+        command = command.replaceAll("%exedata%", pathExedata.replaceAll("\\\\", "\\\\\\\\"));
+
         preparer = new DefaultDataPreparer(exedata);
-        executor = new DefaultTaskExecutor("net", "user");
+        executor = new DefaultTaskExecutor(command.split(" "));
         fetcher = new DefaultResultFetcher(exedata);
         super.build();
     }
