@@ -1,40 +1,102 @@
-{
-    "caselog": [
-        {
-            "taskId": "",
-            "scriptId": "",
-            "scriptName": "",
-            "scriptType": "",
-            "dataId": "",
-            "dataName": "",
-            "system": "",
-            "business": "",
-            "startTime": "",p
-            "endTime": "",
-            "keyEclapse": "",
-            "result": "",
-            "firstExecuteTime": "",
-            "executeNum": "",
-            "groupNo": "",
-            "geoupName": "",
-            "log": "",
-            "dataDesc": "",
-            "dataTags": ""
-        }
-    ],
-    "steplog": [
-        {
-            "caseLogId": "",
-            "stepId": "",
-            "stepName": "",
-            "stepDesc": "",
-            "stepExpectResult": "",
-            "startTime": "",
-            "endTime": "",
-            "eclapse": "",
-            "result": "",
-            "screenshot": "",
-            "log": ""
-        }
+[
+  {
+    "caseLog": {
+      "result": "someresult",
+      "groupName": "",
+      "scriptName": "",
+      "scriptType": "",
+      "dataDesc": "",
+      "dataId": "dataId1",
+      "keyEclapse": "",
+      "endTime": "2016-03-30 23:59:25 +0800",
+      "log": "caselog",
+      "business": "",
+      "dataName": "aaa",
+      "startTime": "2016-03-30 23:59:25 +0800",
+      "groupNo": "",
+      "firstExecuteTime": "",
+      "system": "",
+      "dataTags": "1",
+      "scriptId": "scriptId",
+      "executeNu": ""
+    },
+    "stepLog": [
+      {
+        "startTime": "2016-03-30 23:59:25 +0800",
+        "result": "result",
+        "screenshot": "",
+        "stepExpectResult": "",
+        "eclapse": "",
+        "caseLogId": "generate in db",
+        "stepId": "step0",
+        "stepDesc": "",
+        "endTime": "2016-03-30 23:59:25 +0800",
+        "log": "steplog",
+        "stepNam": 0
+      },
+      {
+        "startTime": "2016-03-30 23:59:25 +0800",
+        "result": "result",
+        "screenshot": "",
+        "stepExpectResult": "",
+        "eclapse": "",
+        "caseLogId": "generate in db",
+        "stepId": "step1",
+        "stepDesc": "",
+        "endTime": "2016-03-30 23:59:25 +0800",
+        "log": "steplog",
+        "stepNam": 1
+      }
     ]
-}
+  },
+  {
+    "caseLog": {
+      "result": "someresult",
+      "groupName": "",
+      "scriptName": "",
+      "scriptType": "",
+      "dataDesc": "",
+      "dataId": "dataId2",
+      "keyEclapse": "",
+      "endTime": "2016-03-30 23:59:25 +0800",
+      "log": "caselog",
+      "business": "",
+      "dataName": "aaa",
+      "startTime": "2016-03-30 23:59:25 +0800",
+      "groupNo": "",
+      "firstExecuteTime": "",
+      "system": "",
+      "dataTags": "1",
+      "scriptId": "scriptId",
+      "executeNu": ""
+    },
+    "stepLog": [
+      {
+        "startTime": "2016-03-30 23:59:25 +0800",
+        "result": "result",
+        "screenshot": "",
+        "stepExpectResult": "",
+        "eclapse": "",
+        "caseLogId": "generate in db",
+        "stepId": "step0",
+        "stepDesc": "",
+        "endTime": "2016-03-30 23:59:25 +0800",
+        "log": "steplog",
+        "stepNam": 0
+      },
+      {
+        "startTime": "2016-03-30 23:59:25 +0800",
+        "result": "result",
+        "screenshot": "",
+        "stepExpectResult": "",
+        "eclapse": "",
+        "caseLogId": "generate in db",
+        "stepId": "step1",
+        "stepDesc": "",
+        "endTime": "2016-03-30 23:59:25 +0800",
+        "log": "steplog",
+        "stepNam": 1
+      }
+    ]
+  }
+]
