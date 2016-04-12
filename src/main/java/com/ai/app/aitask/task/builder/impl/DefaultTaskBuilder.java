@@ -66,6 +66,7 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
 
         Map<String, Object> script = Caster.cast(datamap.get("script"));
         String command = config.getProperty("processcommand", (String) script.get("scriptType"));
+        //TODO make it better
         command = command.replaceAll("%exedata%", pathExedata.replaceAll("\\\\", "\\\\\\\\"));
 
         preparer = new DefaultDataPreparer(exedata);
