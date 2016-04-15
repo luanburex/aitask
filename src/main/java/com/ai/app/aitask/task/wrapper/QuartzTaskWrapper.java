@@ -31,10 +31,14 @@ public class QuartzTaskWrapper implements InterruptableJob {
     }
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        log.debug("trying to execute");
         Map<String, Object> triggerMap = context.getTrigger().getJobDataMap();
         Map<String, Object> detailMap = context.getJobDetail().getJobDataMap();
+        log.debug("wrapper before execute");
+        wrapped.before(triggerMap, detailMap);
+        log.debug("wrapper trying execute");
         wrapped.execute(triggerMap, detailMap);
+        log.debug("wrapper after execute");
+        wrapped.after(triggerMap, detailMap);
     }
     @Override
     public void interrupt() throws UnableToInterruptJobException {

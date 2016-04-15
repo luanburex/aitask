@@ -27,9 +27,6 @@ public class ExecuteListener implements JobListener {
 
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-        ITask task = ((QuartzTaskWrapper) context.getJobInstance()).getWrapped();
-        task.before(context.getTrigger().getJobDataMap(), context.getJobDetail().getJobDataMap());
-
         JobDataMap data_map = context.getTrigger().getJobDataMap();
         StringBuilder sb = new StringBuilder();
         for (Object key : data_map.keySet()) {
@@ -42,8 +39,6 @@ public class ExecuteListener implements JobListener {
 
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException error) {
-        ITask task = ((QuartzTaskWrapper) context.getJobInstance()).getWrapped();
-        task.after(context.getTrigger().getJobDataMap(), context.getJobDetail().getJobDataMap());
         // TODO handle the error
         //                task.after(context, error);
 
