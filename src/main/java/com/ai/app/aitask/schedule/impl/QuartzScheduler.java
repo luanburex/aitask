@@ -29,6 +29,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 
 import com.ai.app.aitask.common.Config;
+import com.ai.app.aitask.listener.quartz.ScheduleListner;
 import com.ai.app.aitask.schedule.ITaskScheduler;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.task.wrapper.QuartzTaskWrapper;
@@ -47,27 +48,7 @@ public class QuartzScheduler implements ITaskScheduler {
         name = scheduler.getSchedulerName();
         scheduler.standby();
         log.debug(String.format("[%s] new Scheduler : %s", name, getClass()));
-        ListenerManager man = scheduler.getListenerManager();
-        for (Entry<Object, Object> entry : config.getProperties("listeners").entrySet()) {
-            try {
-                Class<?> subClass = Class.forName((String) entry.getKey());
-                Class<?> supClass = Class.forName((String) entry.getValue());
-                Object instance = subClass.newInstance();
-                if (SchedulerListener.class == supClass) {
-                    man.addSchedulerListener(SchedulerListener.class.cast(instance));
-                    log.debug(String.format("[%s] add SchedulerListener : %s", name, subClass));
-                } else if (JobListener.class == supClass) {
-                    man.addJobListener(JobListener.class.cast(instance));
-                    log.debug(String.format("[%s] add JobListener : %s", name, subClass));
-                }
-            } catch (ClassNotFoundException e) {
-                log.error("Listener not found : " + entry.getValue());
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+        scheduler.getListenerManager().addSchedulerListener(new ScheduleListner());
     }
     @Override
     public void start() {

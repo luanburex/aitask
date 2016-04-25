@@ -66,7 +66,6 @@ public class ScheduleTest implements Constants{
                         "aitask.sync.url");
                 log.info("url1:" + url);
                 log.info("url2:" + url.replace("http(s?)://(.*):", "http://1.2.3.4:"));
-                System.out.println("https?://.*:");
                 if ("/fetchTask".equals(u)) {
                     super.handle(response, r, q, p);
                 } else if ("/query".equals(u)) {
@@ -78,14 +77,13 @@ public class ScheduleTest implements Constants{
                     }
                     super.handle(u, r, q, p);
                 } else if ("/result".equals(u)) {
-                    System.out.println(r.getContentLength());
                     try {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(
                                 r.getInputStream(), "UTF-8"));
                         for (String line = reader.readLine(); null != line; line = reader
                                 .readLine()) {
                             Object rst = gson.fromJson(line, Map.class);
-                            System.err.println(rst);
+                            log.info(rst);
                         }
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
@@ -126,7 +124,6 @@ public class ScheduleTest implements Constants{
         String file = FileUtils.readFileInClasspath("task_schedule_001.json");
         JsonObject json = new JsonParser().parse(file).getAsJsonObject();
         response = json.toString();
-        //        System.err.println(gson.toJson(json));
 
         TaskFetcher fetcher = new TaskFetcher();
         List<ITaskBuilder> taskList = fetcher.fetch(null, null);

@@ -1,1 +1,6 @@
 /target/
+/target/
+.gitignore
+.classpath
+.project
+Yummy.java

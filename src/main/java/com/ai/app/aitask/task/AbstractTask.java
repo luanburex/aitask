@@ -46,10 +46,8 @@ public class AbstractTask implements ITask {
     @Override
     public void execute(Map<String, Object> trigger, Map<String, Object> datamap) {
         // TODO What will happen when interrupted?
-
         runtimeData.put("thread", Thread.currentThread());
         runtimeData.put("timeStart", System.currentTimeMillis());
-
         try {
             IExecutor executor = (IExecutor) datamap.get("executor");
             runtimeData.put("executor", executor);
