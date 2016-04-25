@@ -87,12 +87,15 @@ public class FileUtil {
     }
 
     public static InputStream readStream(String path) {
-        File file = new File(path);
-        try {
-            return new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        InputStream stream = null;
+        stream = ClassLoader.getSystemResourceAsStream(path);
+        if (null == stream) {
+            try {
+                stream = new FileInputStream(path);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return stream;
     }
 }

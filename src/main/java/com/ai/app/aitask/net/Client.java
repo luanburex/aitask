@@ -1,43 +1,37 @@
 package com.ai.app.aitask.net;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.Map.Entry;
-
-import javax.servlet.Servlet;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.xml.XmlConfiguration;
+import org.xml.sax.SAXException;
 
-import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.Constants;
+import com.ai.app.aitask.common.FileUtil;
 
 /**
  * Simple Servlet Container
  * 
  * @author Alex Xu
  */
-public class Client implements Constants{
+public class Client implements Constants {
     protected final static Logger log = Logger.getLogger(Client.class);
     private Server                server;
-    private Config                config;
     public Client() {
-        this.config = Config.instance(CONFIG_CLIENT);
-        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        for (Entry<Object, Object> servlet : config.getProperties("servlets").entrySet()) {
-            try {
-                Class<?> clazz = Class.forName((String) servlet.getKey());
-                handler.addServlet(clazz.asSubclass(Servlet.class), (String) servlet.getValue());
-                log.info(servlet.getKey() + " @ " + servlet.getValue());
-            } catch (ClassNotFoundException e) {
-                log.error("Servlet not found : " + (String) servlet.getKey());
-            }
+        server = new Server();
+        //#com.ai.app.aitask.net.StatusQueryServlet =/status
+        try {   // TODO add some log to jetty
+            new XmlConfiguration(FileUtil.readFile("client.xml")).configure(server);
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        int port = Integer.parseInt(config.getProperty(null, "aitask.client.port"));
-        log.info("port:" + port);
-        server = new Server(port);
-        server.setHandler(handler);
     }
 
     public void start() {

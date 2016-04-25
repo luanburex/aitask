@@ -81,6 +81,11 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-xml</artifactId>
+			<version>8.1.19.v20160209</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
