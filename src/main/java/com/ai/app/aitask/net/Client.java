@@ -6,6 +6,8 @@ import java.net.NetworkInterface;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletMapping;
 import org.eclipse.jetty.xml.XmlConfiguration;
 import org.xml.sax.SAXException;
 
@@ -21,10 +23,16 @@ public class Client implements Constants {
     protected final static Logger log = Logger.getLogger(Client.class);
     private Server                server;
     public Client() {
-        server = new Server();
+        ServletContextHandler handler = new ServletContextHandler();
+        handler.setServer(server = new Server());
         //#com.ai.app.aitask.net.StatusQueryServlet =/status
-        try {   // TODO add some log to jetty
-            new XmlConfiguration(FileUtil.readFile("client.xml")).configure(server);
+        try {
+            new XmlConfiguration(FileUtil.readStream("client.xml")).configure(handler);
+            String path = InetAddress.getLocalHost() + ":" + server.getConnectors()[0].getPort();
+            log.info("Client : " + path + handler.getContextPath());
+            for (ServletMapping mapping : handler.getServletHandler().getServletMappings()) {
+                log.info("Servlet : " + mapping.getServletName() + "@" + mapping.getPathSpecs()[0]);
+            }
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -37,6 +45,7 @@ public class Client implements Constants {
     public void start() {
         try {
             server.start();
+            log.info("Client Start.");
         } catch (Exception e) {
             e.printStackTrace();
         }

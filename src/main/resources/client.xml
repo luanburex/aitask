@@ -1,48 +1,49 @@
 <?xml version="1.0"  encoding="UTF-8"?>  
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
-<Configure id="AIClient" class="org.eclipse.jetty.server.Server">
-	<Set name="connectors">
-		<Array type="org.eclipse.jetty.server.Connector">
-			<Item>
-				<New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
-					<Set name="port">8888</Set>
-				</New>
-			</Item>
-		</Array>
-	</Set>
-	<Set name="handler">
-		<New class="org.eclipse.jetty.servlet.ServletContextHandler">
-			<Set name="contextPath">/</Set>
-			<Call name="addServlet">
-				<Arg>
-					<New class="org.eclipse.jetty.servlet.ServletHolder">
-						<Arg>
-							<New class="com.ai.app.aitask.net.servlet.TaskArrangeServlet" />
-						</Arg>
+<Configure class="org.eclipse.jetty.servlet.ServletContextHandler">
+	<Get name="server">
+		<Set name="connectors">
+			<Array type="org.eclipse.jetty.server.Connector">
+				<Item>
+					<New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+						<Set name="port">8888</Set>
 					</New>
-				</Arg>
-				<Arg>/arrange</Arg>
-			</Call>
-			<Call name="addServlet">
+				</Item>
+			</Array>
+		</Set>
+	</Get>
+	<Set name="contextPath">/</Set>
+	<Call name="addServlet">
+		<Arg>
+			<New class="org.eclipse.jetty.servlet.ServletHolder">
+				<Arg>TaskArrangeServlet</Arg>
 				<Arg>
-					<New class="org.eclipse.jetty.servlet.ServletHolder">
-						<Arg>
-							<New class="com.ai.app.aitask.net.servlet.DataQueryServlet" />
-						</Arg>
-					</New>
+					<New class="com.ai.app.aitask.net.servlet.TaskArrangeServlet" />
 				</Arg>
-				<Arg>/data</Arg>
-			</Call>
-			<Call name="addServlet">
+			</New>
+		</Arg>
+		<Arg>/arrange</Arg>
+	</Call>
+	<Call name="addServlet">
+		<Arg>
+			<New class="org.eclipse.jetty.servlet.ServletHolder">
+				<Arg>DataQueryServlet</Arg>
 				<Arg>
-					<New class="org.eclipse.jetty.servlet.ServletHolder">
-						<Arg>
-							<New class="com.ai.app.aitask.net.servlet.StepQueryServlet" />
-						</Arg>
-					</New>
+					<New class="com.ai.app.aitask.net.servlet.DataQueryServlet" />
 				</Arg>
-				<Arg>/step</Arg>
-			</Call>
-		</New>
-	</Set>
+			</New>
+		</Arg>
+		<Arg>/data</Arg>
+	</Call>
+	<Call name="addServlet">
+		<Arg>
+			<New class="org.eclipse.jetty.servlet.ServletHolder">
+				<Arg>StepQueryServlet</Arg>
+				<Arg>
+					<New class="com.ai.app.aitask.net.servlet.StepQueryServlet" />
+				</Arg>
+			</New>
+		</Arg>
+		<Arg>/step</Arg>
+	</Call>
 </Configure>
