@@ -19,7 +19,7 @@ import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TriggerUnil;
 
 public class TaskRunTest implements Constants {
-    final static protected Logger log = Logger.getLogger(TaskRunTest.class);
+    static final protected Logger logger = Logger.getLogger(TaskRunTest.class);
 
     public static ScheduleDaemon  sd;
 
@@ -41,7 +41,7 @@ public class TaskRunTest implements Constants {
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
 //                ts.getAuth().mapKey(), TriggerState.NONE, 1000l));
 //        sd.getScheduler().addTask(ts, true);
-//        log.info(sd.getScheduler().getTaskState(ts.getAuth().mapKey()));
+//        logger.info(sd.getScheduler().getTaskState(ts.getAuth().mapKey()));
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
 //                ts.getAuth().mapKey(), TriggerState.BLOCKED, 1000l));
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),

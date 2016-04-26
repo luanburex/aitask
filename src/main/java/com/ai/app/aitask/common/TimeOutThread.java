@@ -14,7 +14,7 @@ import org.quartz.UnableToInterruptJobException;
  */
 public class TimeOutThread extends Thread {
 
-    protected final static Logger log             = Logger.getLogger(TimeOutThread.class);
+    protected static final Logger logger             = Logger.getLogger(TimeOutThread.class);
     /**
      * the default overtime is 30 minutes
      */
@@ -39,12 +39,12 @@ public class TimeOutThread extends Thread {
         this();
         this.context = context;
         if (context != null) {
-            log.debug(context.getTrigger().getJobDataMap().containsKey("timeout"));
-            log.debug(context.getTrigger().getJobDataMap().getLong("timeout"));
+            logger.debug(context.getTrigger().getJobDataMap().containsKey("timeout"));
+            logger.debug(context.getTrigger().getJobDataMap().getLong("timeout"));
             long _temp = (context.getTrigger().getJobDataMap().containsKey("timeout")) ? context
                     .getTrigger().getJobDataMap().getLong("timeout") : DEFAULT_TIMEOUT;
             this.timeout = (_temp > 0l || _temp == -1l) ? _temp : DEFAULT_TIMEOUT;
-            log.debug("[" + context.getTrigger().getKey() + "]"
+            logger.debug("[" + context.getTrigger().getKey() + "]"
                     + "TimeOutThread is create.timeout: " + this.timeout);
 
             this.end_time_long = (context.getTrigger().getJobDataMap().containsKey("endtime")) ? context
@@ -53,7 +53,7 @@ public class TimeOutThread extends Thread {
 
             if (end_time_long != -1l) {
                 long end_time_timeout = end_time_long - System.currentTimeMillis();
-                log.debug("[" + context.getTrigger().getKey() + "]"
+                logger.debug("[" + context.getTrigger().getKey() + "]"
                         + "The end time's overtime is create.timeout: " + end_time_timeout);
 
                 if (end_time_timeout < 0l) {
@@ -64,12 +64,12 @@ public class TimeOutThread extends Thread {
                     this.timeout = end_time_timeout < this.timeout ? end_time_timeout
                             : this.timeout;
                 }
-                log.debug("[" + context.getTrigger().getKey() + "]"
+                logger.debug("[" + context.getTrigger().getKey() + "]"
                         + "TimeOutThread is create.timeout: " + this.timeout);
             }
 
         } else {
-            log.warn("can't get the Job Execution Context.");
+            logger.warn("can't get the Job Execution Context.");
         }
     }
 
@@ -85,10 +85,10 @@ public class TimeOutThread extends Thread {
         }
         try {
             ((InterruptableJob) context.getJobInstance()).interrupt();
-            log.info("[" + context.getTrigger().getKey().toString() + "]"
+            logger.info("[" + context.getTrigger().getKey().toString() + "]"
                     + "the task timeout thread is interrupted");
         } catch (UnableToInterruptJobException e) {
-            log.error("[" + context.getTrigger().getKey().toString() + "]"
+            logger.error("[" + context.getTrigger().getKey().toString() + "]"
                     + "Time out interrupt error:", e);
             throw new RuntimeException("exception", e);
         }

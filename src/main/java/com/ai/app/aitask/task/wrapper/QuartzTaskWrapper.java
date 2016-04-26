@@ -19,7 +19,7 @@ import com.ai.app.aitask.task.ITask;
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
 public class QuartzTaskWrapper implements InterruptableJob {
-    protected final static Logger log = Logger.getLogger(QuartzTaskWrapper.class);
+    protected static final Logger logger = Logger.getLogger(QuartzTaskWrapper.class);
     private ITask                 wrapped;
 
     public QuartzTaskWrapper() {
@@ -33,16 +33,16 @@ public class QuartzTaskWrapper implements InterruptableJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         Map<String, Object> triggerMap = context.getTrigger().getJobDataMap();
         Map<String, Object> detailMap = context.getJobDetail().getJobDataMap();
-        log.debug("wrapper before execute");
+        logger.debug("wrapper before execute");
         wrapped.before(triggerMap, detailMap);
-        log.debug("wrapper trying execute");
+        logger.debug("wrapper trying execute");
         wrapped.execute(triggerMap, detailMap);
-        log.debug("wrapper after execute");
+        logger.debug("wrapper after execute");
         wrapped.after(triggerMap, detailMap);
     }
     @Override
     public void interrupt() throws UnableToInterruptJobException {
-        log.debug("interrupted");
+        logger.debug("interrupted");
         wrapped.interrupt();
     }
 }

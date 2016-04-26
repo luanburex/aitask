@@ -20,7 +20,7 @@ import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TriggerUnil;
 
 public class TaskCronTest {
-    final static protected Logger log = Logger.getLogger(TaskCronTest.class);
+    static final protected Logger logger = Logger.getLogger(TaskCronTest.class);
 
     public static ScheduleDaemon sd;
 
@@ -40,7 +40,7 @@ public class TaskCronTest {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(System.currentTimeMillis() + 2000l));
         String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
-        log.info(t);
+        logger.info(t);
         //        ts.getDatamap().put("cron", t);
 //        ts.getContent().getJobDataMap().put("cron", t);
 //        ts.build();
@@ -49,17 +49,17 @@ public class TaskCronTest {
 //
 //        sd.getScheduler().addTask(ts, true);
 //
-//        log.info(sd.getScheduler().getTaskState(ts.getAuth().mapKey()));
+//        logger.info(sd.getScheduler().getTaskState(ts.getAuth().mapKey()));
 //
-//        log.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getPreviousFireTime());
-//        log.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getNextFireTime());
+//        logger.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getPreviousFireTime());
+//        logger.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getNextFireTime());
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
 //                ts.getAuth().mapKey(), TriggerState.NORMAL, 2000l));
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
 //                ts.getAuth().mapKey(), TriggerState.BLOCKED, 5000l));
-//        log.info(sd.getScheduler().getTaskState(ts.getAuth().mapKey()));
-//        log.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getPreviousFireTime());
-//        log.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getNextFireTime());
+//        logger.info(sd.getScheduler().getTaskState(ts.getAuth().mapKey()));
+//        logger.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getPreviousFireTime());
+//        logger.info(sd.getScheduler().getScheduler().getTrigger(ts.getAuth().mapKey()).getNextFireTime());
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(sd.getScheduler(),
 //                ts.getAuth().mapKey(), TriggerState.NORMAL, 5000l));
 

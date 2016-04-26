@@ -14,7 +14,7 @@ import com.ai.app.aitask.task.builder.ITaskBuilder;
  * @author renzq
  */
 public class TaskSyncDaemon {
-    protected final static Logger log = Logger.getLogger(ScheduleDaemon.class);
+    protected static final Logger logger = Logger.getLogger(ScheduleDaemon.class);
     private static TaskSyncDaemon instance;
     private TaskSyncRunable       syncRunnable;
     private Timer                 timer;
@@ -28,7 +28,7 @@ public class TaskSyncDaemon {
     }
 
     public void syncTask(List<ITaskBuilder> tasks) {
-        log.info("try synchronize tasklist : " + tasks.size());
+        logger.info("try synchronize tasklist : " + tasks.size());
         for (ITaskBuilder task : tasks) {
             syncRunnable.offerTask(task);
         }

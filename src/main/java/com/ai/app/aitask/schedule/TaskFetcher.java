@@ -21,7 +21,7 @@ import com.ai.app.aitask.task.builder.TaskBuilderFactory;
  * @author Alex Xu
  */
 public class TaskFetcher implements Constants {
-    protected final static Logger log = Logger.getLogger(TaskFetcher.class);
+    protected static final Logger logger = Logger.getLogger(TaskFetcher.class);
     private Config                config;
 
     public TaskFetcher() {
@@ -54,15 +54,15 @@ public class TaskFetcher implements Constants {
         try {
             worker.post(RequestWorker.formEntity(queryPairs), ContentType.APPLICATION_JSON);
         } catch (ConnectException e) {
-            log.error("req : failed connecting");
+            logger.error("req : failed connecting");
             return new ArrayList<ITaskBuilder>();
         } finally {
-            log.info("resp msg:" + worker.getRespMsg());
-            log.info("resp txt:" + worker.getRespContent());
+            logger.info("resp msg:" + worker.getRespMsg());
+            logger.info("resp txt:" + worker.getRespContent());
         }
         String content = worker.getRespContent();
         if (null == content || content.trim().isEmpty()) {
-            log.error("no effective content");
+            logger.error("no effective content");
             return new ArrayList<ITaskBuilder>();
         } else {
             return TaskBuilderFactory.parseBuilder(content);

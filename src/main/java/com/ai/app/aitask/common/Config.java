@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
  * @author Alex Xu
  */
 public class Config {
-    protected final static Logger            log         = Logger.getLogger(Config.class);
+    protected static final Logger            logger         = Logger.getLogger(Config.class);
     protected static Map<String, Config>     configCache = new HashMap<String, Config>();
     protected OrderedProperties              builtinSection;
     protected OrderedProperties              cursorSection;
@@ -31,7 +31,7 @@ public class Config {
     public static synchronized Config instance(String filename) {
         if (!configCache.containsKey(filename)) {
             configCache.put(filename, new Config(filename));
-            log.debug(String.format("config %s cached", filename));
+            logger.debug(String.format("config %s cached", filename));
         }
         return configCache.get(filename);
     }

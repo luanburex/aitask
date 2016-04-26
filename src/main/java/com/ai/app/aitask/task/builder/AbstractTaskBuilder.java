@@ -14,21 +14,22 @@ import com.ai.app.aitask.task.result.IResultFetcher;
  * @author Alex Xu
  */
 public abstract class AbstractTaskBuilder implements ITaskBuilder {
-    protected final static Logger log = Logger.getLogger(AbstractTaskBuilder.class);
+    protected static final Logger logger = Logger.getLogger(AbstractTaskBuilder.class);
 
-    protected Map<String, Object> key;
-    protected Map<String, Object> content;
     protected Map<String, Object> datamap;
+    protected Map<String, Object> content;
+    protected Map<String, Object> key;
 
     protected IExecutor           executor;
     protected IDataPreparer       preparer;
     protected IResultFetcher      fetcher;
-    @Override
-    public void parse(Map<String, Object> datamap) {
+
+    public AbstractTaskBuilder(Map<String, Object> datamap) {
+        this.datamap = datamap;
         this.key = new HashMap<String, Object>();
         this.content = new HashMap<String, Object>();
-        this.datamap = datamap;
     }
+    
     @Override
     public void build() {
         content.put("executor", executor);

@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -14,11 +13,8 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
-import org.quartz.JobListener;
-import org.quartz.ListenerManager;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SchedulerListener;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
@@ -39,7 +35,7 @@ import com.ai.app.aitask.task.wrapper.QuartzTaskWrapper;
  * @author Alex Xu
  */
 public class QuartzScheduler implements ITaskScheduler {
-    protected final static Logger log = Logger.getLogger(QuartzScheduler.class);
+    protected static final Logger logger = Logger.getLogger(QuartzScheduler.class);
     private Scheduler             scheduler;
     private String                name;
     public QuartzScheduler() throws SchedulerException {
@@ -47,14 +43,14 @@ public class QuartzScheduler implements ITaskScheduler {
         scheduler = new StdSchedulerFactory(config.getProperties(null)).getScheduler();
         name = scheduler.getSchedulerName();
         scheduler.standby();
-        log.debug(String.format("[%s] new Scheduler : %s", name, getClass()));
+        logger.debug(String.format("[%s] new Scheduler : %s", name, getClass()));
         scheduler.getListenerManager().addSchedulerListener(new ScheduleListner());
     }
     @Override
     public void start() {
         try {
             scheduler.start();
-            log.debug(String.format("[%s] Scheduler start", name));
+            logger.debug(String.format("[%s] Scheduler start", name));
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -63,7 +59,7 @@ public class QuartzScheduler implements ITaskScheduler {
     public void shutdown() {
         try {
             scheduler.shutdown();
-            log.debug(String.format("[%s] Scheduler shutdown", name));
+            logger.debug(String.format("[%s] Scheduler shutdown", name));
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -72,7 +68,7 @@ public class QuartzScheduler implements ITaskScheduler {
     public boolean addTask(ITaskBuilder taskBuilder, boolean replace) {
         try {
             int count = scheduler.getCurrentlyExecutingJobs().size();
-            log.debug(String.format("[%s] current running task : %d", name, count));
+            logger.debug(String.format("[%s] current running task : %d", name, count));
         } catch (SchedulerException e) {
             e.printStackTrace();
             return false;
@@ -82,7 +78,7 @@ public class QuartzScheduler implements ITaskScheduler {
         JobDetail detail = parseDetail(trigger.getKey(), taskBuilder.getContent());
         TriggerState state = (TriggerState) getTaskState(trigger.getKey());
         if (TriggerState.BLOCKED == state) {
-            log.debug(String.format("[%s] block task : %s @ %s", name, trigger.getKey(), state));
+            logger.debug(String.format("[%s] block task : %s @ %s", name, trigger.getKey(), state));
             return false;
         } else {
             try {
@@ -91,8 +87,8 @@ public class QuartzScheduler implements ITaskScheduler {
                 Date fire = trigger.getNextFireTime();
                 state = (TriggerState) getTaskState(trigger.getKey());
 
-                log.debug(String.format("[%s] add task : %s @ %s", name, trigger.getKey(), state));
-                log.debug(String.format("[%s] run task : %s @ %s", name, trigger.getKey(), fire));
+                logger.debug(String.format("[%s] add task : %s @ %s", name, trigger.getKey(), state));
+                logger.debug(String.format("[%s] run task : %s @ %s", name, trigger.getKey(), fire));
                 return true;
             } catch (SchedulerException e) {
                 e.printStackTrace();
@@ -105,10 +101,10 @@ public class QuartzScheduler implements ITaskScheduler {
         TriggerBuilder<Trigger> builder = TriggerBuilder.newTrigger();
         builder.withIdentity((String) triggerMap.get("key"), (String) triggerMap.get("group"));
         if ((Boolean) triggerMap.get("instant")) {
-            log.debug("instant trigger");
+            logger.debug("instant trigger");
             builder.withSchedule(SimpleScheduleBuilder.simpleSchedule()).startNow();
         } else {
-            log.debug("cron trigger");
+            logger.debug("cron trigger");
             builder.withSchedule(CronScheduleBuilder.cronSchedule((String) triggerMap.get("cron")));
         }
         return builder.usingJobData(new JobDataMap(triggerMap)).build();

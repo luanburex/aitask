@@ -28,7 +28,7 @@ import com.google.gson.Gson;
 
 public class ExecuteTest {
 
-    final static protected Logger  log    = Logger.getLogger(ExecuteTest.class);
+    static final protected Logger  logger    = Logger.getLogger(ExecuteTest.class);
 
     public static ScheduleDaemon daemon;
     static TestJettyServer       server = null;
@@ -84,7 +84,7 @@ public class ExecuteTest {
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
 //                .mapKey(), TriggerState.NONE, 1000l));
 //        daemon.getScheduler().addTask(ts, true);
-//        log.info(daemon.getScheduler().getTaskState(ts.getAuth().mapKey()));
+//        logger.info(daemon.getScheduler().getTaskState(ts.getAuth().mapKey()));
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()
 //                .mapKey(), TriggerState.BLOCKED, 1000l));
 //        Assert.assertTrue(TriggerUnil.waitStateUntil(daemon.getScheduler(), ts.getAuth()

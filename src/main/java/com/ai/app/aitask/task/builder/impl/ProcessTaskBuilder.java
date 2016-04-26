@@ -17,9 +17,9 @@ import com.ai.app.aitask.task.result.impl.DefaultResultFetcher;
  * @author renzq
  * @author Alex Xu
  */
-public class DefaultTaskBuilder extends AbstractTaskBuilder {
-    @Override
-    public void parse(Map<String, Object> datamap) {
+public class ProcessTaskBuilder extends AbstractTaskBuilder {
+    public ProcessTaskBuilder(Map<String, Object> datamap) {
+        super(datamap);
         TEMP: { // TODO Temp
             Map<String, Object> task = Caster.cast(datamap.get("task"));
             Map<String, Object> plan = Caster.cast(datamap.get("plan"));
@@ -36,12 +36,10 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
             task.put("taskGroup", "AITASK");
             //            task.put("taskCategory", Integer.toString(TASK_TYPE_CMD));
         }
-        super.parse(datamap);
     }
     @Override
     public void build() {
         Config config = Config.instance(CONFIG_AITASK);
-
         Map<String, Object> task = Caster.cast(datamap.get("task"));
         //            Map<String, Object> plan = Caster.cast(datamap.get("plan"));
         key.put("key", task.get("taskId"));
@@ -64,8 +62,11 @@ public class DefaultTaskBuilder extends AbstractTaskBuilder {
         exedata.put("pathResult", pathResult);
         exedata.put("pathLog", pathLog);
 
-        Map<String, Object> script = Caster.cast(datamap.get("script"));
-        String command = config.getProperty("processcommand", (String) script.get("scriptType"));
+        //        Map<String, Object> script = Caster.cast(datamap.get("script"));
+
+        //        String command = config.getProperty("processcommand", (String) script.get("scriptType"));
+        Map<String, String> properties = Caster.cast(datamap.get("properties"));
+        String command = properties.get("command");
         //TODO make it better
         command = command.replaceAll("%exedata%", pathExedata.replaceAll("\\\\", "\\\\\\\\"));
 

@@ -9,7 +9,7 @@ import com.ai.app.aitask.schedule.ITaskScheduler;
 import com.ai.app.aitask.task.execute.ExecuteTest;
 
 public class TriggerUnil {
-    final static protected Logger log = Logger.getLogger(ExecuteTest.class);
+    static final protected Logger logger = Logger.getLogger(ExecuteTest.class);
 
     public static boolean waitStateUntil(ITaskScheduler s, TriggerKey triggerKey, TriggerState state,
             long wait_time) throws InterruptedException, SchedulerException {
@@ -23,9 +23,9 @@ public class TriggerUnil {
             Thread.sleep(100l);
             _wait += 100l;
         }
-        log.info("actual:" + s.getTaskState(triggerKey));
-        log.info("expect:" + state);
-        log.info("result:" + result + " dur:" + _wait);
+        logger.info("actual:" + s.getTaskState(triggerKey));
+        logger.info("expect:" + state);
+        logger.info("result:" + result + " dur:" + _wait);
         return result;
     }
 

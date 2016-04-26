@@ -26,7 +26,7 @@ import com.ai.app.aitask.utils.TestJettyServer;
 
 public class FetcherTest {
 
-    final static protected Logger       log                 = Logger.getLogger(FetcherTest.class);
+    static final protected Logger       logger                 = Logger.getLogger(FetcherTest.class);
 
     Mockery                             mock_context        = new Mockery();
     static TestJettyServer              server              = null;
@@ -95,7 +95,7 @@ public class FetcherTest {
 //        IniResultFetcher fetcher = new IniResultFetcher(ini_result_file);
 //        String result_xml = fetcher.fetch(context);
 
-//        log.info(result_xml);
+//        logger.info(result_xml);
 
         org.dom4j.Document document = DocumentHelper.parseText(null);
         Element root = document.getRootElement();
@@ -146,7 +146,7 @@ public class FetcherTest {
 //        IniResultFetcher fetcher = new IniResultFetcher(ini_result_file);
 //        String result_xml = fetcher.fetch(context);
 //
-//        log.info(result_xml);
+//        logger.info(result_xml);
 //
 //        org.dom4j.Document document = DocumentHelper.parseText(result_xml);
 //        Element root = document.getRootElement();
@@ -189,7 +189,7 @@ public class FetcherTest {
 //        IniResultFetcher fetcher = new IniResultFetcher(ini_result_file);
 //        String result_xml = fetcher.fetch(context);
 //
-//        log.info(result_xml);
+//        logger.info(result_xml);
 
 //        org.dom4j.Document document = DocumentHelper.parseText(result_xml);
 //        Element root = document.getRootElement();

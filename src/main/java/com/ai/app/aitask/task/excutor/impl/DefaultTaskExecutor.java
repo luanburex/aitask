@@ -17,7 +17,7 @@ import com.ai.app.aitask.task.excutor.IExecutor;
  */
 public class DefaultTaskExecutor implements IExecutor {
 
-    protected final static Logger log      = Logger.getLogger(DefaultTaskExecutor.class);
+    protected static final Logger logger      = Logger.getLogger(DefaultTaskExecutor.class);
     private ProcessWorker         process  = null;
     private String[]              commands = null;
 
@@ -43,7 +43,7 @@ public class DefaultTaskExecutor implements IExecutor {
             e.printStackTrace();
         }
         if (taskExist(process_name)) {
-            log.error("process kill error:" + process_name);
+            logger.error("process kill error:" + process_name);
         }
     }
 
@@ -61,21 +61,21 @@ public class DefaultTaskExecutor implements IExecutor {
     }
     @Override
     public int execute(Map<String, Object> datamap) {
-        log.info("executing:" + Arrays.toString(commands));
+        logger.info("executing:" + Arrays.toString(commands));
         //TODO run run run
         process = new ProcessWorker(DEFAULT_CHARSET);
-        log.info("process begin");
+        logger.info("process begin");
         int result = process.process(commands);
-        log.info("process end");
-        log.info("process stdout: " + process.getStandOutput());
+        logger.info("process end");
+        logger.info("process stdout: " + process.getStandOutput());
         if (!process.getErrorOutput().isEmpty()) {
-            log.error("process erroput: " + process.getErrorOutput());
+            logger.error("process erroput: " + process.getErrorOutput());
         }
         return result;
     }
     @Override
     public void interrupt() {
-        log.info("process destroyed");
+        logger.info("process destroyed");
         if (this.process != null) {
             this.process.destroy();
         }

@@ -22,7 +22,7 @@ import org.apache.http.entity.ContentType;
  * @author Alex Xu
  */
 public class RequestWorker implements Constants {
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
     private String    requestURL;
     private String    requestQuery;
     private Integer   responseCode;
@@ -46,7 +46,7 @@ public class RequestWorker implements Constants {
                 e.printStackTrace();
             }
         }
-        log.info("url:" + buffer.toString());
+        logger.info("url:" + buffer.toString());
         HttpURLConnection conn = null;
         try {
             URL url = new URL(buffer.toString());

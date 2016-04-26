@@ -17,7 +17,7 @@ import com.ai.app.aitask.task.builder.ITaskBuilder;
  */
 public class TaskSyncRunable implements Runnable, Constants {
 
-    protected final static Log  log = LogFactory.getLog(TaskSyncRunable.class);
+    protected static final Log  logger = LogFactory.getLog(TaskSyncRunable.class);
 
     private TaskSyncListener    taskSyncListener;
     private Queue<ITaskBuilder> taskSyncQueue;
@@ -53,12 +53,12 @@ public class TaskSyncRunable implements Runnable, Constants {
     @Override
     public void run() {
         if (intervalTime < 1) {
-            log.info(String.format("task sync disabled (%d)", intervalTime));
+            logger.info(String.format("task sync disabled (%d)", intervalTime));
         } else {
-            log.info(String.format("task sync enabled (%d)", intervalTime));
+            logger.info(String.format("task sync enabled (%d)", intervalTime));
             try {
                 while (true) {
-                    log.info("task sync");
+                    logger.info("task sync");
                     sync();
                     Thread.sleep(intervalTime);
                 }

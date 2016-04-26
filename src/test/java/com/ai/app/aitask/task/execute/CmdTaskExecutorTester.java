@@ -13,7 +13,7 @@ import com.ai.app.aitask.task.excutor.impl.DefaultTaskExecutor;
 
 class WaitProcessClass implements Runnable{
     
-    final static protected Logger log = Logger.getLogger(WaitProcessClass.class);
+    static final protected Logger logger = Logger.getLogger(WaitProcessClass.class);
     
     private boolean result = false;
     private String process_name = null;
@@ -55,7 +55,7 @@ class WaitProcessClass implements Runnable{
         Process process_kill_task = Runtime.getRuntime().exec("taskkill /T /F /IM " + process_name);
         Scanner in = new Scanner(process_kill_task.getInputStream());
         while (in.hasNextLine()) {
-            log.debug(in.nextLine());
+            logger.debug(in.nextLine());
         }
 
         try {
@@ -64,7 +64,7 @@ class WaitProcessClass implements Runnable{
             e.printStackTrace();
         }
         if (this.existsTask(process_name)) {
-            log.error("process kill error:" + process_name);
+            logger.error("process kill error:" + process_name);
         }
         in.close();
     }
@@ -77,7 +77,7 @@ class WaitProcessClass implements Runnable{
             System.err.println("result:"+result);
             taskkill(this.process_name);
         } catch (Exception e) {
-            log.error(e);
+            logger.error(e);
         }   
     }
     
@@ -85,7 +85,7 @@ class WaitProcessClass implements Runnable{
 
 public class CmdTaskExecutorTester {
 
-    final static protected Logger log = Logger.getLogger(CmdTaskExecutorTester.class);
+    static final protected Logger logger = Logger.getLogger(CmdTaskExecutorTester.class);
     
     
     @Test(timeout=3000)
@@ -94,7 +94,7 @@ public class CmdTaskExecutorTester {
         
         try {
             int ret = e.execute(null);
-            log.debug(ret);
+            logger.debug(ret);
             Assert.assertTrue(ret == 0);
             
         } catch (Exception exc) {
@@ -126,7 +126,7 @@ public class CmdTaskExecutorTester {
         try {
             t.start();
             int ret = e.execute(null);
-            log.debug(ret);
+            logger.debug(ret);
             Assert.assertTrue(ret == 1);
             
         } catch (Exception exc) {
@@ -147,7 +147,7 @@ public class CmdTaskExecutorTester {
                 int ret = e.execute(null);
                 
                 
-                log.debug(ret);
+                logger.debug(ret);
                 Assert.assertTrue(ret == 1); //interupt return 1
                 
             } catch (Exception exc) {
@@ -196,7 +196,7 @@ public class CmdTaskExecutorTester {
         
         try {
             int ret = e.execute(null);
-            log.debug(ret);
+            logger.debug(ret);
             Assert.assertTrue(ret == 1);
             Assert.assertFalse("".equals(e.getOutput()));
             

@@ -45,9 +45,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class ScheduleTest implements Constants{
+public class ScheduleTest implements Constants {
 
-    final public static Log        log = LogFactory.getLog(ScheduleTest.class);
+    final public static Log        logger = LogFactory.getLog(ScheduleTest.class);
 
     private static Gson            gson;
     private static ScheduleDaemon  daemon;
@@ -59,13 +59,12 @@ public class ScheduleTest implements Constants{
         server = new TestJettyServer(9999) {
             @Override
             public void handle(String u, Request r, HttpServletRequest q, HttpServletResponse p) {
-                log.info("from:" + r.getRemoteAddr());
-                log.info("user:" + r.getRemoteUser());
+                logger.info("from:" + r.getRemoteAddr());
+                logger.info("user:" + r.getRemoteUser());
 
-                String url = Config.instance(CONFIG_CLIENT).getProperty(null,
-                        "aitask.sync.url");
-                log.info("url1:" + url);
-                log.info("url2:" + url.replace("http(s?)://(.*):", "http://1.2.3.4:"));
+                String url = Config.instance(CONFIG_CLIENT).getProperty(null, "aitask.sync.url");
+                logger.info("url1:" + url);
+                logger.info("url2:" + url.replace("http(s?)://(.*):", "http://1.2.3.4:"));
                 if ("/fetchTask".equals(u)) {
                     super.handle(response, r, q, p);
                 } else if ("/query".equals(u)) {
@@ -73,7 +72,7 @@ public class ScheduleTest implements Constants{
                         JobDataMap jobmap = ((JobExecutionContext) context).getMergedJobDataMap();
                         Map<String, Map<String, Object>> datamap;
                         datamap = Caster.cast(jobmap.get("datamap"));
-                        log.info("query:" + datamap);
+                        logger.info("query:" + datamap);
                     }
                     super.handle(u, r, q, p);
                 } else if ("/result".equals(u)) {
@@ -82,8 +81,9 @@ public class ScheduleTest implements Constants{
                                 r.getInputStream(), "UTF-8"));
                         for (String line = reader.readLine(); null != line; line = reader
                                 .readLine()) {
-                            Object rst = gson.fromJson(line, Map.class);
-                            log.info(rst);
+                            logger.info(line);
+                            //                            Object rst = gson.fromJson(line, Map.class);
+                            //                            logger.info(rst);
                         }
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
@@ -147,7 +147,7 @@ public class ScheduleTest implements Constants{
             Assert.assertTrue("不包含任务数据标签", datamap.containsKey("tags"));
             Assert.assertTrue("不包含任务数据名称", datamap.containsKey("dataName"));
             Assert.assertTrue("不包含任务脚本ID", datamap.containsKey("scriptId"));
-            
+
             Assert.assertTrue("不包含任务数据细节", map.containsKey("detaillist"));
             String dataId = (String) datamap.get("dataId");
             Map<String, Map<String, Object>> detaillist = Caster.cast(map.get("detaillist"));
@@ -155,11 +155,11 @@ public class ScheduleTest implements Constants{
         for (ITaskBuilder taskBuilder : taskList) {
             boolean result = daemon.getScheduler().addTask(taskBuilder, true);
         }
-        
-//        for (List<?> list = daemon.getScheduler().getTasks(); list.size() == 0;) {
-//            list = daemon.getScheduler().getTasks();
-//            Thread.sleep(50);
-//        }
+
+        //        for (List<?> list = daemon.getScheduler().getTasks(); list.size() == 0;) {
+        //            list = daemon.getScheduler().getTasks();
+        //            Thread.sleep(50);
+        //        }
         int counter = 0;
         for (List<Object> list = daemon.getScheduler().getTasks(); list.size() != 0;) {
             if (counter % 5 == 0) {
@@ -234,7 +234,7 @@ public class ScheduleTest implements Constants{
         Calendar c = Calendar.getInstance();
         c.setTime(new Date(System.currentTimeMillis() + 2000l));
         String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
-        log.info("target time : " + t);
+        logger.info("target time : " + t);
         System.err.println(t);
         Iterator<?> itr = root.elementIterator("task");
         while (itr.hasNext()) {
@@ -261,11 +261,11 @@ public class ScheduleTest implements Constants{
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key1, TriggerState.BLOCKED, 3000l));
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key2, TriggerState.BLOCKED, 3000l));
 
-        log.info("s2 trigger info : " + schedule.getInfo());
+        logger.info("s2 trigger info : " + schedule.getInfo());
         System.err.println("==================================================");
         // 3.重新加载之前的任务
         fetcher.fetch(null, null);
-        log.info("s3 trigger info : " + schedule.getInfo());
+        logger.info("s3 trigger info : " + schedule.getInfo());
 
         Thread.sleep(2000l);// 需要等之前的任务执行完，才会进行替换
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key1, TriggerState.NORMAL, 3000l));
@@ -280,6 +280,6 @@ public class ScheduleTest implements Constants{
         Assert.assertEquals(null, trigger2.getPreviousFireTime());
 
         Assert.assertTrue(TriggerUnil.waitStateUntil(schedule, key1, TriggerState.NORMAL, 5000l));
-        log.info("s4 trigger info : " + schedule.getInfo());
+        logger.info("s4 trigger info : " + schedule.getInfo());
     }
 }

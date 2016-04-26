@@ -18,7 +18,7 @@ import com.ai.app.aitask.task.result.IResultFetcher;
  * @author Alex Xu
  */
 public class AbstractTask implements ITask {
-    protected final static Logger log = Logger.getLogger(AbstractTask.class);
+    protected static final Logger logger = Logger.getLogger(AbstractTask.class);
 
     private Thread                thread;
     private Config                config;
@@ -34,12 +34,12 @@ public class AbstractTask implements ITask {
 
     @Override
     public void before(Map<String, Object> trigger, Map<String, Object> datamap) {
-        prefix = (String) trigger.get("info");
+        prefix = "" + trigger.get("info");
         IDataPreparer preparer = (IDataPreparer) datamap.get("preparer");
         if (null != preparer && !interrupted) {
             preparer.prepare(datamap);
         } else {
-            log.info(String.format("[%s] preparer is null", prefix));
+            logger.info(String.format("[%s] preparer is null", prefix));
         }
     }
 
@@ -51,13 +51,13 @@ public class AbstractTask implements ITask {
         try {
             IExecutor executor = (IExecutor) datamap.get("executor");
             runtimeData.put("executor", executor);
-            log.info(String.format("[%s] to execute", prefix));
+            logger.info(String.format("[%s] to execute", prefix));
             if (null == executor) {
                 // TODO Executor is Null!!! tell somebody...
-                log.info(String.format("[%s] executor is null", prefix));
+                logger.info(String.format("[%s] executor is null", prefix));
             } else {
                 int result = executor.execute(datamap);
-                log.info(String.format("[%s] executed, return(%d)", prefix, result));
+                logger.info(String.format("[%s] executed, return(%d)", prefix, result));
                 runtimeData.put("exitCode", result);
             }
         } catch (Exception e) {
@@ -71,14 +71,14 @@ public class AbstractTask implements ITask {
     @Override
     public void interrupt() {
         interrupted = true;
-        log.info(String.format("[%s] Task interrupt", prefix));
+        logger.info(String.format("[%s] Task interrupt", prefix));
         IExecutor executor = (IExecutor) runtimeData.get("executor");
         if (executor != null) {
-            log.info(String.format("[%s] interrupt executor : %s", prefix, executor.getClass()));
+            logger.info(String.format("[%s] interrupt executor : %s", prefix, executor.getClass()));
             executor.interrupt();
         }
         if (thread != null) {
-            log.info(String.format("[%s] interrupt thread : %s", prefix, thread.getName()));
+            logger.info(String.format("[%s] interrupt thread : %s", prefix, thread.getName()));
             thread.interrupt();
         }
     }
@@ -91,7 +91,7 @@ public class AbstractTask implements ITask {
                 //TODO result
                 Map<String, Object> result = fetcher.error(datamap,
                         (Exception) runtimeData.get("exception"));
-                log.info(String.format("[%s] execut failed : %s", prefix, result));
+                logger.info(String.format("[%s] execut failed : %s", prefix, result));
                 //TODO RequestWorker should move to a TaskFinishListener
                 String url = config.getProperty(null, "aitask.result.url");
                 RequestWorker worker = new RequestWorker(url, null);
@@ -99,31 +99,31 @@ public class AbstractTask implements ITask {
                     worker.post(new com.google.gson.Gson().toJson(result),
                             ContentType.APPLICATION_JSON);
                 } catch (ConnectException e) {
-                    log.error(String.format("[%s] report failed :  %s", prefix, e.getMessage()));
+                    logger.error(String.format("[%s] report failed :  %s", prefix, e.getMessage()));
                 } finally {
-                    log.info(String.format("[%s] resp cod : %s", prefix, worker.getRespCode()));
-                    log.info(String.format("[%s] resp msg : %s", prefix, worker.getRespMsg()));
+                    logger.info(String.format("[%s] resp cod : %s", prefix, worker.getRespCode()));
+                    logger.info(String.format("[%s] resp msg : %s", prefix, worker.getRespMsg()));
                 }
             } else {
-                log.info(String.format("[%s] fetcher is null", prefix));
+                logger.info(String.format("[%s] fetcher is null", prefix));
             }
         } else {
             if (null != fetcher) {
                 Map<String, Object> result = fetcher.fetch(datamap);
-                log.info(String.format("[%s] execut finished : %s", prefix, result));
+                logger.info(String.format("[%s] execute finished", prefix));
                 String url = config.getProperty(null, "aitask.result.url");
                 RequestWorker worker = new RequestWorker(url, null);
                 try {
                     worker.post(new com.google.gson.Gson().toJson(result),
                             ContentType.APPLICATION_JSON);
                 } catch (ConnectException e) {
-                    log.error(String.format("[%s] report failed : %s", prefix, e.getMessage()));
+                    logger.error(String.format("[%s] report failed : %s", prefix, e.getMessage()));
                 } finally {
-                    log.info(String.format("[%s] resp cod : %s", prefix, worker.getRespCode()));
-                    log.info(String.format("[%s] resp msg : %s", prefix, worker.getRespMsg()));
+                    logger.info(String.format("[%s] resp cod : %s", prefix, worker.getRespCode()));
+                    logger.info(String.format("[%s] resp msg : %s", prefix, worker.getRespMsg()));
                 }
             } else {
-                log.info(String.format("[%s] fetcher is null", prefix));
+                logger.info(String.format("[%s] fetcher is null", prefix));
             }
         }
     }

@@ -19,7 +19,7 @@ import com.ai.app.aitask.schedule.TaskFetcher;
  */
 public class TaskArrangeServlet extends HttpServlet implements Constants {
     private static final long     serialVersionUID = 4588897907403234206L;
-    protected final static Logger log              = Logger.getLogger(TaskArrangeServlet.class);
+    protected static final Logger logger              = Logger.getLogger(TaskArrangeServlet.class);
     private TaskFetcher           fetcher          = new TaskFetcher();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,

@@ -6,15 +6,12 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 
-import com.ai.app.aitask.task.ITask;
-import com.ai.app.aitask.task.wrapper.QuartzTaskWrapper;
-
 /**
  * @author renzq
  */
 public class ExecuteListener implements JobListener {
 
-    protected final static Logger log = Logger.getLogger(ExecuteListener.class);
+    protected static final Logger logger = Logger.getLogger(ExecuteListener.class);
 
     @Override
     public String getName() {
@@ -32,8 +29,8 @@ public class ExecuteListener implements JobListener {
         for (Object key : data_map.keySet()) {
             sb.append("[").append(key).append("]:").append(data_map.get(key)).append("\n");
         }
-        log.info("[" + context.getTrigger().getKey().toString() + "]Datas:\n" + sb.toString());
-        log.info("[" + context.getTrigger().getKey().toString() + "]"
+        logger.info("[" + context.getTrigger().getKey().toString() + "]Datas:\n" + sb.toString());
+        logger.info("[" + context.getTrigger().getKey().toString() + "]"
                 + "run the task BEFORE function.");
     }
 
@@ -47,8 +44,8 @@ public class ExecuteListener implements JobListener {
         for (Object key : data_map.keySet()) {
             sb.append("[").append(key).append("]:").append(data_map.get(key)).append("\n");
         }
-        log.info("[" + context.getTrigger().getKey().toString() + "]Datas:\n" + sb.toString());
-        log.info("[" + context.getTrigger().getKey().toString() + "]"
+        logger.info("[" + context.getTrigger().getKey().toString() + "]Datas:\n" + sb.toString());
+        logger.info("[" + context.getTrigger().getKey().toString() + "]"
                 + "run the task AFTER function.");
     }
 }

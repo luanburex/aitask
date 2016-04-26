@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  * @author Alex Xu
  */
 public class ProcessWorker implements Constants {
-    protected Logger     log = Logger.getLogger(ProcessWorker.class);
+    protected Logger     logger = Logger.getLogger(ProcessWorker.class);
     private StringBuffer standBuffer;
     private StringBuffer errorBuffer;
     private Charset      charset;
@@ -38,11 +38,11 @@ public class ProcessWorker implements Constants {
     }
 
     protected void handleStandOutput(String content) {
-        log.debug("process stdout :" + content);
+        logger.debug("process stdout :" + content);
     }
 
     protected void handleErrorOutput(String content) {
-        log.debug("process errout :" + content);
+        logger.debug("process errout :" + content);
     }
 
     public int process(String... commands) {
@@ -53,7 +53,7 @@ public class ProcessWorker implements Constants {
                 ProcessBuilder builder = new ProcessBuilder(commands);
                 process = builder.start();
             }
-            log.info("process cmd : " + Arrays.toString(commands));
+            logger.info("process cmd : " + Arrays.toString(commands));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,7 +87,7 @@ public class ProcessWorker implements Constants {
                 }
             }
             int result = process.waitFor();
-            log.info("process result : " + result);
+            logger.info("process result : " + result);
             return result;
         } catch (InterruptedException e) {
             e.printStackTrace();

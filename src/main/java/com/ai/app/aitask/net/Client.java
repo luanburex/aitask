@@ -20,7 +20,7 @@ import com.ai.app.aitask.common.FileUtil;
  * @author Alex Xu
  */
 public class Client implements Constants {
-    protected final static Logger log = Logger.getLogger(Client.class);
+    protected static final Logger logger = Logger.getLogger(Client.class);
     private Server                server;
     public Client() {
         ServletContextHandler handler = new ServletContextHandler();
@@ -29,9 +29,9 @@ public class Client implements Constants {
         try {
             new XmlConfiguration(FileUtil.readStream("client.xml")).configure(handler);
             String path = InetAddress.getLocalHost() + ":" + server.getConnectors()[0].getPort();
-            log.info("Client : " + path + handler.getContextPath());
+            logger.info("Client : " + path + handler.getContextPath());
             for (ServletMapping mapping : handler.getServletHandler().getServletMappings()) {
-                log.info("Servlet : " + mapping.getServletName() + "@" + mapping.getPathSpecs()[0]);
+                logger.info("Servlet : " + mapping.getServletName() + "@" + mapping.getPathSpecs()[0]);
             }
         } catch (SAXException e) {
             e.printStackTrace();
@@ -45,7 +45,7 @@ public class Client implements Constants {
     public void start() {
         try {
             server.start();
-            log.info("Client Start.");
+            logger.info("Client Start.");
         } catch (Exception e) {
             e.printStackTrace();
         }

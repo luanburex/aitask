@@ -18,7 +18,7 @@ import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TriggerUnil;
 
 public class TaskTimeoutTest {
-    final static protected Logger log = Logger.getLogger(TaskRunTest.class);
+    static final protected Logger logger = Logger.getLogger(TaskRunTest.class);
 
     public static ScheduleDaemon sd;
 
