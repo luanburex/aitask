@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +21,7 @@ import org.apache.log4j.Logger;
  * @author Alex Xu
  */
 public class Config {
-    protected static final Logger            logger         = Logger.getLogger(Config.class);
+    protected static final Logger            logger      = Logger.getLogger(Config.class);
     protected static Map<String, Config>     configCache = new HashMap<String, Config>();
     protected OrderedProperties              builtinSection;
     protected OrderedProperties              cursorSection;
@@ -63,7 +64,7 @@ public class Config {
             e.printStackTrace();
         }
     }
-
+    private static final String bom = String.valueOf((char) 65279);
     private void parseLine(String line) {
         line = line.trim();
         if (line.isEmpty() || '#' == line.charAt(0)) {
@@ -72,14 +73,16 @@ public class Config {
             cursorTag = line.replaceFirst(".?\\[(.*)\\]", "$1");
             cursorSection = new OrderedProperties();
             sectionMap.put(cursorTag, cursorSection);
-        } else if (line.matches(".*=.*")) {
+        } else if (line.matches(".+=.*")) {
             if (cursorSection == null) {
                 cursorSection = builtinSection;
             }
             int i = line.indexOf('=');
             String name = line.substring(0, i).trim();
             String value = line.substring(i + 1).trim();
-            cursorSection.setProperty(name, value);
+            if (!bom.equals(name)) {
+                cursorSection.setProperty(name, value);
+            }
         }
     }
 
@@ -144,5 +147,21 @@ public class Config {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = asMap(builtinSection);
+        for (Entry<String, OrderedProperties> entry : sectionMap.entrySet()) {
+            map.put(entry.getKey(), asMap(entry.getValue()));
+        }
+        return map;
+    }
+
+    public static Map<String, Object> asMap(OrderedProperties properties) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        for (String name : properties.stringPropertyNames()) {
+            map.put(name, properties.getProperty(name));
+        }
+        return map;
     }
 }

@@ -9,9 +9,9 @@ import org.apache.log4j.Logger;
 
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.RequestWorker;
-import com.ai.app.aitask.task.excutor.IExecutor;
+import com.ai.app.aitask.task.executor.IExecutor;
+import com.ai.app.aitask.task.fetcher.IResultFetcher;
 import com.ai.app.aitask.task.preparer.IDataPreparer;
-import com.ai.app.aitask.task.result.IResultFetcher;
 
 /**
  * @author renzq

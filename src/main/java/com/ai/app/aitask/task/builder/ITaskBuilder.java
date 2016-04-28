@@ -5,7 +5,7 @@ import java.util.Map;
 import com.ai.app.aitask.common.Constants;
 
 public interface ITaskBuilder extends Constants {
-    void build();
+    ITaskBuilder build();
     Map<String, Object> getTrigger();
     Map<String, Object> getContent();
 }

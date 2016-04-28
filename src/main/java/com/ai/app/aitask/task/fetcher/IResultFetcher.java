@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.result;
+package com.ai.app.aitask.task.fetcher;
 
 import java.util.Map;
 

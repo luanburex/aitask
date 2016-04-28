@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.excutor;
+package com.ai.app.aitask.task.executor;
 
 import java.util.Map;
 

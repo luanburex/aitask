@@ -3,6 +3,8 @@ package com.ai.app.aitask.task.preparer.impl;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.common.FileUtil;
 import com.ai.app.aitask.task.preparer.IDataPreparer;
@@ -11,12 +13,9 @@ import com.ai.app.aitask.task.preparer.IDataPreparer;
  * @author Alex Xu
  */
 public class DefaultDataPreparer implements IDataPreparer {
+    protected static final Logger logger = Logger.getLogger(DefaultDataPreparer.class);
+    private Map<String, Object>   exedata;
 
-    private Map<String, Object> exedata;
-
-    public DefaultDataPreparer(Map<String, Object> exedata) {
-        this.exedata = exedata;
-    }
     @Override
     public void prepare(Map<String, Object> datamap) {
         String pathExedata = (String) exedata.get("pathExedata");

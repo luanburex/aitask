@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.common.RequestWorker;
+import com.ai.app.aitask.task.TaskBuilderFactory;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.ai.app.aitask.task.builder.TaskBuilderFactory;
 
 /**
  * @author renzq

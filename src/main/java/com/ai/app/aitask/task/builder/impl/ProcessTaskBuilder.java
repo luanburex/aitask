@@ -1,44 +1,44 @@
 package com.ai.app.aitask.task.builder.impl;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.common.Config;
-import com.ai.app.aitask.task.builder.AbstractTaskBuilder;
-import com.ai.app.aitask.task.excutor.impl.DefaultTaskExecutor;
-import com.ai.app.aitask.task.preparer.impl.DefaultDataPreparer;
-import com.ai.app.aitask.task.result.impl.DefaultResultFetcher;
+import com.ai.app.aitask.task.builder.ITaskBuilder;
+import com.ai.app.aitask.task.executor.IExecutor;
+import com.ai.app.aitask.task.executor.impl.ProcessTaskExecutor;
 
 /**
  * @author renzq
  * @author Alex Xu
  */
 public class ProcessTaskBuilder extends AbstractTaskBuilder {
-    public ProcessTaskBuilder(Map<String, Object> datamap) {
-        super(datamap);
-        TEMP: { // TODO Temp
-            Map<String, Object> task = Caster.cast(datamap.get("task"));
-            Map<String, Object> plan = Caster.cast(datamap.get("plan"));
-            task.put("cron", plan.get("cron"));
-            Calendar c = Calendar.getInstance();
-            String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
-            c.setTime(new Date(System.currentTimeMillis() + 2000l));
-            t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
-            // TODO Delay 2 second
-            task.put("cron", t);
-            task.put("instant", "1".equals(plan.get("ifInstance")));//1/0
-            // TODO Missing properties
-            task.put("timeout", "-1");
-            task.put("taskGroup", "AITASK");
-            //            task.put("taskCategory", Integer.toString(TASK_TYPE_CMD));
-        }
+    public ProcessTaskBuilder(Map<String, Object> datamap, Map<String, String> properties) {
+        super(datamap, properties);
+        delay2();
     }
+
+    private void delay2() { //TODO delay for 2 second
+        Map<String, Object> task = Caster.cast(datamap.get("task"));
+        Map<String, Object> plan = Caster.cast(datamap.get("plan"));
+        task.put("cron", plan.get("cron"));
+        Calendar c = Calendar.getInstance();
+        String t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
+        c.setTime(new Date(System.currentTimeMillis() + 2000l));
+        t = c.get(Calendar.SECOND) + " " + c.get(Calendar.MINUTE) + " * * * ?";
+        // TODO Delay 2 second
+        task.put("cron", t);
+        task.put("instant", "1".equals(plan.get("ifInstance")));//1/0
+        // TODO Missing properties
+        task.put("timeout", "-1");
+        task.put("taskGroup", "AITASK");
+        //            task.put("taskCategory", Integer.toString(TASK_TYPE_CMD));
+    }
+
     @Override
-    public void build() {
+    public ITaskBuilder build() {
         Config config = Config.instance(CONFIG_AITASK);
         Map<String, Object> task = Caster.cast(datamap.get("task"));
         //            Map<String, Object> plan = Caster.cast(datamap.get("plan"));
@@ -48,31 +48,6 @@ public class ProcessTaskBuilder extends AbstractTaskBuilder {
         key.put("timeout", task.get("timeout"));
         key.put("instant", task.get("instant"));
         content.put("datamap", datamap);
-
-        Map<String, Object> exedata = new HashMap<String, Object>();
-
-        String pathWorkspace = config.getProperty(null, "workspace");
-        String pathExedata = new File(pathWorkspace, "exe").getAbsolutePath();
-        String pathScript = new File(pathWorkspace, "scr").getAbsolutePath();
-        String pathResult = new File(pathWorkspace, "rst").getAbsolutePath();
-        String pathLog = new File(pathWorkspace, "log").getAbsolutePath();
-
-        exedata.put("pathExedata", pathExedata);
-        exedata.put("pathScript", pathScript);
-        exedata.put("pathResult", pathResult);
-        exedata.put("pathLog", pathLog);
-
-        //        Map<String, Object> script = Caster.cast(datamap.get("script"));
-
-        //        String command = config.getProperty("processcommand", (String) script.get("scriptType"));
-        Map<String, String> properties = Caster.cast(datamap.get("properties"));
-        String command = properties.get("command");
-        //TODO make it better
-        command = command.replaceAll("%exedata%", pathExedata.replaceAll("\\\\", "\\\\\\\\"));
-
-        preparer = new DefaultDataPreparer(exedata);
-        executor = new DefaultTaskExecutor(command.split(" "));
-        fetcher = new DefaultResultFetcher(exedata);
-        super.build();
+        return super.build();
     }
 }

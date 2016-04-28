@@ -28,7 +28,7 @@ import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.listener.quartz.ScheduleListner;
 import com.ai.app.aitask.schedule.ITaskScheduler;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.ai.app.aitask.task.wrapper.QuartzTaskWrapper;
+import com.ai.app.aitask.task.impl.QuartzTaskWrapper;
 
 /**
  * @author renzq

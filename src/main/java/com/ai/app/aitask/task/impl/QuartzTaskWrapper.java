@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.wrapper;
+package com.ai.app.aitask.task.impl;
 
 import java.util.Map;
 

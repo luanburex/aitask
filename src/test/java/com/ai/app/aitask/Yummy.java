@@ -13,13 +13,20 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.xml.XmlConfiguration;
 import org.xml.sax.SAXException;
 
+import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.common.FileUtil;
 
 public class Yummy implements Constants {
     boolean good;
-    public static void main(String[] args) throws Exception {
-        test();
+    public static void main(String[] args) {
+//        test();
+//        System.out.println("1".equals(' '));
+        Config.instance("C:/workspace/probe/ha_nethall/Logs/余额查询.ini");
+    }
+    
+    public static Object testConvert() {
+        return null;
     }
 
     public static void server() throws SAXException, IOException, Exception {

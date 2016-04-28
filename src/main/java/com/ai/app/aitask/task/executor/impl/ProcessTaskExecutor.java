@@ -1,4 +1,4 @@
-package com.ai.app.aitask.task.excutor.impl;
+package com.ai.app.aitask.task.executor.impl;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -6,8 +6,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.common.ProcessWorker;
-import com.ai.app.aitask.task.excutor.IExecutor;
+import com.ai.app.aitask.task.executor.IExecutor;
 
 /**
  * Use System shell to run cmd command.
@@ -15,11 +16,11 @@ import com.ai.app.aitask.task.excutor.IExecutor;
  * @author renzq
  * @author Alex Xu
  */
-public class DefaultTaskExecutor implements IExecutor {
+public class ProcessTaskExecutor implements IExecutor {
 
-    protected static final Logger logger      = Logger.getLogger(DefaultTaskExecutor.class);
-    private ProcessWorker         process  = null;
-    private String[]              commands = null;
+    protected static final Logger logger  = Logger.getLogger(ProcessTaskExecutor.class);
+    private Map<String, String>   properties;
+    private ProcessWorker         process = null;
 
     public String getOutput() {
         return process.getStandOutput();
@@ -29,8 +30,8 @@ public class DefaultTaskExecutor implements IExecutor {
         return process.getErrorOutput();
     }
 
-    public DefaultTaskExecutor(String... commands) {
-        this.commands = commands;
+    public ProcessTaskExecutor(Map<String, String> properties) {
+        this.properties = properties;
     }
 
     public void killTask(String process_name) throws IOException {
@@ -43,7 +44,7 @@ public class DefaultTaskExecutor implements IExecutor {
             e.printStackTrace();
         }
         if (taskExist(process_name)) {
-            logger.error("process kill error:" + process_name);
+            logger.error("process kill failed:" + process_name);
         }
     }
 
@@ -57,17 +58,27 @@ public class DefaultTaskExecutor implements IExecutor {
                 super.handleStandOutput(content);
             }
         };
-        return 1 == process.process("tasklist");
+        return (1 == process.process("tasklist"));
     }
     @Override
     public int execute(Map<String, Object> datamap) {
+        String command = properties.get("command");
+        //TODO make it better
+        Map<String, Object> basedatamap = Caster.cast(datamap.get("datamap"));
+        Map<String, String> scriptdata = Caster.cast(basedatamap.get("script"));
+        //        command = command.replaceAll("%exedata%", pathExedata.replaceAll("\\\\", "\\\\\\\\"));
+        command = command.replaceAll("%scriptname%", scriptdata.get("scriptName"));
+        String[] commands = command.split(" ");
+
         logger.info("executing:" + Arrays.toString(commands));
         //TODO run run run
         process = new ProcessWorker(DEFAULT_CHARSET);
         logger.info("process begin");
         int result = process.process(commands);
         logger.info("process end");
-        logger.info("process stdout: " + process.getStandOutput());
+        if (!process.getStandOutput().isEmpty()) {
+            logger.info("process stdout: " + process.getStandOutput());
+        }
         if (!process.getErrorOutput().isEmpty()) {
             logger.error("process erroput: " + process.getErrorOutput());
         }
