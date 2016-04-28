@@ -1,8 +1,0 @@
-/target/
-.gitignore
-.classpath
-.project
-Yummy.java
-.settings
-CopyOfIniDataPreparer.java
-CopyOfIniResultFetcher.java
