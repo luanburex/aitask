@@ -5,10 +5,6 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.ai.app.aitask.task.executor.impl.ProcessTaskExecutor;
 
 
 class WaitProcessClass implements Runnable{

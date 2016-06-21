@@ -12,18 +12,11 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.eclipse.jetty.server.Request;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.quartz.Trigger.TriggerState;
-
-import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
-import com.ai.app.aitask.task.TaskBuilderFactory;
-import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
 import com.ai.app.aitask.utils.TestJettyServer;
-import com.ai.app.aitask.utils.TriggerUnil;
 import com.google.gson.Gson;
 
 public class ExecuteTest {

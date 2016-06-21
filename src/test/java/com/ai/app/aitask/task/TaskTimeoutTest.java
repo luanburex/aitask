@@ -4,17 +4,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.quartz.SchedulerException;
-import org.quartz.Trigger.TriggerState;
-
-import com.ai.app.aitask.common.Constants;
 import com.ai.app.aitask.deamon.ScheduleDaemon;
-import com.ai.app.aitask.task.builder.ITaskBuilder;
 import com.ai.app.aitask.utils.FileUtils;
-import com.ai.app.aitask.utils.TriggerUnil;
 
 public class TaskTimeoutTest {
     static final protected Logger logger = Logger.getLogger(TaskRunTest.class);

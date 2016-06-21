@@ -1,14 +1,9 @@
 package com.ai.app.aitask.sql;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-
-import oracle.jdbc.driver.OracleDriver;
-import oracle.jdbc.pool.OracleConnectionCache;
 import oracle.jdbc.pool.OracleConnectionCacheImpl;
 import oracle.jdbc.pool.OracleConnectionPoolDataSource;
 

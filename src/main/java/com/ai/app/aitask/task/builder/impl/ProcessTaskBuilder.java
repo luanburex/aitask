@@ -7,8 +7,6 @@ import java.util.Map;
 import com.ai.app.aitask.common.Caster;
 import com.ai.app.aitask.common.Config;
 import com.ai.app.aitask.task.builder.ITaskBuilder;
-import com.ai.app.aitask.task.executor.IExecutor;
-import com.ai.app.aitask.task.executor.impl.ProcessTaskExecutor;
 
 /**
  * @author renzq

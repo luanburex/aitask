@@ -1,14 +1,10 @@
-package com.ai.app.aitask.task.fetcher.impl;
+package com.ai.app.aitask.task.preparer.impl;
 
 import java.util.Map;
 
 import com.ai.app.aitask.task.fetcher.IResultFetcher;
 
-/**
- * @author renzq
- * @author Alex Xu
- */
-public class DefaultResultFetcher implements IResultFetcher {
+public class JsonDataPreparer implements IResultFetcher {
 
     @Override
     public Map<String, Object> fetch(Map<String, Object> datamap) {
@@ -21,4 +17,5 @@ public class DefaultResultFetcher implements IResultFetcher {
         // TODO Auto-generated method stub
         return null;
     }
+
 }

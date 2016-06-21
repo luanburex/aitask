@@ -36,50 +36,12 @@
             "scriptId":"scriptId",
             "tags":"1",
             "taskId":"taskId"
-        },
-        {
-            "dataDesc":"weq",
-            "dataId":"dataId2",
-            "dataName":"aaa",
-            "scriptId":"scriptId2",
-            "tags":"1",
-            "taskId":"taskId"
         }
     ],
     "taskDataDetail":[
         {
             "dataId":"dataId1",
             "datadetailId":"detailId1",
-            "paramClob":"",
-            "paramDesc":"111",
-            "paramName":"111",
-            "paramType":"111",
-            "paramValue":"111",
-            "paramVarible":"111"
-        },
-        {
-            "dataId":"dataId1",
-            "datadetailId":"detailId2",
-            "paramClob":"",
-            "paramDesc":"111",
-            "paramName":"111",
-            "paramType":"111",
-            "paramValue":"111",
-            "paramVarible":"111"
-        },
-        {
-            "dataId":"dataId2",
-            "datadetailId":"detailId3",
-            "paramClob":"",
-            "paramDesc":"111",
-            "paramName":"111",
-            "paramType":"111",
-            "paramValue":"111",
-            "paramVarible":"111"
-        },
-        {
-            "dataId":"dataId2",
-            "datadetailId":"detailId4",
             "paramClob":"",
             "paramDesc":"111",
             "paramName":"111",
@@ -95,24 +57,6 @@
         }
     ],
     "scr":[
-        {
-            "scriptId":"scriptId",
-            "scriptName":"ATest",
-            "system":"",
-            "projectId":"",
-            "scriptType":"nethall",
-            "business":"",
-            "tags":"",
-            "scriptDesc":"",
-            "parameter":"",
-            "parameterClob":"",
-            "libList":"",
-            "script":"一个测试",
-            "createAt":"",
-            "createBy":"",
-            "modifyAt":"",
-            "modifyBy":""
-        },
         {
             "scriptId":"scriptId2",
             "scriptName":"工程管理",
